@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.application.vaccine_system.model.User;
 
 public interface  UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>{
+    User findByEmail(String email);
+    User findByRefreshTokenAndEmail(String token, String email);
+    boolean existsByEmail(String email);
 }

@@ -4,11 +4,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.vaccine_system.annotation.ApiMessage;
-import com.application.vaccine_system.model.Doctor;
 import com.application.vaccine_system.model.Cashier;
+import com.application.vaccine_system.model.Doctor;
 import com.application.vaccine_system.model.Patient;
 import com.application.vaccine_system.model.User;
 import com.application.vaccine_system.model.response.Pagination;
@@ -16,6 +17,7 @@ import com.application.vaccine_system.service.UserService;
 import com.turkraft.springfilter.boot.Filter;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -31,7 +33,7 @@ public class UserController {
     // return ResponseEntity.ok().body(vaccineService.getVaccineById(id));
     // }
 
-    @GetMapping("/users")
+    @GetMapping
     @ApiMessage("Get all users")
     public ResponseEntity<Pagination> getAllUsers(@Filter Specification<User> specification,
             Pageable pageable) {

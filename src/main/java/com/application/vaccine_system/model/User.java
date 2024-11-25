@@ -2,6 +2,7 @@ package com.application.vaccine_system.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,4 +37,6 @@ public class User {
     String role;
     LocalDate dateOfBirth;
     String address;
+    @Column(columnDefinition = "MEDIUMTEXT")
+    String refreshToken;
 }
