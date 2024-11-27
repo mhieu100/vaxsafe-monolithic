@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class ReqLoginDTO {
-    @NotBlank(message = "username not empty")
+    @NotBlank(message = "Email không được trống")
     private String username;
-    @NotBlank(message = "password not empty")
+    @NotBlank(message = "Password không được trống")
     private String password;
 }

@@ -27,15 +27,15 @@ public class VaccinationCenter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long centerId;
-    @NotBlank(message = "Vaccination center name is mandatory")
+    @NotBlank(message = "Tên trung tâm tiêm chủng không được trống")
     String name;
-    @NotBlank(message = "Vaccination center image is mandatory")
+    @NotBlank(message = "Hình ảnh trung tâm tiêm chủng không được trống")
     String image;
-    @NotBlank(message = "Vaccination center address is mandatory")
+    @NotBlank(message = "Địa chỉ trung tâm tiêm chủng không được trống")
     String address;
     String phoneNumber;
     int capacity;
-    @NotBlank(message = "Vaccination center working hours are mandatory")
+    @NotBlank(message = "Giờ làm việc không được trống")
     String workingHours;
 
     @OneToMany(mappedBy = "center")

@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,8 +19,8 @@ import com.application.vaccine_system.model.response.Response;
 @RestControllerAdvice
 public class GlobalException {
     @ExceptionHandler(value = {
-            // UsernameNotFoundException.class,
-            // BadCredentialsException.class,
+            UsernameNotFoundException.class,
+            BadCredentialsException.class,
             InvalidException.class,
     })
     public ResponseEntity<Response<Object>> handleException(Exception ex) {
@@ -51,6 +53,17 @@ public class GlobalException {
         List<String> errors = fieldErrors.stream().map(f -> f.getDefaultMessage()).collect(Collectors.toList());
         res.setMessage(errors.size() > 1 ? errors : errors.get(0));
 
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    @ExceptionHandler(value = {
+            StorageException.class,
+    })
+    public ResponseEntity<Response<Object>> handleFileUploadException(Exception ex) {
+        Response<Object> res = new Response<>();
+        res.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        res.setError(ex.getMessage());
+        res.setMessage("Exception upload file...");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 }

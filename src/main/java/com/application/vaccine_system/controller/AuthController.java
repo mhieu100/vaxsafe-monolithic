@@ -179,11 +179,13 @@ public class AuthController {
 
     @PostMapping("/register")
     @ApiMessage("Register a new patient")
-    public ResponseEntity<Patient> register(@Valid @RequestBody Patient patient) throws InvalidException {
-        String hashPassword = this.passwordEncoder.encode(patient.getUser().getPassword());
-        patient.getUser().setPassword(hashPassword);
-        patient.getUser().setRole("PATIENT");
-        this.userService.createUser(patient.getUser());
+    public ResponseEntity<Patient> register(@Valid @RequestBody User user) throws InvalidException {
+        Patient patient = new Patient();
+        String hashPassword = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashPassword);
+        user.setRole("PATIENT");
+        this.userService.createUser(user);
+        patient.setUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createPatient(patient));
     }
 }
