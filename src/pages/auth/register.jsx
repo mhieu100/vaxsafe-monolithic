@@ -6,12 +6,12 @@ import { message, notification } from "antd";
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("dfasdfas");
-  const [email, setEmail] = useState("fasdfasdf@gmail.com");
+  const [name, setName] = useState("user_test");
+  const [email, setEmail] = useState("user_test@gmail.com");
   const [password, setPassword] = useState("12345");
-  const [address, setAddress] = useState("dfasdf");
-  const [phone, setPhone] = useState("03123123");
-  const [date, setDate] = useState("");
+  const [address, setAddress] = useState("Viet Nam");
+  const [phone, setPhone] = useState("0388335845");
+  const [date, setDate] = useState("2003-11-20");
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -4,19 +4,19 @@ import { message, notification } from "antd";
 import "./form.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserLoginInfo } from "./../../redux/slice/accountSlide";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  let params = new URLSearchParams(location.search);
-  const callback = params?.get("callback");
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@gmail.com");
+  const [password, setPassword] = useState("12345");
 
   useEffect(() => {
     if (isAuthenticated) {
-      window.location.href = "/";
+      navigate('/')
     }
   }, []);
 
@@ -27,7 +27,7 @@ const LoginPage = () => {
       localStorage.setItem("access_token", res.data.access_token);
       dispatch(setUserLoginInfo(res.data.user));
       message.success("Đăng nhập tài khoản thành công!");
-      window.location.href = callback ? callback : "/";
+      navigate('/')
     } else {
       notification.error({
         message: "Đăng nhập thất bại",

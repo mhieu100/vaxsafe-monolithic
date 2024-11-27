@@ -39,7 +39,6 @@ export const accountSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.fullName = action.payload.fullName;
       state.user.role = action?.payload?.role;
-      console.log("ok")
     },
     setLogoutAction: (state, action) => {
       localStorage.removeItem("access_token");
