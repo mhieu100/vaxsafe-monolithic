@@ -89,7 +89,6 @@ export const callDeleteCenter = (id) => {
   return axios.delete(`/centers/${id}`);
 };
 
-
 /**
  * Upload single file
  */
@@ -106,4 +105,66 @@ export const callUploadSingleFile = (file, folderType) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+/**
+ *
+Module Vaccine
+ */
+
+export const callCreateVaccine = (
+  vaccineName,
+  image,
+  manufacturer,
+  disease,
+  dosage,
+  ageRange,
+  price,
+  stockQuantity,
+  requiredDoses
+) => {
+  return axios.post("/vaccines", {
+    vaccineName,
+    image,
+    manufacturer,
+    disease,
+    dosage,
+    ageRange,
+    price,
+    stockQuantity,
+    requiredDoses,
+  });
+};
+
+export const callUpdateVaccine = (
+  vaccnineId,
+  vaccineName,
+  image,
+  manufacturer,
+  disease,
+  dosage,
+  ageRange,
+  price,
+  stockQuantity,
+  requiredDoses
+) => {
+  return axios.put(`/vaccines/${vaccnineId}`, {
+    vaccineName,
+    image,
+    manufacturer,
+    disease,
+    dosage,
+    ageRange,
+    price,
+    stockQuantity,
+    requiredDoses,
+  });
+};
+
+export const callFetchVaccine = (query) => {
+  return axios.get(`/vaccines?${query}`);
+};
+
+export const callDeleteVaccine = (id) => {
+  return axios.delete(`/vaccines/${id}`);
 };
