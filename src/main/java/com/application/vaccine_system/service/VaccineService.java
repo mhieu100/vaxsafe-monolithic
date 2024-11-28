@@ -57,15 +57,6 @@ public class VaccineService {
             throw new InvalidException("Vaccine not found with id: " + id);
         }
         vaccine.setVaccineId(id);
-        vaccine.setVaccineName(vaccine.getVaccineName());
-        vaccine.setImage(vaccine.getImage());
-        vaccine.setDescription(vaccine.getDescription());
-        vaccine.setDisease(vaccine.getDisease());
-        vaccine.setAgeRange(vaccine.getAgeRange());
-        vaccine.setDosage(vaccine.getDosage());
-        vaccine.setManufacturer(vaccine.getManufacturer());
-        vaccine.setPrice(vaccine.getPrice());
-        vaccine.setRequiredDoses(vaccine.getRequiredDoses());
         return vaccineRepository.save(vaccine);
 
     }

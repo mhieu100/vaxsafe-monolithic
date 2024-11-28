@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.exception.InvalidException;
 import com.application.vaccine_system.model.VaccinationCenter;
+import com.application.vaccine_system.model.response.CenterDTO;
 import com.application.vaccine_system.model.response.Pagination;
-import com.application.vaccine_system.model.response.center.CenterDTO;
 import com.application.vaccine_system.repository.VaccinationCenterRepository;
 
 @Service
@@ -27,7 +27,7 @@ public class VaccinationCenterService {
                 .orElseThrow(() -> new InvalidException("Vaccination Center not found with id: " + id));
     }
 
-     public CenterDTO convertToCenterDTO(VaccinationCenter vaccinationCenter) {
+    public CenterDTO convertToCenterDTO(VaccinationCenter vaccinationCenter) {
         CenterDTO res = new CenterDTO();
         res.setCenterId(vaccinationCenter.getCenterId());
         res.setName(vaccinationCenter.getName());
@@ -74,12 +74,6 @@ public class VaccinationCenterService {
             throw new InvalidException("Vaccination Center not found with id: " + id);
         }
         vaccinationCenter.setCenterId(id);
-        vaccinationCenter.setName(vaccinationCenter.getName());
-        vaccinationCenter.setImage(vaccinationCenter.getImage());
-        vaccinationCenter.setAddress(vaccinationCenter.getAddress());
-        vaccinationCenter.setPhoneNumber(vaccinationCenter.getPhoneNumber());
-        vaccinationCenter.setCapacity(vaccinationCenter.getCapacity());
-        vaccinationCenter.setWorkingHours(vaccinationCenter.getWorkingHours());
         return vaccinationCenterRepository.save(vaccinationCenter);
     }
 

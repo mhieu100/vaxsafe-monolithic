@@ -32,6 +32,6 @@ public class Doctor {
     String specialization;
     String workingHours;
     @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
+    @JoinColumn(name = "center_id")
     VaccinationCenter center;
 }

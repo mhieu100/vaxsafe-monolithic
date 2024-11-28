@@ -53,8 +53,8 @@ public class VaccineController {
 
     @PutMapping("/{id}")
     @ApiMessage("Update a vaccine")
-    public Vaccine updateVaccine(@PathVariable Long id,@Valid @RequestBody Vaccine vaccine) throws InvalidException {
-        return vaccineService.updateVaccine(id, vaccine);
+    public ResponseEntity<Vaccine> updateVaccine(@PathVariable Long id,@Valid @RequestBody Vaccine vaccine) throws InvalidException {
+        return ResponseEntity.ok().body(vaccineService.updateVaccine(id, vaccine));
     }
 
     @DeleteMapping("/{id}")

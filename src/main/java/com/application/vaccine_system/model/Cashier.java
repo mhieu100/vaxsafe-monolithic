@@ -30,6 +30,6 @@ public class Cashier {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
     @ManyToOne
-    @JoinColumn(name = "center_id", nullable = false)
+    @JoinColumn(name = "center_id")
     VaccinationCenter center;
 }

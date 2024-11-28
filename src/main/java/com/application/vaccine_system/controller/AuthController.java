@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.application.vaccine_system.annotation.ApiMessage;
 import com.application.vaccine_system.config.security.SecurityUtil;
 import com.application.vaccine_system.exception.InvalidException;
-import com.application.vaccine_system.model.Patient;
+
 import com.application.vaccine_system.model.User;
 import com.application.vaccine_system.model.request.ReqLoginDTO;
 import com.application.vaccine_system.model.response.ResLoginDTO;
+import com.application.vaccine_system.model.response.UserDTO;
 import com.application.vaccine_system.service.UserService;
 
 import jakarta.validation.Valid;
@@ -36,16 +36,14 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     @Value("${mhieu.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
-            UserService userService, PasswordEncoder passwordEncoder) {
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -179,13 +177,8 @@ public class AuthController {
 
     @PostMapping("/register")
     @ApiMessage("Register a new patient")
-    public ResponseEntity<Patient> register(@Valid @RequestBody User user) throws InvalidException {
-        Patient patient = new Patient();
-        String hashPassword = this.passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashPassword);
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody User user) throws InvalidException {
         user.setRole("PATIENT");
-        this.userService.createUser(user);
-        patient.setUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createPatient(patient));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
     }
 }

@@ -1,4 +1,4 @@
-package com.application.vaccine_system.model.response.center;
+package com.application.vaccine_system.model.response;
 
 import lombok.AccessLevel;
 import lombok.Data;
