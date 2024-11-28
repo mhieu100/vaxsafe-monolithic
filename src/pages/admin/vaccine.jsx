@@ -145,7 +145,7 @@ const VaccinePage = () => {
           <Popconfirm
             placement="leftTop"
             title={"Xác nhận xóa company"}
-            description={"Bạn có chắc chắn muốn xóa company này ?"}
+            description={"Bạn có chắc chắn muốn xóa vaccine này ?"}
             onConfirm={() => handleDeleteVaccine(entity.vaccineId)}
             okText="Xác nhận"
             cancelText="Hủy"
@@ -217,7 +217,7 @@ const VaccinePage = () => {
       <DataTable
         actionRef={tableRef}
         headerTitle="Danh sách Vaccine"
-        rowKey="id"
+        rowKey="vaccineId"
         loading={isFetching}
         columns={columns}
         dataSource={centers}

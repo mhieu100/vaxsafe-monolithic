@@ -16,12 +16,12 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await callRegister(name, email, password , phone, date, address);
-    if (res?.data?.patientId) {
+    if (res?.data?.userId) {
       message.success('Đăng ký tài khoản thành công!');
       navigate('/login')
   } else {
       notification.error({
-          message: "Đăng ký tài khoản thất bại",
+          message: res.error,
           description:
               res.message && Array.isArray(res.message) ? res.message[0] : res.message,
           duration: 5

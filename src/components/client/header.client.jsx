@@ -78,7 +78,7 @@ const Header = () => {
                         Hồ sơ
                       </a>
                     </li>
-                    {user.role !== "PARTIENT" ? (
+                    {user.role !== "PATIENT" ? (
                       <li>
                         <Link className="dropdown-item" to="/admin">
                           Trang quản lý

@@ -169,13 +169,13 @@ const CenterPage = () => {
 
     return temp;
   };
-
+  
   return (
     <>
       <DataTable
         actionRef={tableRef}
         headerTitle="Danh sách Trung tâm tiêm chủng"
-        rowKey="id"
+        rowKey="centerId"
         loading={isFetching}
         columns={columns}
         dataSource={centers}

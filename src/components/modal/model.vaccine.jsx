@@ -39,6 +39,7 @@ const ModalVaccine = (props) => {
       const res = await callUpdateVaccine(
         dataInit.vaccineId,
         vaccineName,
+        value,
         image,
         manufacturer,
         disease,
@@ -49,7 +50,7 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success("Cập nhật trung tâm thành công");
+        message.success("Cập nhật vaccine thành công");
         handleReset();
         reloadTable();
       } else {
@@ -62,6 +63,7 @@ const ModalVaccine = (props) => {
       //create
       const res = await callCreateVaccine(
         vaccineName,
+        value,
         image,
         manufacturer,
         disease,
@@ -72,7 +74,7 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success("Thêm mới trung tâm thành công");
+        message.success("Thêm mới vaccine thành công");
         handleReset();
         reloadTable();
       } else {
