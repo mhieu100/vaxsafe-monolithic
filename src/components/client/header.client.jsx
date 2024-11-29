@@ -1,15 +1,27 @@
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown, Layout, Menu, message, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { callLogout } from "../../config/api";
 import { setLogoutAction } from "../../redux/slice/accountSlide";
-import { message } from "antd";
+import { useEffect, useState } from "react";
 
-const Header = () => {
+const { Header } = Layout;
+
+const NavbarTop = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [current, setCurrent] = useState("/");
+  const location = useLocation();
+
+  useEffect(() => {
+    setCurrent(location.pathname);
+  }, [location]);
+
   const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
   const user = useSelector((state) => state.account.user);
+
   const handleLogout = async () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
@@ -19,104 +31,85 @@ const Header = () => {
     }
   };
 
+  const items = [
+    {
+      label: `Welcome ${user?.fullName}`,
+    },
+
+    {
+      key: "1",
+      label: <Link to="/">Hồ sơ</Link>,
+    },
+    user.role !== "PATIENT"
+      ? {
+          key: "2",
+          label: <Link to="/admin">Trang quản trị</Link>,
+        }
+      : "",
+    {
+      key: "3",
+      danger: true,
+      label: <label onClick={handleLogout}>Đăng xuất</label>,
+    },
+  ];
+
   return (
-    <section>
-      <nav
-        className="bg-white navbar navbar-expand-lg navbar-light pg-lib-item py-lg-1"
-        data-navbar-id="{bs-navbar}"
+    <>
+      <Header
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1,
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 200px",
+        }}
       >
-        <div className="container">
-          <Link className="fw-bold navbar-brand fs-4" to="/">
-            <span>Logo</span>
-          </Link>
-          <button
-            className="navbar-toggler collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#{bs-navbar}"
-            aria-controls="{bs-navbar}"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          selectedKeys={[current]}
+          items={[
+            {
+              key: "/",
+              label: <Link to="/">Trang chủ</Link>,
+            },
+            {
+              key: "/shop",
+              label: <Link to="/shop">Kho vaccine</Link>,
+            },
+            {
+              key: "/center",
+              label: <Link to="/center">Trung tâm tiêm chủng</Link>,
+            },
+          ]}
+          style={{ flex: 1, minWidth: 0 }}
+        />
+        {isAuthenticated ? (
+          <Dropdown
+            menu={{
+              items,
+            }}
+            trigger={["click"]}
           >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="navbar-collapse collapse" id="{bs-navbar}">
-            <ul className="mb-2 mb-lg-0 me-lg-auto navbar-nav">
-              <li className="nav-item">
-                <Link
-                  className="nav-link px-lg-3 py-lg-4"
-                  aria-current="page"
-                  to="/"
-                >
-                  Trang chủ
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link px-lg-3 py-lg-4" to="/shop">
-                  Kho vaccine
-                </Link>
-              </li>
-            </ul>
-            <div className="d-flex flex-wrap gap-2 py-1">
-              {isAuthenticated && user ? (
-                <li
-                  className="nav-item dropdown"
-                  style={{ listStyleType: "none" }}
-                >
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    {user.fullName}
-                  </a>
-                  <ul className="dropdown-menu">
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Hồ sơ
-                      </a>
-                    </li>
-                    {user.role !== "PATIENT" ? (
-                      <li>
-                        <Link className="dropdown-item" to="/admin">
-                          Trang quản lý
-                        </Link>
-                      </li>
-                    ) : null}
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <label className="dropdown-item" onClick={handleLogout}>
-                        Đăng xuất
-                      </label>
-                    </li>
-                  </ul>
-                </li>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="btn btn-outline-primary pb-2 pe-4 ps-4 pt-2"
-                  >
-                    Log In
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="btn btn-primary pb-2 pe-4 ps-4 pt-2"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-    </section>
+            <Space>
+              <Avatar shape="square" icon={<UserOutlined />} />
+            </Space>
+          </Dropdown>
+        ) : (
+          <Space>
+            <Button type="primary">
+              <Link to={"/login"} className="no-underline">Đăng nhập</Link>
+            </Button>
+            <Button color="danger" variant="solid">
+              <Link to={"/login"}>Đăng ký</Link>
+            </Button>
+          </Space>
+        )}
+      </Header>
+    </>
   );
 };
 
-export default Header;
+export default NavbarTop;

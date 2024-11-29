@@ -1,156 +1,95 @@
-import "./shop.css";
+import { useEffect, useState } from "react";
+import { callFetchVaccine } from "../../config/api";
+import { Button, Card, Col, Row } from "antd";
+import { Typography } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
+const { Title, Text } = Typography;
+
+const { Meta } = Card;
+
 const ShopPage = () => {
+  // const [isLoading, setIsLoading] = useState(false);
+  const [displayVaccine, setDisplayVaccine] = useState(null);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
+  const [total, setTotal] = useState(0);
+  const [filter, setFilter] = useState("");
+  const [sortQuery, setSortQuery] = useState("sort=vaccineName,desc");
+
+
+  useEffect(() => {
+    setCurrent(1);
+    setPageSize(100);
+    setFilter("");
+    setSortQuery("sort=vaccineName,desc");
+    fetchVaccine();
+  }, [current, pageSize, filter, sortQuery]);
+
+  const fetchVaccine = async () => {
+    // setIsLoading(true);
+    let query = `page=${current}&size=${pageSize}`;
+    if (filter) {
+      query += `&${filter}`;
+    }
+    if (sortQuery) {
+      query += `&${sortQuery}`;
+    }
+
+    const res = await callFetchVaccine(query);
+    if (res && res.data) {
+      setDisplayVaccine(res.data.result);
+      setTotal(res.data.meta.total);
+    }
+    // setIsLoading(false);
+  };
+
   return (
     <>
-      <section className="section-products">
-        <div className="container">
-          <div className="row justify-content-center text-center">
-            <div className="col-md-8 col-lg-6">
-              <div className="header">
-                <h3>Featured Product</h3>
-                <h2>Popular Products</h2>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6 col-lg-4 col-xl-3">
-              <div id="product-1" className="single-product">
-                <div className="part-1">
-                  <ul>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-shopping-cart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-heart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-plus"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-expand"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="part-2">
-                  <h3 className="product-title">Here Product Title</h3>
-                  <h4 className="product-old-price">$79.99</h4>
-                  <h4 className="product-price">$49.99</h4>
-                </div>
-              </div>
-            </div>
+      <Row style={{ display: "flex" }} gutter={[20, 20]}>
+        <Col span={24}>
+          <Title level={2} className="text-center">
+            Danh sách vaccine <Text type="success">({total} loại vaccine)</Text>
+          </Title>
+        </Col>
+        {displayVaccine &&
+          displayVaccine.map((vaccine, index) => {
+            return (
+              <Col key={index} span={6} style={{ justifyItems: "center" }}>
+                <Card
+                  bordered={false}
+                  style={{
+                    width: 300,
+                  }}
+                  cover={<img alt="example" src={vaccine.image} height={150} />}
+                >
+                  <Meta
+                    title={vaccine.vaccineName.slice(0, 30) + "..."}
+                    description={vaccine.description.slice(0, 30) + "..."}
+                  />
+                  <div className="d-flex justify-content-between mt-3">
+                    <p>
+                      Giá:{" "}
+                      <span className="text-success">
+                        {new Intl.NumberFormat("vi-VN").format(vaccine.price)}
+                      </span>{" "}
+                      VNĐ
+                    </p>
 
-            <div className="col-md-6 col-lg-4 col-xl-3">
-              <div id="product-2" className="single-product">
-                <div className="part-1">
-                  <span className="discount">15% off</span>
-                  <ul>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-shopping-cart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-heart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-plus"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-expand"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="part-2">
-                  <h3 className="product-title">Here Product Title</h3>
-                  <h4 className="product-price">$49.99</h4>
-                </div>
-              </div>
-            </div>
+                    <p>Số lượng: {vaccine.stockQuantity}</p>
+                  </div>
 
-            <div className="col-md-6 col-lg-4 col-xl-3">
-              <div id="product-3" className="single-product">
-                <div className="part-1">
-                  <ul>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-shopping-cart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-heart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-plus"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-expand"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="part-2">
-                  <h3 className="product-title">Here Product Title</h3>
-                  <h4 className="product-old-price">$79.99</h4>
-                  <h4 className="product-price">$49.99</h4>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-6 col-lg-4 col-xl-3">
-              <div id="product-4" className="single-product">
-                <div className="part-1">
-                  <span className="new">new</span>
-                  <ul>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-shopping-cart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-heart"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-plus"></i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <i className="fas fa-expand"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div className="part-2">
-                  <h3 className="product-title">Here Product Title</h3>
-                  <h4 className="product-price">$49.99</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                  <Button
+                    type="primary"
+                  >
+                    <PlusOutlined />
+                    Đăng ký tiêm chủng
+                  </Button>
+                </Card>
+              </Col>
+            );
+          })}
+      </Row>
     </>
   );
 };

@@ -26,7 +26,7 @@ const CenterPage = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteCompany = async (id) => {
-    console.log(id)
+    console.log(id);
     if (id) {
       const res = await callDeleteCenter(id);
       if (res && +res.statusCode === 200) {
@@ -169,7 +169,7 @@ const CenterPage = () => {
 
     return temp;
   };
-  
+
   return (
     <>
       <DataTable

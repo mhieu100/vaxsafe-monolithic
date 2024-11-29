@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/share/protected-route";
 import VaccinePage from "./pages/admin/vaccine";
 import CenterPage from "./pages/admin/center";
 import UserPage from "./pages/admin/user";
+import VaccineCenterPage from "./pages/center";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ function App() {
       children: [
         { index: true, element: <HomePage /> },
         { path: "shop", element: <ShopPage /> },
+        { path: "center", element: <VaccineCenterPage /> },
       ],
     },
 
