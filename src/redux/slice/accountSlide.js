@@ -11,11 +11,11 @@ export const fetchAccount = createAsyncThunk(
 );
 
 const initialState = {
-  isAuthenticated: false,
+  isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
   isLoading: true,
   isRefreshToken: false,
   errorRefreshToken: "",
-  user: {
+  user: JSON.parse(localStorage.getItem("user")) || {
     id: "",
     email: "",
     fullName: "",
@@ -39,6 +39,8 @@ export const accountSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.fullName = action.payload.fullName;
       state.user.role = action?.payload?.role;
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     setLogoutAction: (state) => {
       localStorage.removeItem("access_token");

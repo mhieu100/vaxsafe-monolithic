@@ -46,7 +46,7 @@ const VaccineCenterPage = () => {
       <Row style={{ display: "flex" }} gutter={[20, 20]}>
         <Col span={24}>
           <Title level={2} className="text-center">
-            Danh sách trung tâm tiêm chủng{" "}
+            Danh sách trung tâm tiêm chủng
             <Text type="success">({total} trung tâm)</Text>
           </Title>
         </Col>

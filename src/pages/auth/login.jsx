@@ -16,9 +16,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/')
+      navigate("/");
     }
-  }, []);
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +27,7 @@ const LoginPage = () => {
       localStorage.setItem("access_token", res.data.access_token);
       dispatch(setUserLoginInfo(res.data.user));
       message.success("Đăng nhập tài khoản thành công!");
-      navigate('/')
+      navigate("/");
     } else {
       notification.error({
         message: "Đăng nhập thất bại",
@@ -59,7 +59,6 @@ const LoginPage = () => {
           id="inputEmail"
           className="form-control"
           placeholder="Email address"
-          // required
           autoFocus
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +71,6 @@ const LoginPage = () => {
           id="inputPassword"
           className="form-control"
           placeholder="Password"
-          // required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

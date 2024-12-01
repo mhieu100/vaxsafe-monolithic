@@ -16,6 +16,7 @@ import VaccinePage from "./pages/admin/vaccine";
 import CenterPage from "./pages/admin/center";
 import UserPage from "./pages/admin/user";
 import VaccineCenterPage from "./pages/center";
+import OrderPage from "./pages/order";
 
 function App() {
   const dispatch = useDispatch();
@@ -42,6 +43,10 @@ function App() {
         { index: true, element: <HomePage /> },
         { path: "shop", element: <ShopPage /> },
         { path: "center", element: <VaccineCenterPage /> },
+        {
+          path: "order",
+          element: <OrderPage />,
+        },
       ],
     },
 

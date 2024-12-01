@@ -3,6 +3,7 @@ import { callFetchVaccine } from "../../config/api";
 import { Button, Card, Col, Row } from "antd";
 import { Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -16,7 +17,7 @@ const ShopPage = () => {
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("");
   const [sortQuery, setSortQuery] = useState("sort=vaccineName,desc");
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCurrent(1);
@@ -43,6 +44,13 @@ const ShopPage = () => {
     }
     // setIsLoading(false);
   };
+
+  const placeOrderVaccine = () => {
+    // call API here
+    // if success, show success message
+    // if fail, show error message
+    navigate("/order");
+  }
 
   return (
     <>
@@ -81,6 +89,7 @@ const ShopPage = () => {
 
                   <Button
                     type="primary"
+                    onClick={placeOrderVaccine}
                   >
                     <PlusOutlined />
                     Đăng ký tiêm chủng
