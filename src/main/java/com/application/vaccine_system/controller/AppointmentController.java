@@ -19,6 +19,7 @@ public class AppointmentController {
 
     @PostMapping("/order")
     public ResponseEntity<ResAppointmentDTO> order(@RequestBody ReqAppointmentDTO req) {
+        System.out.println("Ordering appointment" + req);
         ResAppointmentDTO newAppointment = appointmentService.createAppointment(req);
         return ResponseEntity.ok().body(newAppointment);
     }

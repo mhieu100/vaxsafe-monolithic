@@ -13,8 +13,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReqAppointmentDTO {
     Long vaccineId;
-    Long userId;
+    Long patientId;
     Long centerId;
+    Long doctorId;
     LocalDate appointmentDate;
     LocalTime appointmentTime;
     Appointment.Status status;

@@ -35,8 +35,11 @@ public class Appointment {
     @JoinColumn(name = "vaccine_id")
     Vaccine vaccine;
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    User user;
+    @JoinColumn(name = "patient_id")
+    Patient patient;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    Doctor doctor;
     @ManyToOne
     @JoinColumn(name = "center_id")
     VaccinationCenter center;
