@@ -1,39 +1,36 @@
 package com.application.vaccine_system.service;
 
+import com.application.vaccine_system.model.Patient;
+import com.application.vaccine_system.model.Vaccine;
+import com.application.vaccine_system.model.response.PatientDTO;
+import com.application.vaccine_system.repository.*;
 import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.model.Appointment;
 import com.application.vaccine_system.model.Doctor;
-import com.application.vaccine_system.model.Patient;
-import com.application.vaccine_system.model.User;
 import com.application.vaccine_system.model.request.ReqAppointmentDTO;
 import com.application.vaccine_system.model.response.DoctorDTO;
 import com.application.vaccine_system.model.response.ResAppointmentDTO;
-import com.application.vaccine_system.repository.AppointmentRepository;
-import com.application.vaccine_system.repository.PatientRepository;
-import com.application.vaccine_system.repository.UserRepository;
-import com.application.vaccine_system.repository.VaccinationCenterRepository;
-import com.application.vaccine_system.repository.VaccineRepository;
 
 @Service
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final VaccineRepository vaccineRepository;
-    private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final VaccinationCenterRepository vaccinationCenterRepository;
     private final VaccinationCenterService vaccinationCenterService;
+    private final DoctorRepository doctorRepository;
 
     public AppointmentService(AppointmentRepository appointmentRepository, VaccineRepository vaccineRepository,
-            UserRepository userRepository, PatientRepository patientRepository,
-            VaccinationCenterRepository vaccinationCenterRepository,
-            VaccinationCenterService vaccinationCenterService) {
+                              PatientRepository patientRepository,
+                              VaccinationCenterRepository vaccinationCenterRepository,
+                              VaccinationCenterService vaccinationCenterService, DoctorRepository doctorRepository) {
         this.appointmentRepository = appointmentRepository;
         this.vaccineRepository = vaccineRepository;
-        this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.vaccinationCenterRepository = vaccinationCenterRepository;
         this.vaccinationCenterService = vaccinationCenterService;
+        this.doctorRepository = doctorRepository;
     }
 
     public DoctorDTO convertToDoctorDTO(Doctor doctor) {
@@ -42,20 +39,23 @@ public class AppointmentService {
                 .user(DoctorDTO.UserDoctor.builder()
                         .userId(doctor.getUser().getUserId())
                         .fullName(doctor.getUser().getFullName())
-                        .email(doctor.getUser().getEmail())
-                        .phoneNumber(doctor.getUser().getPhoneNumber())
-                        .role(doctor.getUser().getRole())
-                        .dateOfBirth(doctor.getUser().getDateOfBirth())
-                        .address(doctor.getUser().getAddress()).build())
-                .specialization(doctor.getSpecialization())
-                .workingHours(doctor.getWorkingHours()).build();
+                       .build())
+                .build();
+    }
+
+    public PatientDTO convertToPatientDTO(Patient patient) {
+        return PatientDTO.builder()
+                .patientId(patient.getPatientId())
+                .user(PatientDTO.UserPatient.builder()
+                        .userId(patient.getUser().getUserId())
+                        .fullName(patient.getUser().getFullName()).build()).build();
     }
 
     public ResAppointmentDTO convertToAppointmentDTO(Appointment appointment) {
         return ResAppointmentDTO.builder()
                 .appointId(appointment.getAppointId())
                 .vaccine(appointment.getVaccine())
-                .patient(appointment.getPatient())
+                .patient(convertToPatientDTO(appointment.getPatient()))
                 .center(vaccinationCenterService.convertToCenterDTO(appointment.getCenter()))
                 .doctor(appointment.getDoctor() != null ? convertToDoctorDTO(appointment.getDoctor()) : null)
                 .appointmentDate(appointment.getAppointmentDate())
@@ -64,11 +64,14 @@ public class AppointmentService {
     }
 
     public ResAppointmentDTO createAppointment(ReqAppointmentDTO req) {
+        Vaccine vaccine = vaccineRepository.findById(req.getVaccineId()).get();
+        vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
+
         Appointment appointment = Appointment.builder()
-                .vaccine(vaccineRepository.findById(req.getVaccineId()).get())
+                .vaccine(vaccineRepository.save(vaccine))
                 .patient(patientRepository.findById(req.getPatientId()).get())
                 .center(vaccinationCenterRepository.findById(req.getCenterId()).get())
-                .doctor(req.getDoctorId() != null ? userRepository.findById(req.getDoctorId()).get().getDoctor() : null)
+                .doctor(req.getDoctorId() != null ? doctorRepository.findById(req.getDoctorId()).get() : null)
                 .appointmentDate(req.getAppointmentDate())
                 .appointmentTime(req.getAppointmentTime())
                 .status(req.getStatus()).build();

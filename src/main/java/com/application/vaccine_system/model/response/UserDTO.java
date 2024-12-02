@@ -32,7 +32,6 @@ public class UserDTO {
         private Long doctorId;
         private String specialization;
         private String workingHours;
-        // private CenterDoctor center;
     }
 
     @Data
@@ -40,7 +39,6 @@ public class UserDTO {
     @NoArgsConstructor
     public static class CashierUser {
         private Long cashierId;
-        // private CenterCashier center;
     }
 
     @Data

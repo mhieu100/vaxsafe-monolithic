@@ -18,8 +18,6 @@ import lombok.experimental.FieldDefaults;
 public class DoctorDTO {
     Long doctorId;
     UserDoctor user;
-    String specialization;
-    String workingHours;
 
     @Data
     @AllArgsConstructor
@@ -29,10 +27,5 @@ public class DoctorDTO {
     public static class UserDoctor {
         Long userId;
         String fullName;
-        String email;
-        String phoneNumber;
-        String role;
-        LocalDate dateOfBirth;
-        String address;
     }
 }

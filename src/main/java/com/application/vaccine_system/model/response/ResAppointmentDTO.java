@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.application.vaccine_system.model.Appointment;
-import com.application.vaccine_system.model.Patient;
 import com.application.vaccine_system.model.Vaccine;
 
 import lombok.AccessLevel;
@@ -18,7 +17,7 @@ import lombok.Builder;
 public class ResAppointmentDTO {
     Long appointId;
     Vaccine vaccine;
-    Patient patient;
+    PatientDTO patient;
     CenterDTO center;
     DoctorDTO doctor;
     LocalDate appointmentDate;

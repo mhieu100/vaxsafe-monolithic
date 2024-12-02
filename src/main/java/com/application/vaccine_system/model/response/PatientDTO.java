@@ -1,30 +1,23 @@
 package com.application.vaccine_system.model.response;
 
-import java.time.LocalDate;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DoctorDTO {
-    Long doctorId;
-    UserDoctor user;
+public class PatientDTO {
+    Long patientId;
+    UserPatient user;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
     @FieldDefaults(level = AccessLevel.PRIVATE)
-    public static class UserDoctor {
+    public static class UserPatient {
         Long userId;
         String fullName;
     }
