@@ -2,6 +2,7 @@ package com.application.vaccine_system.service;
 
 import com.application.vaccine_system.model.Patient;
 import com.application.vaccine_system.model.Vaccine;
+import com.application.vaccine_system.model.Appointment.Status;
 import com.application.vaccine_system.model.response.PatientDTO;
 import com.application.vaccine_system.repository.*;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,21 @@ public class AppointmentService {
     private final VaccinationCenterRepository vaccinationCenterRepository;
     private final VaccinationCenterService vaccinationCenterService;
     private final DoctorRepository doctorRepository;
+    private final UserRepository userRepository;
 
     public AppointmentService(AppointmentRepository appointmentRepository, VaccineRepository vaccineRepository,
-                              PatientRepository patientRepository,
-                              VaccinationCenterRepository vaccinationCenterRepository,
-                              VaccinationCenterService vaccinationCenterService, DoctorRepository doctorRepository) {
+            PatientRepository patientRepository,
+
+            VaccinationCenterRepository vaccinationCenterRepository,
+            VaccinationCenterService vaccinationCenterService, DoctorRepository doctorRepository,
+            UserRepository userRepository) {
         this.appointmentRepository = appointmentRepository;
         this.vaccineRepository = vaccineRepository;
         this.patientRepository = patientRepository;
         this.vaccinationCenterRepository = vaccinationCenterRepository;
         this.vaccinationCenterService = vaccinationCenterService;
         this.doctorRepository = doctorRepository;
+        this.userRepository = userRepository;
     }
 
     public DoctorDTO convertToDoctorDTO(Doctor doctor) {
@@ -39,7 +44,7 @@ public class AppointmentService {
                 .user(DoctorDTO.UserDoctor.builder()
                         .userId(doctor.getUser().getUserId())
                         .fullName(doctor.getUser().getFullName())
-                       .build())
+                        .build())
                 .build();
     }
 
@@ -48,7 +53,8 @@ public class AppointmentService {
                 .patientId(patient.getPatientId())
                 .user(PatientDTO.UserPatient.builder()
                         .userId(patient.getUser().getUserId())
-                        .fullName(patient.getUser().getFullName()).build()).build();
+                        .fullName(patient.getUser().getFullName()).build())
+                .build();
     }
 
     public ResAppointmentDTO convertToAppointmentDTO(Appointment appointment) {
@@ -66,15 +72,15 @@ public class AppointmentService {
     public ResAppointmentDTO createAppointment(ReqAppointmentDTO req) {
         Vaccine vaccine = vaccineRepository.findById(req.getVaccineId()).get();
         vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
-
+        
         Appointment appointment = Appointment.builder()
                 .vaccine(vaccineRepository.save(vaccine))
-                .patient(patientRepository.findById(req.getPatientId()).get())
+                .patient(userRepository.findById(req.getPatientId()).get().getPatient())
                 .center(vaccinationCenterRepository.findById(req.getCenterId()).get())
                 .doctor(req.getDoctorId() != null ? doctorRepository.findById(req.getDoctorId()).get() : null)
                 .appointmentDate(req.getAppointmentDate())
                 .appointmentTime(req.getAppointmentTime())
-                .status(req.getStatus()).build();
+                .status(Status.PENDING).build();
         return convertToAppointmentDTO(appointmentRepository.save(appointment));
     }
 }
