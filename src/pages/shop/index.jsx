@@ -45,12 +45,9 @@ const ShopPage = () => {
     // setIsLoading(false);
   };
 
-  const placeOrderVaccine = () => {
-    // call API here
-    // if success, show success message
-    // if fail, show error message
-    navigate("/order");
-  }
+  const placeOrderVaccine = (vaccineId) => {
+    navigate(`/order/${vaccineId}`);
+  };
 
   return (
     <>
@@ -89,7 +86,7 @@ const ShopPage = () => {
 
                   <Button
                     type="primary"
-                    onClick={placeOrderVaccine}
+                    onClick={() => placeOrderVaccine(vaccine.vaccineId)}
                   >
                     <PlusOutlined />
                     Đăng ký tiêm chủng

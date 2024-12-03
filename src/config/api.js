@@ -222,3 +222,19 @@ export const callFetchUser = (query) => {
 export const callDeleteUser = (id) => {
   return axios.delete(`/users/${id}`);
 };
+
+export const callOrder = (
+  vaccineId,
+  patientId,
+  centerId,
+  appointmentDate,
+  appointmentTime
+) => {
+  return axios.post("/order", {
+    vaccineId,
+    patientId,
+    centerId,
+    appointmentDate,
+    appointmentTime,
+  });
+};

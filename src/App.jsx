@@ -44,7 +44,7 @@ function App() {
         { path: "shop", element: <ShopPage /> },
         { path: "center", element: <VaccineCenterPage /> },
         {
-          path: "order",
+          path: "/order/:vaccineId",
           element: <OrderPage />,
         },
       ],

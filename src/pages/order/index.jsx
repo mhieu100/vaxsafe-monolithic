@@ -4,9 +4,11 @@ import {
   ProFormSelect,
   ProFormTimePicker,
 } from "@ant-design/pro-components";
-import { message } from "antd";
+import { Form, message, notification } from "antd";
 import { useEffect, useState } from "react";
-import { callFetchCenter } from "../../config/api";
+import { callFetchCenter, callOrder } from "../../config/api";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -17,11 +19,13 @@ const waitTime = (time = 100) => {
 };
 
 const OrderPage = () => {
+  const { vaccineId } = useParams();
   const [displayCenter, setDisplayCenter] = useState(null);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(100);
   const [filter, setFilter] = useState("");
   const [sortQuery, setSortQuery] = useState("sort=name,desc");
+  const user = useSelector((state) => state.account.user);
 
   useEffect(() => {
     setCurrent(1);
@@ -48,27 +52,40 @@ const OrderPage = () => {
     // setIsLoading(false);
   };
 
+  const [form] = Form.useForm();
+
+  const handleReset = async () => {
+    form.resetFields();
+
+    await new Promise((r) => setTimeout(r, 400));
+  };
+
+  const submitOrder = async (valuesForm) => {
+    await waitTime(2000);
+    const { date, time, center } = valuesForm;
+    console.log(date, time, center, user.id, vaccineId);
+    const res = await callOrder(vaccineId, user.id, center, date, time);
+    if (res.data) {
+      handleReset();
+      message.success("Đặt lịch thành công");
+    } else {
+      notification.error({
+        message: "Có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+  };
+
   return (
     <div className="m-3">
-      <h3>Đăng ký lịch tiêm chủng</h3>
+      <h3>Đăng ký lịch tiêm chủng của bạn {user.fullName}</h3>
 
       <ProForm
         className="mt-4"
         layout={"horizontal"}
         grid={{ span: 12 }}
-        onFinish={async (values) => {
-          await waitTime(2000);
-          console.log(values);
-          message.success("Đặt lịch thành công");
-        }}
-        params={{}}
-        request={async () => {
-          await waitTime(100);
-          return {
-            name: "蚂蚁设计有限公司",
-            useMode: "chapter",
-          };
-        }}
+        onFinish={submitOrder}
+        form={form}
         submitter={{
           searchConfig: {
             submitText: "Xác nhận", // Đổi tên nút Submit
@@ -106,7 +123,7 @@ const OrderPage = () => {
           label="Trung tâm tiêm chủng"
           options={
             displayCenter &&
-            displayCenter.map((center, index) => {
+            displayCenter.map((center) => {
               return {
                 label: center.name,
                 value: center.id,
