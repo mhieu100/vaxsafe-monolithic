@@ -1,41 +1,37 @@
 package com.application.vaccine_system.service;
 
-import com.application.vaccine_system.model.Patient;
-import com.application.vaccine_system.model.Vaccine;
+import com.application.vaccine_system.model.*;
 import com.application.vaccine_system.model.Appointment.Status;
 import com.application.vaccine_system.model.response.PatientDTO;
 import com.application.vaccine_system.repository.*;
 import org.springframework.stereotype.Service;
 
-import com.application.vaccine_system.model.Appointment;
-import com.application.vaccine_system.model.Doctor;
 import com.application.vaccine_system.model.request.ReqAppointmentDTO;
 import com.application.vaccine_system.model.response.DoctorDTO;
 import com.application.vaccine_system.model.response.ResAppointmentDTO;
+
+import java.time.LocalDate;
 
 @Service
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final VaccineRepository vaccineRepository;
-    private final PatientRepository patientRepository;
     private final VaccinationCenterRepository vaccinationCenterRepository;
     private final VaccinationCenterService vaccinationCenterService;
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
-
+private final PaymentRepository paymentRepository;
     public AppointmentService(AppointmentRepository appointmentRepository, VaccineRepository vaccineRepository,
-            PatientRepository patientRepository,
-
             VaccinationCenterRepository vaccinationCenterRepository,
             VaccinationCenterService vaccinationCenterService, DoctorRepository doctorRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, PaymentRepository paymentRepository) {
         this.appointmentRepository = appointmentRepository;
         this.vaccineRepository = vaccineRepository;
-        this.patientRepository = patientRepository;
         this.vaccinationCenterRepository = vaccinationCenterRepository;
         this.vaccinationCenterService = vaccinationCenterService;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public DoctorDTO convertToDoctorDTO(Doctor doctor) {
@@ -81,6 +77,17 @@ public class AppointmentService {
                 .appointmentDate(req.getAppointmentDate())
                 .appointmentTime(req.getAppointmentTime())
                 .status(Status.PENDING).build();
-        return convertToAppointmentDTO(appointmentRepository.save(appointment));
+
+        Payment payment = Payment.builder()
+                .appointment(appointment)
+                .cashier(null)
+                .paymentDate(LocalDate.now())
+                .amount(vaccine.getPrice())
+                .paymentMethod(Payment.PaymentMethod.CASH)
+                .status(Payment.PaymentStatus.PENDING)
+                .build();
+        ResAppointmentDTO response = convertToAppointmentDTO(appointmentRepository.save(appointment));
+        paymentRepository.save(payment);
+        return response;
     }
 }
