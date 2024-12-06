@@ -4,13 +4,17 @@ import com.application.vaccine_system.model.*;
 import com.application.vaccine_system.model.Appointment.Status;
 import com.application.vaccine_system.model.response.PatientDTO;
 import com.application.vaccine_system.repository.*;
+import com.application.vaccine_system.util.PaymentMethod;
 import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.model.request.ReqAppointmentDTO;
 import com.application.vaccine_system.model.response.DoctorDTO;
 import com.application.vaccine_system.model.response.ResAppointmentDTO;
 
+
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class AppointmentService {
@@ -32,6 +36,7 @@ private final PaymentRepository paymentRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
+
     }
 
     public DoctorDTO convertToDoctorDTO(Doctor doctor) {
@@ -65,7 +70,7 @@ private final PaymentRepository paymentRepository;
                 .status(appointment.getStatus()).build();
     }
 
-    public ResAppointmentDTO createAppointment(ReqAppointmentDTO req) {
+    public ResAppointmentDTO createAppointment(ReqAppointmentDTO req, String paymentMethod) throws UnsupportedEncodingException {
         Vaccine vaccine = vaccineRepository.findById(req.getVaccineId()).get();
         vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
         
@@ -77,17 +82,20 @@ private final PaymentRepository paymentRepository;
                 .appointmentDate(req.getAppointmentDate())
                 .appointmentTime(req.getAppointmentTime())
                 .status(Status.PENDING).build();
-
-        Payment payment = Payment.builder()
-                .appointment(appointment)
-                .cashier(null)
-                .paymentDate(LocalDate.now())
-                .amount(vaccine.getPrice())
-                .paymentMethod(Payment.PaymentMethod.CASH)
-                .status(Payment.PaymentStatus.PENDING)
-                .build();
         ResAppointmentDTO response = convertToAppointmentDTO(appointmentRepository.save(appointment));
-        paymentRepository.save(payment);
+        if(paymentMethod.equals("CASH")) {
+            Payment payment = Payment.builder()
+                    .appointment(appointment)
+                    .cashier(null)
+                    .paymentDate(LocalDate.now())
+                    .amount(vaccine.getPrice())
+                    .paymentMethod(Payment.PaymentMethod.CASH)
+                    .status(Payment.PaymentStatus.PENDING)
+                    .build();
+            paymentRepository.save(payment);
+        }
+        PaymentMethod.infoVNPay(vaccine.getPrice());
         return response;
     }
+
 }
