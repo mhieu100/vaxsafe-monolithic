@@ -11,7 +11,6 @@ import com.application.vaccine_system.model.request.ReqAppointmentDTO;
 import com.application.vaccine_system.model.response.DoctorDTO;
 import com.application.vaccine_system.model.response.ResAppointmentDTO;
 
-
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.*;
@@ -24,7 +23,8 @@ public class AppointmentService {
     private final VaccinationCenterService vaccinationCenterService;
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
-private final PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
+
     public AppointmentService(AppointmentRepository appointmentRepository, VaccineRepository vaccineRepository,
             VaccinationCenterRepository vaccinationCenterRepository,
             VaccinationCenterService vaccinationCenterService, DoctorRepository doctorRepository,
@@ -70,10 +70,11 @@ private final PaymentRepository paymentRepository;
                 .status(appointment.getStatus()).build();
     }
 
-    public ResAppointmentDTO createAppointment(ReqAppointmentDTO req, String paymentMethod) throws UnsupportedEncodingException {
+    public ResAppointmentDTO createAppointment(ReqAppointmentDTO req, String paymentMethod)
+            throws UnsupportedEncodingException {
         Vaccine vaccine = vaccineRepository.findById(req.getVaccineId()).get();
         vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
-        
+
         Appointment appointment = Appointment.builder()
                 .vaccine(vaccineRepository.save(vaccine))
                 .patient(userRepository.findById(req.getPatientId()).get().getPatient())
@@ -83,7 +84,7 @@ private final PaymentRepository paymentRepository;
                 .appointmentTime(req.getAppointmentTime())
                 .status(Status.PENDING).build();
         ResAppointmentDTO response = convertToAppointmentDTO(appointmentRepository.save(appointment));
-        if(paymentMethod.equals("CASH")) {
+        if (paymentMethod.equals("CASH")) {
             Payment payment = Payment.builder()
                     .appointment(appointment)
                     .cashier(null)
@@ -93,8 +94,18 @@ private final PaymentRepository paymentRepository;
                     .status(Payment.PaymentStatus.PENDING)
                     .build();
             paymentRepository.save(payment);
+        } else if (paymentMethod.equals("CREDIT_CARD")) {
+            Payment payment = Payment.builder()
+                    .appointment(appointment)
+                    .cashier(null)
+                    .paymentDate(LocalDate.now())
+                    .amount(vaccine.getPrice())
+                    .paymentMethod(Payment.PaymentMethod.CREDIT_CARD)
+                    .status(Payment.PaymentStatus.COMPLETED)
+                    .build();
+            paymentRepository.save(payment);
         }
-        PaymentMethod.infoVNPay(vaccine.getPrice());
+        // PaymentMethod.infoVNPay(vaccine.getPrice());
         return response;
     }
 

@@ -29,7 +29,6 @@ public class VaccinationCenter {
     Long centerId;
     @NotBlank(message = "Tên trung tâm tiêm chủng không được trống")
     String name;
-    @NotBlank(message = "Hình ảnh trung tâm tiêm chủng không được trống")
     String image;
     @NotBlank(message = "Địa chỉ trung tâm tiêm chủng không được trống")
     String address;

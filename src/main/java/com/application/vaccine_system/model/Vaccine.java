@@ -26,7 +26,6 @@ public class Vaccine {
     Long vaccineId;
     @NotBlank(message = "Vaccine name is mandatory")
     String vaccineName;
-    @NotBlank(message = "Vaccine image is mandatory")
     String image;
     @NotBlank(message = "Vaccine manufacturer is mandatory")
     String manufacturer;
