@@ -7,7 +7,7 @@ import { sfLike } from "spring-filter-query-builder";
 import { Button, message, notification, Popconfirm, Space } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import ModalCenter from "../../components/modal/modal.center";
-import { callDeleteCenter } from "../../config/api";
+import { callDeleteCenter } from "../../config/api.center";
 
 const CenterPage = () => {
   const tableRef = useRef();

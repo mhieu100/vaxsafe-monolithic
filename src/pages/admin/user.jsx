@@ -1,7 +1,7 @@
 import { Badge, Button, message, notification, Popconfirm, Space } from "antd";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { callDeleteUser } from "../../config/api";
+import { callDeleteUser } from "../../config/api.user";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { sfLike } from "spring-filter-query-builder";
 import queryString from "query-string";

@@ -19,7 +19,7 @@ import {
   Space,
   theme,
 } from "antd";
-import { callLogout } from "../../config/api";
+import { callLogout } from "../../config/api.auth";
 import { setLogoutAction } from "../../redux/slice/accountSlide";
 import { useDispatch } from "react-redux";
 const { Header, Sider, Content } = Layout;

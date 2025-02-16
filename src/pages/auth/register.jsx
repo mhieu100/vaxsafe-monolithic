@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { callRegister } from "../../config/api";
+import { callRegister } from "../../config/api.auth";
 import { useNavigate } from "react-router-dom";
 import { message, notification } from "antd";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("user_test");
-  const [email, setEmail] = useState("user_test@gmail.com");
+  const [name, setName] = useState("user");
+  const [email, setEmail] = useState("user@gmail.com");
   const [password, setPassword] = useState("12345");
   const [address, setAddress] = useState("Viet Nam");
   const [phone, setPhone] = useState("0388335845");

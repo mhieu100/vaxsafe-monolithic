@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { callDeleteVaccine } from "../../config/api";
+import { callDeleteVaccine } from "../../config/api.vaccine";
 import {
   Button,
   message,
@@ -63,7 +63,7 @@ const VaccinePage = () => {
       hideInSearch: true,
       render: (text) => (
         <img
-          src={text}
+        src={"http://localhost:8080/storage/vaccine/" + text}
           alt="center"
           style={{
             width: "50px",

@@ -1,4 +1,7 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   FooterToolbar,
   ModalForm,
@@ -15,26 +18,25 @@ import {
   Row,
   Upload,
 } from "antd";
-import { useState } from "react";
-import {
-  callCreateCenter,
-  callUpdateCenter,
-  callUploadSingleFile,
-} from "../../config/api";
 import {
   CheckSquareOutlined,
   LoadingOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import enUS from "antd/es/calendar/locale/en_US";
-import { v4 as uuidv4 } from "uuid";
+
+import {
+  callCreateCenter,
+  callUpdateCenter,
+} from "../../config/api.center";
+import { callUploadSingleFile } from "../../config/api.file";
+
 import "../../styles/reset.scss";
 
 const ModalCenter = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [animation, setAnimation] = useState("open");
-  //   const [value, setValue] = useState("");
   const [form] = Form.useForm();
   const [dataLogo, setDataLogo] = useState([]);
 
@@ -118,10 +120,8 @@ const ModalCenter = (props) => {
 
   const handleReset = async () => {
     form.resetFields();
-    // setValue("");
     setDataInit(null);
 
-    //add animation when closing modal
     setAnimation("close");
     await new Promise((r) => setTimeout(r, 400));
     setOpenModal(false);
@@ -137,7 +137,6 @@ const ModalCenter = (props) => {
     }
 
     if (dataInit?.centerId) {
-      //update
       const res = await callUpdateCenter(
         dataInit.centerId,
         name,
@@ -158,7 +157,6 @@ const ModalCenter = (props) => {
         });
       }
     } else {
-      //create
       const res = await callCreateCenter(
         name,
         address,
@@ -180,12 +178,6 @@ const ModalCenter = (props) => {
     }
   };
 
-  //   useEffect(() => {
-  //     if (dataInit?.centerId && dataInit?.name) {
-  //       setValue(dataInit.name);
-  //     }
-  //   }, [dataInit]);
-
   return (
     <>
       {openModal && (
@@ -205,7 +197,6 @@ const ModalCenter = (props) => {
               },
               afterClose: () => handleReset(),
               destroyOnClose: true,
-              //   width: isMobile ? "100%" : 900,
               footer: null,
               keyboard: false,
               maskClosable: false,
@@ -286,15 +277,14 @@ const ModalCenter = (props) => {
                       defaultFileList={
                         dataInit?.centerId
                           ? [
-                              {
-                                uid: uuidv4(),
-                                name: dataInit?.image ?? "",
-                                status: "done",
-                                url: `${"http://localhost:8080/"}storage/center/${
-                                  dataInit?.image
+                            {
+                              uid: uuidv4(),
+                              name: dataInit?.image ?? "",
+                              status: "done",
+                              url: `${"http://localhost:8080/"}storage/center/${dataInit?.image
                                 }`,
-                              },
-                            ]
+                            },
+                          ]
                           : []
                       }
                     >

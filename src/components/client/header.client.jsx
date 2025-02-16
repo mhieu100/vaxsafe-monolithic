@@ -2,7 +2,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Layout, Menu, message, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { callLogout } from "../../config/api";
+import { callLogout } from "../../config/api.auth";
 import { setLogoutAction } from "../../redux/slice/accountSlide";
 import { useEffect, useState } from "react";
 
@@ -103,7 +103,7 @@ const NavbarTop = () => {
               <Link to={"/login"} className="no-underline">Đăng nhập</Link>
             </Button>
             <Button color="danger" variant="solid">
-              <Link to={"/login"}>Đăng ký</Link>
+              <Link to={"/register"}>Đăng ký</Link>
             </Button>
           </Space>
         )}

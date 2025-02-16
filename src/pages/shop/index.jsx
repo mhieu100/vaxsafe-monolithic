@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { callFetchVaccine } from "../../config/api";
+import { callFetchVaccine } from "../../config/api.vaccine";
 import { Button, Card, Col, Row } from "antd";
 import { Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import parse from 'html-react-parser';
 
 const { Title, Text } = Typography;
 
@@ -66,11 +67,11 @@ const ShopPage = () => {
                   style={{
                     width: 300,
                   }}
-                  cover={<img alt="example" src={vaccine.image} height={150} />}
+                  cover={<img alt="example" src={`http://localhost:8080/storage/vaccine/${vaccine.image}`} height={150} />}
                 >
                   <Meta
                     title={vaccine.vaccineName.slice(0, 30) + "..."}
-                    description={vaccine.description.slice(0, 30) + "..."}
+                    description={parse(vaccine.description.slice(0, 30) + "...")}
                   />
                   <div className="d-flex justify-content-between mt-3">
                     <p>

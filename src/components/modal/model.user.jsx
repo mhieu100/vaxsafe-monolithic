@@ -11,7 +11,7 @@ import {
 import { Col, Form, message, notification, Row } from "antd";
 import { useState } from "react";
 import "../../styles/reset.scss";
-import { callCreateUser, callUpdateUser } from "../../config/api";
+import { callCreateUser, callUpdateUser } from "../../config/api.user";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";

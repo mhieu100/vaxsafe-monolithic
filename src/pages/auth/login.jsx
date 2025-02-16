@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { callLogin } from "../../config/api";
+import { callLogin } from "../../config/api.auth";
 import { message, notification } from "antd";
 import "./form.css";
 import { useDispatch, useSelector } from "react-redux";

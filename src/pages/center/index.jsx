@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { callFetchCenter } from "../../config/api";
+import { callFetchCenter } from "../../config/api.center";
 import { Card, Col, Row } from "antd";
 import { Typography } from "antd";
 
