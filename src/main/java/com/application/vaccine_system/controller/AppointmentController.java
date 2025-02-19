@@ -1,33 +1,26 @@
 package com.application.vaccine_system.controller;
 
-import com.application.vaccine_system.config.payment.VNPayConfig;
-import com.application.vaccine_system.model.response.ResAppointmentDTO;
-import com.application.vaccine_system.util.PaymentMethod;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.application.vaccine_system.model.request.ReqAppointmentDTO;
+import com.application.vaccine_system.model.request.ReqAppointment;
 import com.application.vaccine_system.service.AppointmentService;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
 
 @RestController
+@RequiredArgsConstructor
 public class AppointmentController {
     private final AppointmentService appointmentService;
 
-    public AppointmentController(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
-    }
-
     @PostMapping("/order")
-    public ResponseEntity<ResAppointmentDTO> order(@RequestBody ReqAppointmentDTO req,
+    public ResponseEntity<String> order(@RequestBody ReqAppointment reqAppointment,
             @RequestParam("payment_method") String paymentMethod) throws UnsupportedEncodingException {
-        ResAppointmentDTO newAppointment = appointmentService.createAppointment(req,
-                paymentMethod);
-        return ResponseEntity.ok().body(newAppointment);
+        
+        return ResponseEntity.ok().body(appointmentService.createAppointment(reqAppointment, paymentMethod));
     }
 
     // @GetMapping("/vnpay_return")

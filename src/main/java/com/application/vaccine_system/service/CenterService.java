@@ -9,25 +9,21 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.exception.InvalidException;
-import com.application.vaccine_system.model.VaccinationCenter;
+import com.application.vaccine_system.model.Center;
 import com.application.vaccine_system.model.response.CenterDTO;
 import com.application.vaccine_system.model.response.Pagination;
-import com.application.vaccine_system.repository.VaccinationCenterRepository;
+import com.application.vaccine_system.repository.CenterRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
-public class VaccinationCenterService {
-    private final VaccinationCenterRepository vaccinationCenterRepository;
+@RequiredArgsConstructor
+public class CenterService {
+    private final CenterRepository centerRepository;
 
-    public VaccinationCenterService(VaccinationCenterRepository vaccinationCenterRepository) {
-        this.vaccinationCenterRepository = vaccinationCenterRepository;
-    }
+    
 
-    public VaccinationCenter getVaccinationCenterById(Long id) throws InvalidException {
-        return vaccinationCenterRepository.findById(id)
-                .orElseThrow(() -> new InvalidException("Vaccination Center not found with id: " + id));
-    }
-
-    public CenterDTO convertToCenterDTO(VaccinationCenter vaccinationCenter) {
+    public CenterDTO convertToCenterDTO(Center vaccinationCenter) {
         CenterDTO res = new CenterDTO();
         res.setCenterId(vaccinationCenter.getCenterId());
         res.setName(vaccinationCenter.getName());
@@ -39,8 +35,13 @@ public class VaccinationCenterService {
         return res;
     }
 
-    public Pagination getAllVaccines(Specification<VaccinationCenter> specification, Pageable pageable) {
-        Page<VaccinationCenter> pageVaccinationCenter = vaccinationCenterRepository.findAll(specification, pageable);
+    public CenterDTO getVaccinationCenterById(Long id) throws InvalidException {
+        return convertToCenterDTO(centerRepository.findById(id)
+                .orElseThrow(() -> new InvalidException("Vaccination Center not found with id: " + id)));
+    }
+
+    public Pagination getAllVaccines(Specification<Center> specification, Pageable pageable) {
+        Page<Center> pageVaccinationCenter = centerRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
 
@@ -61,26 +62,26 @@ public class VaccinationCenterService {
         return pagination;
     }
 
-    public VaccinationCenter createVaccinationCenter(VaccinationCenter vaccinationCenter) throws InvalidException {
-        if (vaccinationCenterRepository.existsByName(vaccinationCenter.getName())) {
+    public Center createVaccinationCenter(Center vaccinationCenter) throws InvalidException {
+        if (centerRepository.existsByName(vaccinationCenter.getName())) {
             throw new InvalidException("Vaccination Center already exists with name: " + vaccinationCenter.getName());
         }
-        return vaccinationCenterRepository.save(vaccinationCenter);
+        return centerRepository.save(vaccinationCenter);
     }
 
-    public VaccinationCenter updateVaccinationCenter(Long id, VaccinationCenter vaccinationCenter)
+    public Center updateVaccinationCenter(Long id, Center vaccinationCenter)
             throws InvalidException {
-        if (!vaccinationCenterRepository.existsById(id)) {
+        if (!centerRepository.existsById(id)) {
             throw new InvalidException("Vaccination Center not found with id: " + id);
         }
         vaccinationCenter.setCenterId(id);
-        return vaccinationCenterRepository.save(vaccinationCenter);
+        return centerRepository.save(vaccinationCenter);
     }
 
     public void deleteVaccinationCenter(Long id) throws InvalidException {
-        if (!vaccinationCenterRepository.existsById(id)) {
+        if (!centerRepository.existsById(id)) {
             throw new InvalidException("Vaccination Center not found with id: " + id);
         }
-        vaccinationCenterRepository.deleteById(id);
+        centerRepository.deleteById(id);
     }
 }

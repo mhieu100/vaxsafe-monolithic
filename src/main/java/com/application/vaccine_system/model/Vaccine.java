@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "vaccine")
+@Table(name = "vaccines")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

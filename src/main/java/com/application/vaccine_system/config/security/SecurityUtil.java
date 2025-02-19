@@ -24,7 +24,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
 
-import com.application.vaccine_system.model.response.ResLoginDTO;
+import com.application.vaccine_system.model.response.ResLogin;
 import com.nimbusds.jose.util.Base64;
 
 @Service
@@ -62,10 +62,10 @@ public class SecurityUtil {
         }
     }
 
-    public String createAccessToken(String email, ResLoginDTO.UserLogin dto) {
+    public String createAccessToken(String email, ResLogin.UserLogin dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
-        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        ResLogin.UserInsideToken userToken = new ResLogin.UserInsideToken();
         userToken.setId(dto.getId());
         userToken.setEmail(dto.getEmail());
         userToken.setFullName(dto.getFullName());
@@ -89,11 +89,11 @@ public class SecurityUtil {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String createRefreshToken(String email, ResLoginDTO dto) {
+    public String createRefreshToken(String email, ResLogin dto) {
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
-        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        ResLogin.UserInsideToken userToken = new ResLogin.UserInsideToken();
         userToken.setId(dto.getUser().getId());
         userToken.setEmail(dto.getUser().getEmail());
         userToken.setFullName(dto.getUser().getEmail());

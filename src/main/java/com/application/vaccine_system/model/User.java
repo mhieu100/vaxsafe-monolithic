@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,22 +31,18 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
-    @NotBlank(message = "Full name is mandatory")
-    String fullName;
-    @NotBlank(message = "Email is mandatory")
+    String fullname;
     String email;
     String phoneNumber;
-    @NotBlank(message = "Password is mandatory")
     String password;
-    String role;
     LocalDate dateOfBirth;
     String address;
     @Column(columnDefinition = "MEDIUMTEXT")
     String refreshToken;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    Doctor doctor;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    Cashier cashier;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    Patient patient;
+    @ManyToOne
+    @JoinColumn(name = "center_id")
+    Center center;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    Role role;
 }

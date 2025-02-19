@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,10 +22,6 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "appointment_id", nullable = false)
     Appointment appointment;
-
-    @ManyToOne
-    @JoinColumn(name = "cashier_id")
-    Cashier cashier;
 
     LocalDate paymentDate;
 

@@ -1,11 +1,13 @@
 package com.application.vaccine_system.model.response;
 
+import com.application.vaccine_system.model.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class ResLoginDTO {
+public class ResLogin {
     private String access_token;
     private UserLogin user;
 
@@ -16,7 +18,7 @@ public class ResLoginDTO {
         private long id;
         private String email;
         private String fullName;
-        private String role;
+        private Role role;
     }
 
     @Data

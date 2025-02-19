@@ -2,6 +2,8 @@ package com.application.vaccine_system.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,13 +19,14 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "vaccination_center")
+@Table(name = "centers")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VaccinationCenter {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Center {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long centerId;
@@ -38,8 +41,8 @@ public class VaccinationCenter {
     String workingHours;
 
     @OneToMany(mappedBy = "center")
-    List<Doctor> doctors;
+    List<User> doctors;
 
     @OneToMany(mappedBy = "center")
-    List<Cashier> cashiers;
+    List<User> cashiers;
 }

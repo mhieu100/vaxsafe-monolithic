@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "appointment")
+@Table(name = "appointments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,13 +36,16 @@ public class Appointment {
     Vaccine vaccine;
     @ManyToOne
     @JoinColumn(name = "patient_id")
-    Patient patient;
+    User patient;
     @ManyToOne
     @JoinColumn(name = "doctor_id")
-    Doctor doctor;
+    User doctor;
+    @ManyToOne
+    @JoinColumn(name = "cashier_id")
+    User cashier;
     @ManyToOne
     @JoinColumn(name = "center_id")
-    VaccinationCenter center;
+    Center center;
     LocalDate appointmentDate;
     LocalTime appointmentTime;
     @Enumerated(EnumType.STRING)

@@ -22,9 +22,9 @@ import com.application.vaccine_system.config.security.SecurityUtil;
 import com.application.vaccine_system.exception.InvalidException;
 
 import com.application.vaccine_system.model.User;
-import com.application.vaccine_system.model.request.ReqLoginDTO;
-import com.application.vaccine_system.model.response.ResLoginDTO;
-import com.application.vaccine_system.model.response.UserDTO;
+import com.application.vaccine_system.model.request.ReqLogin;
+import com.application.vaccine_system.model.request.ReqRegister;
+import com.application.vaccine_system.model.response.ResLogin;
 import com.application.vaccine_system.service.UserService;
 
 import jakarta.validation.Valid;
@@ -48,27 +48,27 @@ public class AuthController {
 
     @PostMapping("/login")
     @ApiMessage("Login successful")
-    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO reqLoginDTO) {
+    public ResponseEntity<ResLogin> login(@Valid @RequestBody ReqLogin reqLogin) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                reqLoginDTO.getUsername(), reqLoginDTO.getPassword());
+            reqLogin.getUsername(), reqLogin.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        ResLoginDTO resLoginDTO = new ResLoginDTO();
-        User currentUserDB = userService.getUserByEmail(reqLoginDTO.getUsername());
+        ResLogin ResLogin = new ResLogin();
+        User currentUserDB = userService.getUserByEmail(reqLogin.getUsername());
         if (currentUserDB != null) {
-            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+            ResLogin.UserLogin userLogin = new ResLogin.UserLogin(
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getFullName(),
+                    currentUserDB.getFullname(),
                     currentUserDB.getRole());
-            resLoginDTO.setUser(userLogin);
+            ResLogin.setUser(userLogin);
         }
 
-        String access_token = this.securityUtil.createAccessToken(reqLoginDTO.getUsername(), resLoginDTO.getUser());
-        String refresh_token = this.securityUtil.createRefreshToken(reqLoginDTO.getUsername(), resLoginDTO);
-        userService.updateUserToken(refresh_token, reqLoginDTO.getUsername());
-        resLoginDTO.setAccess_token(access_token);
+        String access_token = this.securityUtil.createAccessToken(reqLogin.getUsername(), ResLogin.getUser());
+        String refresh_token = this.securityUtil.createRefreshToken(reqLogin.getUsername(), ResLogin);
+        userService.updateUserToken(refresh_token, reqLogin.getUsername());
+        ResLogin.setAccess_token(access_token);
 
         // set cookies
         ResponseCookie resCookies = ResponseCookie
@@ -79,20 +79,20 @@ public class AuthController {
                 .maxAge(refreshTokenExpiration)
                 .build();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, resCookies.toString()).body(resLoginDTO);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, resCookies.toString()).body(ResLogin);
     }
 
     @GetMapping("/account")
     @ApiMessage("Get profile")
-    public ResponseEntity<ResLoginDTO.UserGetAccount> getAll() {
+    public ResponseEntity<ResLogin.UserGetAccount> getAll() {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User currentUserDB = userService.getUserByEmail(email);
-        ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin();
-        ResLoginDTO.UserGetAccount userGetAccount = new ResLoginDTO.UserGetAccount();
+        ResLogin.UserLogin userLogin = new ResLogin.UserLogin();
+        ResLogin.UserGetAccount userGetAccount = new ResLogin.UserGetAccount();
         if (currentUserDB != null) {
             userLogin.setId(currentUserDB.getUserId());
             userLogin.setEmail(currentUserDB.getEmail());
-            userLogin.setFullName(currentUserDB.getFullName());
+            userLogin.setFullName(currentUserDB.getFullname());
             userLogin.setRole(currentUserDB.getRole());
             userGetAccount.setUser(userLogin);
         }
@@ -101,7 +101,7 @@ public class AuthController {
 
     @GetMapping("/refresh")
     @ApiMessage("Get user by refresh token")
-    public ResponseEntity<ResLoginDTO> getAllgetRefreshToken(
+    public ResponseEntity<ResLogin> getAllgetRefreshToken(
             @CookieValue(name = "refresh_token", defaultValue = "empty") String refresh_token) throws InvalidException {
         if (refresh_token.equals("empty")) {
             throw new InvalidException("Bạn không có refresh token ở cookie");
@@ -115,13 +115,13 @@ public class AuthController {
             throw new InvalidException("Refresh Token không hợp lệ");
         }
         // issue new token/set refresh token as cookies
-        ResLoginDTO res = new ResLoginDTO();
+        ResLogin res = new ResLogin();
         User currentUserDB = userService.getUserByEmail(email);
         if (currentUserDB != null) {
-            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+            ResLogin.UserLogin userLogin = new ResLogin.UserLogin(
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getFullName(),
+                    currentUserDB.getFullname(),
                     currentUserDB.getRole());
             res.setUser(userLogin);
         }
@@ -177,8 +177,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ApiMessage("Register a new patient")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody User user) throws InvalidException {
-        user.setRole("PATIENT");
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.createUser(user));
+    public ResponseEntity<ReqRegister> register(@Valid @RequestBody ReqRegister reqRegister) throws InvalidException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.registerUser(reqRegister));
     }
 }

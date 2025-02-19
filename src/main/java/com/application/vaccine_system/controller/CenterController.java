@@ -15,54 +15,55 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.vaccine_system.annotation.ApiMessage;
 import com.application.vaccine_system.exception.InvalidException;
-import com.application.vaccine_system.model.VaccinationCenter;
+import com.application.vaccine_system.model.Center;
+import com.application.vaccine_system.model.response.CenterDTO;
 import com.application.vaccine_system.model.response.Pagination;
-import com.application.vaccine_system.service.VaccinationCenterService;
+import com.application.vaccine_system.service.CenterService;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/centers")
-public class VaccinationCenterController {
+@RequiredArgsConstructor
+public class CenterController {
 
-    private final VaccinationCenterService vaccinationCenterService;
+    private final CenterService centerService;
 
-    public VaccinationCenterController(VaccinationCenterService vaccinationCenterService) {
-        this.vaccinationCenterService = vaccinationCenterService;
-    }
+    
 
     @GetMapping("/{id}")
     @ApiMessage("Get a center by id")
-    public ResponseEntity<VaccinationCenter> getVaccinationCenterById(@PathVariable Long id) throws InvalidException {
-        return ResponseEntity.ok().body(vaccinationCenterService.getVaccinationCenterById(id));
+    public ResponseEntity<CenterDTO> getVaccinationCenterById(@PathVariable Long id) throws InvalidException {
+        return ResponseEntity.ok().body(centerService.getVaccinationCenterById(id));
     }
 
     @GetMapping
     @ApiMessage("Get all centers")
-    public ResponseEntity<Pagination> getAllVaccinationCenters(@Filter Specification<VaccinationCenter> specification,
+    public ResponseEntity<Pagination> getAllVaccinationCenters(@Filter Specification<Center> specification,
             Pageable pageable) {
-        return ResponseEntity.ok().body(vaccinationCenterService.getAllVaccines(specification, pageable));
+        return ResponseEntity.ok().body(centerService.getAllVaccines(specification, pageable));
     }
 
     @PostMapping
     @ApiMessage("Create a new center")
-    public ResponseEntity<VaccinationCenter> createVaccine(@Valid @RequestBody VaccinationCenter vaccinationCenter)
+    public ResponseEntity<Center> createVaccine(@Valid @RequestBody Center vaccinationCenter)
             throws InvalidException {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(vaccinationCenterService.createVaccinationCenter(vaccinationCenter));
+                .body(centerService.createVaccinationCenter(vaccinationCenter));
     }
 
     @PutMapping("/{id}")
     @ApiMessage("Update a center")
-    public ResponseEntity<VaccinationCenter> updateVaccine(@PathVariable Long id,
-            @Valid @RequestBody VaccinationCenter vaccinationCenter) throws InvalidException {
-        return ResponseEntity.ok().body(vaccinationCenterService.updateVaccinationCenter(id, vaccinationCenter));
+    public ResponseEntity<Center> updateVaccine(@PathVariable Long id,
+            @Valid @RequestBody Center vaccinationCenter) throws InvalidException {
+        return ResponseEntity.ok().body(centerService.updateVaccinationCenter(id, vaccinationCenter));
     }
 
     @DeleteMapping("/{id}")
     @ApiMessage("Delete a center")
     public void deleteVaccine(@PathVariable Long id) throws InvalidException {
-        vaccinationCenterService.deleteVaccinationCenter(id);
+        centerService.deleteVaccinationCenter(id);
     }
 }

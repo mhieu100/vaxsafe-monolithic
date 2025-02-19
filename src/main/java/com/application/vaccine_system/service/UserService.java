@@ -11,33 +11,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.exception.InvalidException;
-import com.application.vaccine_system.model.Cashier;
-import com.application.vaccine_system.model.Doctor;
-import com.application.vaccine_system.model.Patient;
+
 import com.application.vaccine_system.model.User;
+import com.application.vaccine_system.model.request.ReqRegister;
+import com.application.vaccine_system.model.request.ReqUser;
 import com.application.vaccine_system.model.response.Pagination;
-import com.application.vaccine_system.model.response.UserDTO;
-import com.application.vaccine_system.repository.CashierRepository;
-import com.application.vaccine_system.repository.DoctorRepository;
-import com.application.vaccine_system.repository.PatientRepository;
+import com.application.vaccine_system.model.response.ResUser;
+import com.application.vaccine_system.repository.RoleRepository;
 import com.application.vaccine_system.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final DoctorRepository doctorRepository;
-    private final PatientRepository patientRepository;
-    private final CashierRepository cashierRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, DoctorRepository doctorRepository,
-            PatientRepository patientRepository, CashierRepository cashierRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.cashierRepository = cashierRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -55,29 +45,17 @@ public class UserService {
         }
     }
 
-    public UserDTO convertToUserDTO(User user) {
-        UserDTO res = new UserDTO();
-
-        if (user.getDoctor() != null) {
-            res.setDoctor(new UserDTO.DoctorUser(user.getDoctor().getDoctorId(), user.getDoctor().getSpecialization(),
-                    user.getDoctor().getWorkingHours()));
-        }
-        if (user.getCashier() != null) {
-            res.setCashier(new UserDTO.CashierUser(user.getCashier().getCashierId()));
-        }
-        if (user.getPatient() != null) {
-            res.setPatient(
-                    new UserDTO.PatientUser(user.getPatient().getPatientId(), user.getPatient().getMedicalHistory(),
-                            user.getPatient().getInsuranceNumber()));
-        }
-        res.setUserId(user.getUserId());
-        res.setFullName(user.getFullName());
-        res.setEmail(user.getEmail());
-        res.setPhoneNumber(user.getPhoneNumber());
-        res.setRole(user.getRole());
-        res.setDateOfBirth(user.getDateOfBirth());
-        res.setAddress(user.getAddress());
-        return res;
+    public ResUser convertToResUser(User user) {
+        ResUser resUser = new ResUser();
+        resUser.setUserId(user.getUserId());
+        resUser.setFullname(user.getFullname());
+        resUser.setEmail(user.getEmail());
+        resUser.setPhoneNumber(user.getPhoneNumber());
+        resUser.setDateOfBirth(user.getDateOfBirth());
+        resUser.setAddress(user.getAddress());
+        resUser.setCenter(user.getCenter());
+        resUser.setRole(user.getRole());
+        return resUser;
     }
 
     public Pagination getAllUsers(Specification<User> specification, Pageable pageable) {
@@ -93,57 +71,37 @@ public class UserService {
 
         pagination.setMeta(meta);
 
-        List<UserDTO> listUsers = pageUser.getContent().stream()
-                .map(this::convertToUserDTO).collect(Collectors.toList());
+        List<ResUser> listUsers = pageUser.getContent().stream()
+                .map(this::convertToResUser).collect(Collectors.toList());
 
         pagination.setResult(listUsers);
 
         return pagination;
     }
 
-    public UserDTO createUser(User user) throws InvalidException {
+    public ResUser createUser(User user) throws InvalidException {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new InvalidException("Email đã tồn tài : " + user.getEmail());
         }
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
         user.setPassword(hashPassword);
-
+        user.setRole(this.roleRepository.findByName("PATIENT"));
         User savedUser = userRepository.save(user);
-
-        if (user.getRole().equals("DOCTOR")) {
-            Doctor doctor = new Doctor();
-            doctor.setUser(user);
-            doctorRepository.save(doctor);
-        } else if (user.getRole().equals("CASHIER")) {
-            Cashier cashier = new Cashier();
-            cashier.setUser(user);
-            cashierRepository.save(cashier);
-        } else if (user.getRole().equals("PATIENT")) {
-            Patient patient = new Patient();
-            patient.setUser(user);
-            patientRepository.save(patient);
-        }
-        return convertToUserDTO(savedUser);
+        return convertToResUser(savedUser);
     }
 
-    public Patient createPatient(Patient patient) throws InvalidException {
-        return patientRepository.save(patient);
-    }
-
-    public UserDTO updateUser(Long id, User user) throws InvalidException {
+    public ResUser updateUser(Long id, ReqUser reqUser) throws InvalidException {
         Optional<User> currentUser = userRepository.findById(id);
         if (currentUser.isEmpty()) {
             throw new InvalidException("User not found with id: " + id);
         }
         currentUser.get().setUserId(id);
-        currentUser.get().setFullName(user.getFullName());
-        currentUser.get().setEmail(user.getEmail());
-        currentUser.get().setPhoneNumber(user.getPhoneNumber());
-        currentUser.get().setRole(user.getRole());
-        currentUser.get().setDateOfBirth(user.getDateOfBirth());
-        currentUser.get().setAddress(user.getAddress());
+        currentUser.get().setFullname(reqUser.getFullname());
+        currentUser.get().setPhoneNumber(reqUser.getPhoneNumber());
+        currentUser.get().setDateOfBirth(reqUser.getDateOfBirth());
+        currentUser.get().setAddress(reqUser.getAddress());
 
-        return convertToUserDTO(userRepository.save(currentUser.get()));
+        return convertToResUser(userRepository.save(currentUser.get()));
 
     }
 
@@ -152,14 +110,24 @@ public class UserService {
         if (user.isEmpty()) {
             throw new InvalidException("User not found with id: " + id);
         }
-
-        if (user.get().getRole().equals("DOCTOR")) {
-            doctorRepository.deleteById(user.get().getDoctor().getDoctorId());
-        } else if (user.get().getRole().equals("CASHIER")) {
-            cashierRepository.deleteById(user.get().getCashier().getCashierId());
-        } else if (user.get().getRole().equals("PATIENT")) {
-            patientRepository.deleteById(user.get().getPatient().getPatientId());
-        }
         userRepository.deleteById(id);
+    }
+
+    public ReqRegister registerUser(ReqRegister reqRegister) throws InvalidException {
+        if (userRepository.existsByEmail(reqRegister.getEmail())) {
+            throw new InvalidException("Email đã tồn tài : " + reqRegister.getEmail());
+        }
+        String hashPassword = this.passwordEncoder.encode(reqRegister.getPassword());
+        reqRegister.setPassword(hashPassword);
+        reqRegister.setRole(this.roleRepository.findByName("PATIENT"));
+
+        User savedUser = new User();
+        savedUser.setFullname(reqRegister.getFullname());
+        savedUser.setEmail(reqRegister.getEmail());
+        savedUser.setPassword(hashPassword);
+        savedUser.setRole(reqRegister.getRole());
+        this.userRepository.save(savedUser);
+
+        return reqRegister;
     }
 }
