@@ -6,7 +6,7 @@ Module User
  */
 
 export const callCreateUser = (
-  fullName,
+  fullname,
   email,
   phoneNumber,
   password,
@@ -15,7 +15,7 @@ export const callCreateUser = (
   address
 ) => {
   return axios.post("/users", {
-    fullName,
+    fullname,
     email,
     phoneNumber,
     password,
@@ -27,7 +27,7 @@ export const callCreateUser = (
 
 export const callUpdateUser = (
   userId,
-  fullName,
+  fullname,
   email,
   phoneNumber,
   password,
@@ -37,7 +37,7 @@ export const callUpdateUser = (
 ) => {
   return axios.put(`/users/${userId}`, {
     userId,
-    fullName,
+    fullname,
     email,
     phoneNumber,
     password,
@@ -55,3 +55,6 @@ export const callDeleteUser = (id) => {
   return axios.delete(`/users/${id}`);
 };
 
+export const callFetchDoctor = () => {
+  return axios.get("/users/doctors");
+}

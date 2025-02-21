@@ -1,9 +1,5 @@
 import axios from "./axios-customize";
 
-
-/**
- * Upload single file
- */
 export const callUploadSingleFile = (file, folderType) => {
   const bodyFormData = new FormData();
   bodyFormData.append("file", file);

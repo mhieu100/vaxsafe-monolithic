@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+ 
 import { ProTable } from "@ant-design/pro-components";
 import vi_VN from "antd/locale/vi_VN";
 import { ConfigProvider } from "antd";

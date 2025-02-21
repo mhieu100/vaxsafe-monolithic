@@ -1,13 +1,14 @@
 import { Badge, Button, message, notification, Popconfirm, Space } from "antd";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { callDeleteUser } from "../../config/api.user";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { sfLike } from "spring-filter-query-builder";
 import queryString from "query-string";
+
+import { callDeleteUser } from "../../config/api.user";
 import DataTable from "../../components/data-table";
 import { fetchUser } from "../../redux/slice/userSlice";
-import ModalUser from "../../components/modal/model.user";
+import ModalUser from "../../components/modal/modal.user";
 
 const UserPage = () => {
   const tableRef = useRef();
@@ -52,7 +53,7 @@ const UserPage = () => {
     },
     {
       title: "Name",
-      dataIndex: "fullName",
+      dataIndex: "fullname",
       sorter: true,
     },
     {
@@ -67,11 +68,16 @@ const UserPage = () => {
       hideInSearch: true,
     },
     {
+      title: "Center",
+      dataIndex: "centerName",
+      
+    },
+    {
       title: "Role",
       dataIndex: "role",
       render: (_value, entity) => {
         let color;
-        switch (entity.role) {
+        switch (entity.roleName) {
           case "ADMIN":
             color = "#faad14";
             break;
@@ -84,7 +90,7 @@ const UserPage = () => {
           default:
             color = "#d9d9d9";
         }
-        return <Badge count={entity.role} showZero color={color} />;
+        return <Badge count={entity.roleName} showZero color={color} />;
       },
     },
     {
@@ -117,8 +123,8 @@ const UserPage = () => {
 
           <Popconfirm
             placement="leftTop"
-            title={"Xác nhận xóa user"}
-            description={"Bạn có chắc chắn muốn xóa user này ?"}
+            title="Xác nhận xóa user"
+            description="Bạn có chắc chắn muốn xóa user này ?"
             onConfirm={() => handleDeleteUser(entity.userId)}
             okText="Xác nhận"
             cancelText="Hủy"
@@ -145,9 +151,9 @@ const UserPage = () => {
       filter: "",
     };
 
-    if (clone.fullName) q.filter = `${sfLike("fullName", clone.fullName)}`;
+    if (clone.fullname) q.filter = `${sfLike("fullname", clone.fullname)}`;
     if (clone.email) {
-      q.filter = clone.fullName
+      q.filter = clone.fullname
         ? q.filter + " and " + `${sfLike("email", clone.email)}`
         : `${sfLike("email", clone.email)}`;
     }
@@ -162,9 +168,9 @@ const UserPage = () => {
     let temp = queryString.stringify(q);
 
     let sortBy = "";
-    if (sort && sort.fullName) {
+    if (sort && sort.fullname) {
       sortBy =
-        sort.fullName === "ascend" ? "sort=fullName,asc" : "sort=fullName,desc";
+        sort.fullname === "ascend" ? "sort=fullname,asc" : "sort=fullname,desc";
     }
     if (sort && sort.email) {
       sortBy = sort.email === "ascend" ? "sort=email,asc" : "sort=email,desc";

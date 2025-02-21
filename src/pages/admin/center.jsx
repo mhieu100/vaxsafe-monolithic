@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import DataTable from "../../components/data-table";
 import { useRef, useState } from "react";
 import queryString from "query-string";
-import { fetchCenter } from "../../redux/slice/centerSlice";
 import { sfLike } from "spring-filter-query-builder";
 import { Button, message, notification, Popconfirm, Space } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+
+import { fetchCenter } from "../../redux/slice/centerSlice";
+import DataTable from "../../components/data-table";
 import ModalCenter from "../../components/modal/modal.center";
 import { callDeleteCenter } from "../../config/api.center";
 
@@ -22,11 +23,9 @@ const CenterPage = () => {
   const meta = useSelector((state) => state.center.meta);
   const centers = useSelector((state) => state.center.result);
   const dispatch = useDispatch();
-
   const [openModal, setOpenModal] = useState(false);
 
   const handleDeleteCompany = async (id) => {
-    console.log(id);
     if (id) {
       const res = await callDeleteCenter(id);
       if (res && +res.statusCode === 200) {
@@ -114,8 +113,8 @@ const CenterPage = () => {
 
           <Popconfirm
             placement="leftTop"
-            title={"Xác nhận xóa company"}
-            description={"Bạn có chắc chắn muốn xóa company này ?"}
+            title="Xác nhận xóa company"
+            description="Bạn có chắc chắn muốn xóa company này ?"
             onConfirm={() => handleDeleteCompany(entity.centerId)}
             okText="Xác nhận"
             cancelText="Hủy"

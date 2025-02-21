@@ -1,10 +1,11 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Layout, Menu, message, Space } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { callLogout } from "../../config/api.auth";
-import { setLogoutAction } from "../../redux/slice/accountSlide";
-import { useEffect, useState } from "react";
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Dropdown, Layout, Menu, message, Space } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+import { callLogout } from '../../config/api.auth';
+import { setLogoutAction } from '../../redux/slice/accountSlide';
 
 const { Header } = Layout;
 
@@ -12,7 +13,7 @@ const NavbarTop = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [current, setCurrent] = useState("/");
+  const [current, setCurrent] = useState('/');
   const location = useLocation();
 
   useEffect(() => {
@@ -26,28 +27,28 @@ const NavbarTop = () => {
     const res = await callLogout();
     if (res && res && +res.statusCode === 200) {
       dispatch(setLogoutAction({}));
-      message.success("Đăng xuất thành công");
-      navigate("/");
+      message.success('Đăng xuất thành công');
+      navigate('/');
     }
   };
 
   const items = [
     {
-      label: `Welcome ${user?.fullName}`,
+      label: `Welcome ${user?.fullname}`,
     },
 
     {
-      key: "1",
-      label: <Link to="/">Hồ sơ</Link>,
+      key: '1',
+      label: <Link to='/'>Hồ sơ</Link>,
     },
-    user.role !== "PATIENT"
+    user.roleName !== 'PATIENT'
       ? {
-          key: "2",
-          label: <Link to="/admin">Trang quản trị</Link>,
+          key: '2',
+          label: <Link to='/admin'>Trang quản trị</Link>,
         }
-      : "",
+      : '',
     {
-      key: "3",
+      key: '3',
       danger: true,
       label: <label onClick={handleLogout}>Đăng xuất</label>,
     },
@@ -57,31 +58,31 @@ const NavbarTop = () => {
     <>
       <Header
         style={{
-          position: "sticky",
+          position: 'sticky',
           top: 0,
           zIndex: 1,
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 200px",
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 200px',
         }}
       >
         <Menu
-          theme="dark"
-          mode="horizontal"
+          theme='dark'
+          mode='horizontal'
           selectedKeys={[current]}
           items={[
             {
-              key: "/",
-              label: <Link to="/">Trang chủ</Link>,
+              key: '/',
+              label: <Link to='/'>Trang chủ</Link>,
             },
             {
-              key: "/shop",
-              label: <Link to="/shop">Kho vaccine</Link>,
+              key: '/shop',
+              label: <Link to='/shop'>Kho vaccine</Link>,
             },
             {
-              key: "/center",
-              label: <Link to="/center">Trung tâm tiêm chủng</Link>,
+              key: '/center',
+              label: <Link to='/center'>Trung tâm tiêm chủng</Link>,
             },
           ]}
           style={{ flex: 1, minWidth: 0 }}
@@ -91,19 +92,19 @@ const NavbarTop = () => {
             menu={{
               items,
             }}
-            trigger={["click"]}
+            trigger={['click']}
           >
             <Space>
-              <Avatar shape="square" icon={<UserOutlined />} />
+              <Avatar shape='square' icon={<UserOutlined />} />
             </Space>
           </Dropdown>
         ) : (
           <Space>
-            <Button type="primary">
-              <Link to={"/login"} className="no-underline">Đăng nhập</Link>
+            <Button type='primary'>
+              <Link to='/login' className='no-underline'>Đăng nhập</Link>
             </Button>
-            <Button color="danger" variant="solid">
-              <Link to={"/register"}>Đăng ký</Link>
+            <Button color='danger' variant='solid'>
+              <Link to='/register'>Đăng ký</Link>
             </Button>
           </Space>
         )}

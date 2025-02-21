@@ -6,7 +6,7 @@ Module Vaccine
  */
 
 export const callCreateVaccine = (
-  vaccineName,
+  name,
   description,
   image,
   manufacturer,
@@ -18,7 +18,7 @@ export const callCreateVaccine = (
   requiredDoses
 ) => {
   return axios.post("/vaccines", {
-    vaccineName,
+    name,
     description,
     image,
     manufacturer,
@@ -33,7 +33,7 @@ export const callCreateVaccine = (
 
 export const callUpdateVaccine = (
   vaccnineId,
-  vaccineName,
+  name,
   description,
   image,
   manufacturer,
@@ -45,7 +45,7 @@ export const callUpdateVaccine = (
   requiredDoses
 ) => {
   return axios.put(`/vaccines/${vaccnineId}`, {
-    vaccineName,
+    name,
     description,
     image,
     manufacturer,

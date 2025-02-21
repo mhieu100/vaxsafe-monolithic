@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import { callFetchVaccine } from "../../config/api.vaccine";
 
 export const fetchVaccine = createAsyncThunk(

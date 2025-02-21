@@ -1,22 +1,20 @@
 import { useState } from "react";
-import { callRegister } from "../../config/api.auth";
 import { useNavigate } from "react-router-dom";
 import { message, notification } from "antd";
+
+import { callRegister } from "../../config/api.auth";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("user");
   const [email, setEmail] = useState("user@gmail.com");
-  const [password, setPassword] = useState("12345");
-  const [address, setAddress] = useState("Viet Nam");
-  const [phone, setPhone] = useState("0388335845");
-  const [date, setDate] = useState("2003-11-20");
+  const [password, setPassword] = useState("123456");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await callRegister(name, email, password , phone, date, address);
-    if (res?.data?.userId) {
+    const res = await callRegister(name, email, password);
+    if (res?.data?.email) {
       message.success('Đăng ký tài khoản thành công!');
       navigate('/login')
   } else {
@@ -41,7 +39,7 @@ const RegisterPage = () => {
           />
           <h1 className="h3 mb-3 font-weight-normal">Đăng ký</h1>
           <div className="row g-4">
-            <div className="col-lg-6">
+            <div className="col-lg-12">
               <label htmlFor="inputName" className="sr-only">
                 Tên
               </label>
@@ -55,22 +53,22 @@ const RegisterPage = () => {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-12">
               <label htmlFor="inputEmail" className="sr-only">
-                Email address
+                Email
               </label>
               <input
                 type="email"
                 id="inputEmail"
                 className="form-control"
-                placeholder="Email address"
+                placeholder="Email"
                 autoFocus
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div className="col-lg-6">
+            <div className="col-lg-12">
               <label htmlFor="inputPassword" className="sr-only">
                 Password
               </label>
@@ -83,47 +81,7 @@ const RegisterPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className="col-lg-6">
-              <label htmlFor="inputAddress" className="sr-only">
-                Địa chỉ
-              </label>
-              <input
-                type="text"
-                id="inputAddress"
-                className="form-control"
-                placeholder="Địa chỉ nhà..."
-                autoFocus
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-            </div>
-            <div className="col-lg-6">
-              <label htmlFor="inputPhone" className="sr-only">
-                Số điện thoại
-              </label>
-              <input
-                type="text"
-                id="inputPhone"
-                className="form-control"
-                placeholder="Số điện thoại..."
-                autoFocus
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-            <div className="col-lg-6">
-              <label htmlFor="inputDate" className="sr-only">
-                Ngày sinh
-              </label>
-              <input
-                type="date"
-                id="inputDate"
-                className="form-control"
-                autoFocus
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </div>
+          
           </div>
           <button className="btn btn-primary btn-block mt-3" type="submit">
             Submit

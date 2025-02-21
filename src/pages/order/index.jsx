@@ -6,11 +6,11 @@ import {
 } from "@ant-design/pro-components";
 import { Form, message, notification } from "antd";
 import { useEffect, useState } from "react";
-import { callFetchCenter } from "../../config/api.center";
-import { callOrder } from "../../config/api.order";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import moment from "moment";
+
+import { callFetchCenter } from "../../config/api.center";
+import { callAddAppointment } from "../../config/api.appointment";
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -37,6 +37,7 @@ const OrderPage = () => {
     }
     // setIsLoading(false);
   };
+
   const [form] = Form.useForm();
 
   const handleReset = async () => {
@@ -48,7 +49,7 @@ const OrderPage = () => {
   const submitOrder = async (valuesForm) => {
     await waitTime(2000);
     const { date, time, center, paymentType } = valuesForm;
-    const res = await callOrder(
+    const res = await callAddAppointment(
       vaccineId,
       user.id,
       center,
@@ -56,7 +57,7 @@ const OrderPage = () => {
       time,
       paymentType
     );
-    if (res.data) {
+    if (res.statusCode === 200) {
       handleReset();
       message.success("Đặt lịch thành công");
     } else {
@@ -81,7 +82,7 @@ const OrderPage = () => {
           time: null,
         }}
         className="mt-4"
-        layout={"horizontal"}
+        layout="horizontal"
         grid={{ span: 12 }}
         onFinish={submitOrder}
         form={form}
@@ -100,10 +101,10 @@ const OrderPage = () => {
       >
         <ProFormDatePicker
           colProps={{ xl: 8, md: 12 }}
-          width={"md"}
+          width="md"
           label="Ngày tiêm"
           name="date"
-          placeholder={"Chọn ngày tiêm"}
+          placeholder="Chọn ngày tiêm"
           rules={[
             {
               required: true,
@@ -123,36 +124,36 @@ const OrderPage = () => {
         />
         <ProFormTimePicker
           colProps={{ xl: 8, md: 12 }}
-          width={"md"}
+          width="md"
           label="Giờ tiêm"
           name="time"
-          placeholder={"Chọn giờ tiêm"}
+          placeholder="Chọn giờ tiêm"
           fieldProps={{
             format: "HH:mm",
           }}
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng chọn giờ tiêm!",
-            },
-            {
-              validator: (_, value) => {
-                const selectedDate = form.getFieldValue("date");
-                if (selectedDate && value) {
-                  const selectedDateTime = moment(selectedDate).set({
-                    hour: value.hour(),
-                    minute: value.minute(),
-                  });
-                  if (selectedDateTime.isBefore(moment())) {
-                    return Promise.reject(
-                      "Giờ tiêm không được là thời gian trong quá khứ!"
-                    );
-                  }
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Vui lòng chọn giờ tiêm!",
+          //   },
+          //   {
+          //     validator: (_, value) => {
+          //       const selectedDate = form.getFieldValue("date");
+          //       if (selectedDate && value) {
+          //         const selectedDateTime = moment(selectedDate).set({
+          //           hour: value.hour(),
+          //           minute: value.minute(),
+          //         });
+          //         if (selectedDateTime.isBefore(moment())) {
+          //           return Promise.reject(
+          //             "Giờ tiêm không được là thời gian trong quá khứ!"
+          //           );
+          //         }
+          //       }
+          //       return Promise.resolve();
+          //     },
+          //   },
+          // ]}
         />
 
         <ProFormSelect

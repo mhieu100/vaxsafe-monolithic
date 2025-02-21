@@ -1,18 +1,17 @@
-/* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-
+ 
+import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   CheckSquareOutlined,
   LoadingOutlined,
   PlusOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons';
 import {
   FooterToolbar,
   ModalForm,
   ProCard,
   ProFormText,
-} from "@ant-design/pro-components";
+} from '@ant-design/pro-components';
 import {
   Col,
   ConfigProvider,
@@ -22,32 +21,32 @@ import {
   notification,
   Row,
   Upload,
-} from "antd";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import enUS from "antd/es/calendar/locale/en_US";
+} from 'antd';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import enUS from 'antd/es/calendar/locale/en_US';
 
-import { callCreateVaccine, callUpdateVaccine } from "../../config/api.vaccine";
-import { callUploadSingleFile } from "../../config/api.file";
+import { callCreateVaccine, callUpdateVaccine } from '../../config/api.vaccine';
+import { callUploadSingleFile } from '../../config/api.file';
 
-import "../../styles/reset.scss";
+import '../../styles/reset.scss';
 
 const ModalVaccine = (props) => {
   const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [form] = Form.useForm();
-  const [value, setValue] = useState("");
-  const [animation, setAnimation] = useState("open");
+  const [value, setValue] = useState('');
+  const [animation, setAnimation] = useState('open');
 
   const [dataLogo, setDataLogo] = useState([]);
 
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result));
+    reader.addEventListener('load', () => callback(reader.result));
     reader.readAsDataURL(img);
   };
 
@@ -56,7 +55,7 @@ const ModalVaccine = (props) => {
       setPreviewImage(file.url);
       setPreviewOpen(true);
       setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
       );
       return;
     }
@@ -64,7 +63,7 @@ const ModalVaccine = (props) => {
       setPreviewImage(url);
       setPreviewOpen(true);
       setPreviewTitle(
-        file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+        file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
       );
     });
   };
@@ -74,34 +73,34 @@ const ModalVaccine = (props) => {
   };
 
   const handleChange = (info) => {
-    if (info.file.status === "uploading") {
+    if (info.file.status === 'uploading') {
       setLoadingUpload(true);
     }
-    if (info.file.status === "done") {
+    if (info.file.status === 'done') {
       setLoadingUpload(false);
     }
-    if (info.file.status === "error") {
+    if (info.file.status === 'error') {
       setLoadingUpload(false);
       message.error(
-        info?.file?.error?.event?.message ?? "Đã có lỗi xảy ra khi upload file."
+        info?.file?.error?.event?.message ?? 'Đã có lỗi xảy ra khi upload file.'
       );
     }
   };
 
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error("You can only upload JPG/PNG file!");
+      message.error('You can only upload JPG/PNG file!');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error("Image must smaller than 2MB!");
+      message.error('Image must smaller than 2MB!');
     }
     return isJpgOrPng && isLt2M;
   };
 
   const handleUploadFileLogo = async ({ file, onSuccess, onError }) => {
-    const res = await callUploadSingleFile(file, "vaccine");
+    const res = await callUploadSingleFile(file, 'vaccine');
     if (res && res.data) {
       setDataLogo([
         {
@@ -109,7 +108,7 @@ const ModalVaccine = (props) => {
           uid: uuidv4(),
         },
       ]);
-      if (onSuccess) onSuccess("ok");
+      if (onSuccess) onSuccess('ok');
     } else {
       if (onError) {
         setDataLogo([]);
@@ -121,18 +120,18 @@ const ModalVaccine = (props) => {
 
   const handleReset = async () => {
     form.resetFields();
-    setValue("");
+    setValue('');
     setDataInit(null);
 
-    setAnimation("close");
+    setAnimation('close');
     await new Promise((r) => setTimeout(r, 400));
     setOpenModal(false);
-    setAnimation("open");
+    setAnimation('open');
   };
 
   const submitVaccine = async (valuesForm) => {
     const {
-      vaccineName,
+      name,
       manufacturer,
       disease,
       dosage,
@@ -143,14 +142,14 @@ const ModalVaccine = (props) => {
     } = valuesForm;
 
     if (dataLogo.length === 0) {
-      message.error("Vui lòng upload ảnh Vaccine");
+      message.error('Vui lòng upload ảnh Vaccine');
       return;
     }
 
     if (dataInit?.vaccineId) {
       const res = await callUpdateVaccine(
         dataInit.vaccineId,
-        vaccineName,
+        name,
         value,
         dataLogo[0].name,
         manufacturer,
@@ -162,18 +161,18 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success("Cập nhật vaccine thành công");
+        message.success('Cập nhật vaccine thành công');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: "Có lỗi xảy ra",
+          message: 'Có lỗi xảy ra',
           description: res.message,
         });
       }
     } else {
       const res = await callCreateVaccine(
-        vaccineName,
+        name,
         value,
         dataLogo[0].name,
         manufacturer,
@@ -185,12 +184,12 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success("Thêm mới vaccine thành công");
+        message.success('Thêm mới vaccine thành công');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: "Có lỗi xảy ra",
+          message: 'Có lỗi xảy ra',
           description: res.message,
         });
       }
@@ -210,7 +209,7 @@ const ModalVaccine = (props) => {
           <ModalForm
             title={
               <>
-                {dataInit?.vaccineId ? "Cập nhật Vaccine" : "Tạo mới Vaccine"}
+                {dataInit?.vaccineId ? 'Cập nhật Vaccine' : 'Tạo mới Vaccine'}
               </>
             }
             open={openModal}
@@ -237,70 +236,70 @@ const ModalVaccine = (props) => {
                 icon: <CheckSquareOutlined />,
               },
               searchConfig: {
-                resetText: "Hủy",
-                submitText: <>{dataInit?.vaccineId ? "Cập nhật" : "Tạo mới"}</>,
+                resetText: 'Hủy',
+                submitText: <>{dataInit?.vaccineId ? 'Cập nhật' : 'Tạo mới'}</>,
               },
             }}
           >
             <Row gutter={16}>
               <Col span={12}>
                 <ProFormText
-                  label="Tên vaccine"
-                  name="vaccineName"
+                  label='Tên vaccine'
+                  name='name'
                   rules={[
-                    { required: true, message: "Vui lòng không bỏ trống" },
+                    { required: true, message: 'Vui lòng không bỏ trống' },
                   ]}
-                  placeholder="Nhập tên vaccine..."
+                  placeholder='Nhập tên vaccine...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label="Nơi sản xuất"
-                  name="manufacturer"
+                  label='Nơi sản xuất'
+                  name='manufacturer'
                   rules={[
-                    { required: true, message: "Vui lòng không bỏ trống" },
+                    { required: true, message: 'Vui lòng không bỏ trống' },
                   ]}
-                  placeholder="Nơi sản xuất..."
+                  placeholder='Nơi sản xuất...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label="Loại bệnh"
-                  name="disease"
+                  label='Loại bệnh'
+                  name='disease'
                   rules={[
-                    { required: true, message: "Vui lòng không bỏ trống" },
+                    { required: true, message: 'Vui lòng không bỏ trống' },
                   ]}
-                  placeholder="Loại bệnh..."
+                  placeholder='Loại bệnh...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label="Price"
-                  name="price"
+                  label='Price'
+                  name='price'
                   rules={[
-                    { required: true, message: "Vui lòng không bỏ trống" },
+                    { required: true, message: 'Vui lòng không bỏ trống' },
                   ]}
-                  placeholder="giá tiền..."
+                  placeholder='giá tiền...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label="Stock"
-                  name="stockQuantity"
+                  label='Stock'
+                  name='stockQuantity'
                   rules={[
-                    { required: true, message: "Vui lòng không bỏ trống" },
+                    { required: true, message: 'Vui lòng không bỏ trống' },
                   ]}
-                  placeholder="Số lượng kho..."
+                  placeholder='Số lượng kho...'
                 />
               </Col>
 
               <Col span={8}>
-                <Form.Item labelCol={{ span: 24 }} label="Ảnh Vaccine" name="logo">
+                <Form.Item labelCol={{ span: 24 }} label='Ảnh Vaccine' name='logo'>
                   <ConfigProvider locale={enUS}>
                     <Upload
-                      name="logo"
-                      listType="picture-card"
-                      className="avatar-uploader"
+                      name='logo'
+                      listType='picture-card'
+                      className='avatar-uploader'
                       maxCount={1}
                       multiple={false}
                       customRequest={handleUploadFileLogo}
@@ -313,9 +312,9 @@ const ModalVaccine = (props) => {
                           ? [
                             {
                               uid: uuidv4(),
-                              name: dataInit?.image ?? "",
-                              status: "done",
-                              url: `${"http://localhost:8080/"}storage/vaccine/${dataInit?.image
+                              name: dataInit?.image ?? '',
+                              status: 'done',
+                              url: `${'http://localhost:8080/'}storage/vaccine/${dataInit?.image
                                 }`,
                               
                             },
@@ -333,15 +332,15 @@ const ModalVaccine = (props) => {
               </Col>
 
               <ProCard
-                title="Miêu tả"
-                headStyle={{ color: "#d81921" }}
+                title='Miêu tả'
+                headStyle={{ color: '#d81921' }}
                 style={{ marginBottom: 20 }}
                 headerBordered
-                size="small"
+                size='small'
                 bordered
               >
                 <Col span={24}>
-                  <ReactQuill theme="snow" value={value} onChange={setValue} />
+                  <ReactQuill theme='snow' value={value} onChange={setValue} />
                 </Col>
               </ProCard>
             </Row>
@@ -353,7 +352,7 @@ const ModalVaccine = (props) => {
             onCancel={() => setPreviewOpen(false)}
             style={{ zIndex: 1500 }}
           >
-            <img alt="example" style={{ width: "100%" }} src={previewImage} />
+            <img alt='example' style={{ width: '100%' }} src={previewImage} />
           </Modal>
         </>
       )}

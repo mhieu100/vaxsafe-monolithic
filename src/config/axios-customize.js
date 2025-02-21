@@ -1,8 +1,9 @@
 import axiosClient from "axios";
-import { store } from "../redux/store";
-import { setRefreshTokenAction } from "../redux/slice/accountSlide";
 import { notification } from "antd";
 import { Mutex } from "async-mutex";
+
+import { store } from "../redux/store";
+import { setRefreshTokenAction } from "../redux/slice/accountSlide";
 
 /**
  * Creates an initial 'axios' instance with custom settings.
@@ -79,7 +80,6 @@ instance.interceptors.response.use(
 
 /**
  * Replaces main `axios` instance with the custom-one.
- *
  * @param cfg - Axios configuration object.
  * @returns A promise object of a response of the HTTP request with the 'data' object already
  * destructured.

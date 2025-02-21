@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
+import { Card, Col, Row , Typography } from "antd";
+
 import { callFetchCenter } from "../../config/api.center";
-import { Card, Col, Row } from "antd";
-import { Typography } from "antd";
 
 const { Title, Text } = Typography;
 
 const { Meta } = Card;
 
-const VaccineCenterPage = () => {
+const CenterPage = () => {
   const [displayCenter, setDisplayCenter] = useState(null);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(100);
@@ -72,4 +72,4 @@ const VaccineCenterPage = () => {
   );
 };
 
-export default VaccineCenterPage;
+export default CenterPage;

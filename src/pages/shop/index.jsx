@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { callFetchVaccine } from "../../config/api.vaccine";
-import { Button, Card, Col, Row } from "antd";
-import { Typography } from "antd";
+import { Button, Card, Col, Row , Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import parse from 'html-react-parser';
+
+import { callFetchVaccine } from "../../config/api.vaccine";
 
 const { Title, Text } = Typography;
 
@@ -17,14 +17,14 @@ const ShopPage = () => {
   const [pageSize, setPageSize] = useState(100);
   const [total, setTotal] = useState(0);
   const [filter, setFilter] = useState("");
-  const [sortQuery, setSortQuery] = useState("sort=vaccineName,desc");
+  const [sortQuery, setSortQuery] = useState("sort=name,desc");
   const navigate = useNavigate();
 
   useEffect(() => {
     setCurrent(1);
     setPageSize(100);
     setFilter("");
-    setSortQuery("sort=vaccineName,desc");
+    setSortQuery("sort=name,desc");
     fetchVaccine();
   }, [current, pageSize, filter, sortQuery]);
 
@@ -61,7 +61,7 @@ const ShopPage = () => {
         {displayVaccine &&
           displayVaccine.map((vaccine, index) => {
             return (
-              <Col key={index} span={6} style={{ justifyItems: "center" }}>
+              <Col key={index} span={8} style={{ justifyItems: "center" }}>
                 <Card
                   bordered={false}
                   style={{
@@ -70,8 +70,8 @@ const ShopPage = () => {
                   cover={<img alt="example" src={`http://localhost:8080/storage/vaccine/${vaccine.image}`} height={150} />}
                 >
                   <Meta
-                    title={vaccine.vaccineName.slice(0, 30) + "..."}
-                    description={parse(vaccine.description.slice(0, 30) + "...")}
+                    title={vaccine.name.slice(0, 20) + "..."}
+                    description={parse(vaccine.description.slice(0, 20) + "...")}
                   />
                   <div className="d-flex justify-content-between mt-3">
                     <p>

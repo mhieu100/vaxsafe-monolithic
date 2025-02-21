@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import { callFetchCenter } from "../../config/api.center";
 
 export const fetchCenter = createAsyncThunk(

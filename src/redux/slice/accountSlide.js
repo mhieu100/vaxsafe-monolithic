@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import { callFetchAccount } from "../../config/api.auth";
 
 // First, create the thunk
@@ -18,8 +19,9 @@ const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || {
     id: "",
     email: "",
-    fullName: "",
-    role: "",
+    fullname: "",
+    centerName: "",
+    roleName: "",
   },
   activeMenu: "home",
 };
@@ -37,8 +39,10 @@ export const accountSlice = createSlice({
       state.isLoading = false;
       state.user.id = action?.payload?.id;
       state.user.email = action.payload.email;
-      state.user.fullName = action.payload.fullName;
-      state.user.role = action?.payload?.role;
+      state.user.centerName = action.payload.centerName;
+      state.user.fullname = action.payload.fullname;
+      
+      state.user.roleName = action?.payload?.roleName;
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("user", JSON.stringify(action.payload));
     },
@@ -50,8 +54,9 @@ export const accountSlice = createSlice({
       state.user = {
         id: "",
         email: "",
-        fullName: "",
-        role: "",
+        fullname: "",
+        centerName: "",
+        roleName: "",
       };
     },
     setRefreshTokenAction: (state, action) => {
@@ -73,8 +78,9 @@ export const accountSlice = createSlice({
         state.isLoading = false;
         state.user.id = action?.payload?.user?.id;
         state.user.email = action.payload.user?.email;
-        state.user.fullName = action.payload.user?.fullName;
-        state.user.role = action?.payload?.user?.role;
+        state.user.fullname = action.payload.user?.fullname;
+        state.user.centerName = action.payload.user?.centerName;
+        state.user.roleName = action?.payload?.user?.roleName;
       }
     });
 

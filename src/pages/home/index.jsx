@@ -4,6 +4,7 @@ const contentStyle = {
 };
 
 const HomePage = () => {
+  
   return (
     <Row gutter={[20, 20]} justify="center">
       <Col span={16}>

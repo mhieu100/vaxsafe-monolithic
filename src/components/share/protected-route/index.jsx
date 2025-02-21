@@ -1,17 +1,20 @@
 import { Navigate } from "react-router-dom";
-import Loading from "../loading";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import NotPermitted from "./not-permitted";
 import { useEffect, useState } from "react";
+
+import Loading from "../loading";
+
+import NotPermitted from "./not-permitted";
 
 const RoleBaseRoute = (props) => {
   const user = useSelector((state) => state.account.user);
 
   if (
-    user.role === "ADMIN" ||
-    user.role === "DOCTOR" ||
-    user.role === "CASHIER"
+    user.roleName === "ADMIN" ||
+    user.roleName === "DOCTOR" ||
+    user.roleName === "CASHIER"
   ) {
     return <>{props.children}</>;
   } else {

@@ -6,20 +6,14 @@ Module Auth
  */
 
 export const callRegister = (
-  fullName,
+  fullname,
   email,
   password,
-  phone,
-  dateOfBirth,
-  address
 ) => {
   return axios.post("/auth/register", {
-    fullName,
+    fullname,
     email,
-    password,
-    phone,
-    dateOfBirth,
-    address,
+    password
   });
 };
 

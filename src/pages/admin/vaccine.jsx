@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { callDeleteVaccine } from "../../config/api.vaccine";
 import {
   Button,
   message,
@@ -12,9 +11,11 @@ import {
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { sfLike } from "spring-filter-query-builder";
 import queryString from "query-string";
+
+import { callDeleteVaccine } from "../../config/api.vaccine";
 import DataTable from "../../components/data-table";
 import { fetchVaccine } from "../../redux/slice/vaccineSlice";
-import ModalVaccine from "../../components/modal/model.vaccine";
+import ModalVaccine from "../../components/modal/modal.vaccine";
 
 const VaccinePage = () => {
   const tableRef = useRef();
@@ -76,7 +77,7 @@ const VaccinePage = () => {
     },
     {
       title: "Name",
-      dataIndex: "vaccineName",
+      dataIndex: "name",
       sorter: true,
       render: (text) => (
         <Tooltip title={text}>
@@ -144,8 +145,8 @@ const VaccinePage = () => {
 
           <Popconfirm
             placement="leftTop"
-            title={"Xác nhận xóa company"}
-            description={"Bạn có chắc chắn muốn xóa vaccine này ?"}
+            title="Xác nhận xóa company"
+            description="Bạn có chắc chắn muốn xóa vaccine này ?"
             onConfirm={() => handleDeleteVaccine(entity.vaccineId)}
             okText="Xác nhận"
             cancelText="Hủy"
@@ -172,10 +173,10 @@ const VaccinePage = () => {
       filter: "",
     };
 
-    if (clone.vaccineName)
-      q.filter = `${sfLike("vaccineName", clone.vaccineName)}`;
+    if (clone.name)
+      q.filter = `${sfLike("name", clone.name)}`;
     if (clone.manufacturer) {
-      q.filter = clone.vaccineName
+      q.filter = clone.name
         ? q.filter + " and " + `${sfLike("manufacturer", clone.manufacturer)}`
         : `${sfLike("manufacturer", clone.manufacturer)}`;
     }
@@ -185,11 +186,11 @@ const VaccinePage = () => {
     let temp = queryString.stringify(q);
 
     let sortBy = "";
-    if (sort && sort.vaccineName) {
+    if (sort && sort.name) {
       sortBy =
-        sort.vaccineName === "ascend"
-          ? "sort=vaccineName,asc"
-          : "sort=vaccineName,desc";
+        sort.name === "ascend"
+          ? "sort=name,asc"
+          : "sort=name,desc";
     }
     if (sort && sort.manufacturer) {
       sortBy =
@@ -234,7 +235,6 @@ const VaccinePage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {" "}
                 {range[0]}-{range[1]} trên {total} rows
               </div>
             );

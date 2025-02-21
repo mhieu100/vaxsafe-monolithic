@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { callFetchUser } from "../../config/api.user";
+import { callFetchAppointment } from "../../config/api.appointment";
 
-export const fetchUser = createAsyncThunk(
-  "user/fetchUser",
+export const fetchAppointment = createAsyncThunk(
+  "appointment/fetchAppointment",
   async ({ query }) => {
-    const response = await callFetchUser(query);
+    const response = await callFetchAppointment(query);
     return response;
   }
 );
@@ -21,19 +21,19 @@ const initialState = {
   result: [],
 };
 
-export const userSlice = createSlice({
-  name: "user",
+export const appointmentSlice = createSlice({
+  name: "appointment",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUser.pending, (state) => {
+      .addCase(fetchAppointment.pending, (state) => {
         state.isFetching = true;
       })
-      .addCase(fetchUser.rejected, (state) => {
+      .addCase(fetchAppointment.rejected, (state) => {
         state.isFetching = false;
       })
-      .addCase(fetchUser.fulfilled, (state, action) => {
+      .addCase(fetchAppointment.fulfilled, (state, action) => {
         if (action.payload && action.payload.data) {
           state.isFetching = false;
           state.meta = action.payload.data.meta;
@@ -43,4 +43,4 @@ export const userSlice = createSlice({
   },
 });
 
-export default userSlice.reducer;
+export default appointmentSlice.reducer;

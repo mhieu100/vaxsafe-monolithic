@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { callLogin } from "../../config/api.auth";
 import { message, notification } from "antd";
 import "./form.css";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserLoginInfo } from "./../../redux/slice/accountSlide";
 import { useNavigate } from "react-router-dom";
+
+import { callLogin } from "../../config/api.auth";
+
+import { setUserLoginInfo } from "./../../redux/slice/accountSlide";
+
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -12,7 +15,7 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.account.isAuthenticated);
   const [email, setEmail] = useState("admin@gmail.com");
-  const [password, setPassword] = useState("12345");
+  const [password, setPassword] = useState("123456");
 
   useEffect(() => {
     if (isAuthenticated) {
