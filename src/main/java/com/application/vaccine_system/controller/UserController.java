@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.vaccine_system.annotation.ApiMessage;
+import com.application.vaccine_system.config.security.SecurityUtil;
 import com.application.vaccine_system.exception.InvalidException;
 import com.application.vaccine_system.model.User;
 import com.application.vaccine_system.model.request.ReqUser;
@@ -36,6 +37,20 @@ public class UserController {
     @ApiMessage("Get all users")
     public ResponseEntity<Pagination> getAllUsers(@Filter Specification<User> specification,
             Pageable pageable) {
+        return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
+    }
+
+    @GetMapping("/doctors")
+    @ApiMessage("Get all doctors of center")
+    public ResponseEntity<Pagination> getAllDoctorsOfCenter(@Filter Specification<User> specification,
+            Pageable pageable) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent()
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+        String centerName = this.userService.getUserByEmail(email).getCenter().getName();
+        specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
+                .equal(root.get("role").get("name"), "DOCTOR")).and(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
+                .equal(root.get("center").get("name"), centerName));
         return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
     }
 

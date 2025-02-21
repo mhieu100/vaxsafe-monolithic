@@ -27,6 +27,7 @@ public class ReqAppointment {
     @Positive(message = "Center ID must be a positive number")
     Long centerId;
     Long doctorId;
+    Long cashierId;
     @NotNull(message = "Appointment date cannot be null")
     @FutureOrPresent(message = "Appointment date must be in the present or future")
     LocalDate appointmentDate;

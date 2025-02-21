@@ -28,9 +28,11 @@ import com.application.vaccine_system.model.response.ResLogin;
 import com.application.vaccine_system.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -38,13 +40,6 @@ public class AuthController {
     private final UserService userService;
     @Value("${mhieu.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
-
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
-            UserService userService) {
-        this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.securityUtil = securityUtil;
-        this.userService = userService;
-    }
 
     @PostMapping("/login")
     @ApiMessage("Login successful")
@@ -61,10 +56,12 @@ public class AuthController {
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getFullname(),
-                    currentUserDB.getRole());
+                    currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName(),
+                    currentUserDB.getRole().getName());
             ResLogin.setUser(userLogin);
+            System.out.println(">>> Login successful : " + userLogin);
         }
-
+      
         String access_token = this.securityUtil.createAccessToken(reqLogin.getUsername(), ResLogin.getUser());
         String refresh_token = this.securityUtil.createRefreshToken(reqLogin.getUsername(), ResLogin);
         userService.updateUserToken(refresh_token, reqLogin.getUsername());
@@ -92,8 +89,9 @@ public class AuthController {
         if (currentUserDB != null) {
             userLogin.setId(currentUserDB.getUserId());
             userLogin.setEmail(currentUserDB.getEmail());
-            userLogin.setFullName(currentUserDB.getFullname());
-            userLogin.setRole(currentUserDB.getRole());
+            userLogin.setFullname(currentUserDB.getFullname());
+            userLogin.setRoleName(currentUserDB.getRole().getName());
+            userLogin.setCenterName(currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             userGetAccount.setUser(userLogin);
         }
         return ResponseEntity.ok().body(userGetAccount);
@@ -122,7 +120,8 @@ public class AuthController {
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getFullname(),
-                    currentUserDB.getRole());
+                    currentUserDB.getRole().getName(),
+                    currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             res.setUser(userLogin);
         }
         // create access token

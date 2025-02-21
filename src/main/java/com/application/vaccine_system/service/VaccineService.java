@@ -46,8 +46,8 @@ public class VaccineService {
     }
 
     public Vaccine createVaccine(Vaccine vaccine) throws InvalidException {
-        if (vaccineRepository.existsByVaccineName(vaccine.getVaccineName())) {
-            throw new InvalidException("Vaccine already exists with name: " + vaccine.getVaccineName());
+        if (vaccineRepository.existsByName(vaccine.getName())) {
+            throw new InvalidException("Vaccine already exists with name: " + vaccine.getName());
         }
         return vaccineRepository.save(vaccine);
     }

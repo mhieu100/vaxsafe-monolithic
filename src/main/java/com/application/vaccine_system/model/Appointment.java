@@ -30,7 +30,7 @@ import lombok.experimental.FieldDefaults;
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long appointId;
+    Long appointmentId;
     @ManyToOne
     @JoinColumn(name = "vaccine_id")
     Vaccine vaccine;
@@ -55,7 +55,7 @@ public class Appointment {
     public enum Status {
         PENDING,
         CANCELLED,
-        CONFIRMED,
+        PROCESSING,
         COMPLETED
     }
 }

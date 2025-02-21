@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.application.vaccine_system.exception.InvalidException;
 import com.application.vaccine_system.model.Center;
-import com.application.vaccine_system.model.response.CenterDTO;
+import com.application.vaccine_system.model.response.ResCenter;
 import com.application.vaccine_system.model.response.Pagination;
 import com.application.vaccine_system.repository.CenterRepository;
 
@@ -21,26 +21,24 @@ import lombok.RequiredArgsConstructor;
 public class CenterService {
     private final CenterRepository centerRepository;
 
-    
-
-    public CenterDTO convertToCenterDTO(Center vaccinationCenter) {
-        CenterDTO res = new CenterDTO();
-        res.setCenterId(vaccinationCenter.getCenterId());
-        res.setName(vaccinationCenter.getName());
-        res.setImage(vaccinationCenter.getImage());
-        res.setAddress(vaccinationCenter.getAddress());
-        res.setPhoneNumber(vaccinationCenter.getPhoneNumber());
-        res.setCapacity(vaccinationCenter.getCapacity());
-        res.setWorkingHours(vaccinationCenter.getWorkingHours());
+    public ResCenter convertToResCenter(Center center) {
+        ResCenter res = new ResCenter();
+        res.setCenterId(center.getCenterId());
+        res.setName(center.getName());
+        res.setImage(center.getImage());
+        res.setAddress(center.getAddress());
+        res.setPhoneNumber(center.getPhoneNumber());
+        res.setCapacity(center.getCapacity());
+        res.setWorkingHours(center.getWorkingHours());
         return res;
     }
 
-    public CenterDTO getVaccinationCenterById(Long id) throws InvalidException {
-        return convertToCenterDTO(centerRepository.findById(id)
+    public ResCenter getCenterById(Long id) throws InvalidException {
+        return convertToResCenter(centerRepository.findById(id)
                 .orElseThrow(() -> new InvalidException("Vaccination Center not found with id: " + id)));
     }
 
-    public Pagination getAllVaccines(Specification<Center> specification, Pageable pageable) {
+    public Pagination getAllCenters(Specification<Center> specification, Pageable pageable) {
         Page<Center> pageVaccinationCenter = centerRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
         Pagination.Meta meta = new Pagination.Meta();
@@ -53,8 +51,8 @@ public class CenterService {
 
         pagination.setMeta(meta);
 
-        List<CenterDTO> listVaccinationCenters = pageVaccinationCenter.getContent()
-                .stream().map(this::convertToCenterDTO)
+        List<ResCenter> listVaccinationCenters = pageVaccinationCenter.getContent()
+                .stream().map(this::convertToResCenter)
                 .collect(Collectors.toList());
 
         pagination.setResult(listVaccinationCenters);
@@ -62,14 +60,14 @@ public class CenterService {
         return pagination;
     }
 
-    public Center createVaccinationCenter(Center vaccinationCenter) throws InvalidException {
+    public Center createCenter(Center vaccinationCenter) throws InvalidException {
         if (centerRepository.existsByName(vaccinationCenter.getName())) {
             throw new InvalidException("Vaccination Center already exists with name: " + vaccinationCenter.getName());
         }
         return centerRepository.save(vaccinationCenter);
     }
 
-    public Center updateVaccinationCenter(Long id, Center vaccinationCenter)
+    public Center updateCenter(Long id, Center vaccinationCenter)
             throws InvalidException {
         if (!centerRepository.existsById(id)) {
             throw new InvalidException("Vaccination Center not found with id: " + id);
@@ -78,7 +76,7 @@ public class CenterService {
         return centerRepository.save(vaccinationCenter);
     }
 
-    public void deleteVaccinationCenter(Long id) throws InvalidException {
+    public void deleteCenter(Long id) throws InvalidException {
         if (!centerRepository.existsById(id)) {
             throw new InvalidException("Vaccination Center not found with id: " + id);
         }

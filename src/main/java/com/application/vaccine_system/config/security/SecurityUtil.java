@@ -68,7 +68,7 @@ public class SecurityUtil {
         ResLogin.UserInsideToken userToken = new ResLogin.UserInsideToken();
         userToken.setId(dto.getId());
         userToken.setEmail(dto.getEmail());
-        userToken.setFullName(dto.getFullName());
+        userToken.setFullName(dto.getFullname());
 
         // hardcode permission (for testing)
         List<String> listAuthority = new ArrayList<>();

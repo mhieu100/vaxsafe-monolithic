@@ -53,8 +53,12 @@ public class UserService {
         resUser.setPhoneNumber(user.getPhoneNumber());
         resUser.setDateOfBirth(user.getDateOfBirth());
         resUser.setAddress(user.getAddress());
-        resUser.setCenter(user.getCenter());
-        resUser.setRole(user.getRole());
+        if (user.getCenter() == null) {
+            resUser.setCenterName(null); 
+        } else {
+            resUser.setCenterName(user.getCenter().getName());
+        }
+        resUser.setRoleName(user.getRole().getName());
         return resUser;
     }
 

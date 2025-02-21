@@ -25,7 +25,7 @@ public class Vaccine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long vaccineId;
     @NotBlank(message = "Vaccine name is mandatory")
-    String vaccineName;
+    String name;
     String image;
     @NotBlank(message = "Vaccine manufacturer is mandatory")
     String manufacturer;

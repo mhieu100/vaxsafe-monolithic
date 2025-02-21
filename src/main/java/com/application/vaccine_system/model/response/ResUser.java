@@ -2,8 +2,7 @@ package com.application.vaccine_system.model.response;
 
 import java.time.LocalDate;
 
-import com.application.vaccine_system.model.Center;
-import com.application.vaccine_system.model.Role;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AccessLevel;
@@ -20,6 +19,6 @@ public class ResUser {
     String phoneNumber;
     LocalDate dateOfBirth;
     String address;
-    Center center;
-    Role role;
+    String centerName;
+    String roleName;
 }

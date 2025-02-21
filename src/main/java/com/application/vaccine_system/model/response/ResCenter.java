@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CenterDTO {
+public class ResCenter {
     Long centerId;
     String name;
     String image;

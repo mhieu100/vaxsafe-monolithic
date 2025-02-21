@@ -17,8 +17,9 @@ public class ResLogin {
     public static class UserLogin {
         private long id;
         private String email;
-        private String fullName;
-        private Role role;
+        private String fullname;
+        private String centerName;
+        private String roleName;
     }
 
     @Data
