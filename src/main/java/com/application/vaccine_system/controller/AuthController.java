@@ -45,7 +45,7 @@ public class AuthController {
     @ApiMessage("Login successful")
     public ResponseEntity<ResLogin> login(@Valid @RequestBody ReqLogin reqLogin) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            reqLogin.getUsername(), reqLogin.getPassword());
+                reqLogin.getUsername(), reqLogin.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -56,12 +56,15 @@ public class AuthController {
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getFullname(),
+                    currentUserDB.getAddress(),
+                    currentUserDB.getPhoneNumber(),
+                    currentUserDB.getBirthday(),
                     currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName(),
                     currentUserDB.getRole().getName());
             ResLogin.setUser(userLogin);
             System.out.println(">>> Login successful : " + userLogin);
         }
-      
+
         String access_token = this.securityUtil.createAccessToken(reqLogin.getUsername(), ResLogin.getUser());
         String refresh_token = this.securityUtil.createRefreshToken(reqLogin.getUsername(), ResLogin);
         userService.updateUserToken(refresh_token, reqLogin.getUsername());
@@ -90,6 +93,9 @@ public class AuthController {
             userLogin.setId(currentUserDB.getUserId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setFullname(currentUserDB.getFullname());
+            userLogin.setAddress(currentUserDB.getAddress());
+            userLogin.setPhoneNumber(currentUserDB.getPhoneNumber());
+            userLogin.setBirthday(currentUserDB.getBirthday());
             userLogin.setRoleName(currentUserDB.getRole().getName());
             userLogin.setCenterName(currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             userGetAccount.setUser(userLogin);
@@ -120,8 +126,11 @@ public class AuthController {
                     currentUserDB.getUserId(),
                     currentUserDB.getEmail(),
                     currentUserDB.getFullname(),
-                    currentUserDB.getRole().getName(),
-                    currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
+                    currentUserDB.getAddress(),
+                    currentUserDB.getPhoneNumber(),
+                    currentUserDB.getBirthday(),
+                    currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName(),
+                    currentUserDB.getRole().getName());
             res.setUser(userLogin);
         }
         // create access token

@@ -1,6 +1,8 @@
 package com.application.vaccine_system.model.response;
 
-import com.application.vaccine_system.model.Role;
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,10 +16,14 @@ public class ResLogin {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class UserLogin {
         private long id;
         private String email;
         private String fullname;
+        private String address;
+        private String phoneNumber;
+        private LocalDate birthday;
         private String centerName;
         private String roleName;
     }

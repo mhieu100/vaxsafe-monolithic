@@ -10,6 +10,6 @@ public class ReqUser {
     @NotBlank(message = "Full name không được trống")
     private String fullname;
     String phoneNumber;
-    LocalDate dateOfBirth;
+    LocalDate birthday;
     String address;
 }

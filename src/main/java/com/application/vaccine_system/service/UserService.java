@@ -51,7 +51,7 @@ public class UserService {
         resUser.setFullname(user.getFullname());
         resUser.setEmail(user.getEmail());
         resUser.setPhoneNumber(user.getPhoneNumber());
-        resUser.setDateOfBirth(user.getDateOfBirth());
+        resUser.setBirthday(user.getBirthday());
         resUser.setAddress(user.getAddress());
         if (user.getCenter() == null) {
             resUser.setCenterName(null); 
@@ -102,7 +102,7 @@ public class UserService {
         currentUser.get().setUserId(id);
         currentUser.get().setFullname(reqUser.getFullname());
         currentUser.get().setPhoneNumber(reqUser.getPhoneNumber());
-        currentUser.get().setDateOfBirth(reqUser.getDateOfBirth());
+        currentUser.get().setBirthday(reqUser.getBirthday());
         currentUser.get().setAddress(reqUser.getAddress());
 
         return convertToResUser(userRepository.save(currentUser.get()));

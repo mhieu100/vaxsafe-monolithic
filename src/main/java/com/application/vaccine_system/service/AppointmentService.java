@@ -78,7 +78,7 @@ public class AppointmentService {
         return res;
     }
 
-    public Pagination getAllAppointmentsOfCenter(Specification<Appointment> specification, Pageable pageable) {
+    public Pagination getAllAppointments(Specification<Appointment> specification, Pageable pageable) {
 
         Page<Appointment> pageAppointment = appointmentRepository.findAll(specification, pageable);
         Pagination pagination = new Pagination();
@@ -101,7 +101,7 @@ public class AppointmentService {
         return pagination;
     }
 
-    public ResAppointment updateAppointment(String id, ReqAppointment reqAppointment) {
+    public ResAppointment updateAppointmentOfCashier(String id, ReqAppointment reqAppointment) {
         String email = SecurityUtil.getCurrentUserLogin().isPresent()
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : "";
@@ -111,6 +111,30 @@ public class AppointmentService {
         appointment.setCashier(cashier);
         appointment.setDoctor(doctor);
         appointment.setStatus(Status.PROCESSING);
+        this.appointmentRepository.save(appointment);
+        return convertToReqAppointment(appointment);
+    }
+
+    public ResAppointment cancelAppointment(String id) {
+        Appointment appointment = appointmentRepository.findById(Long.parseLong(id)).get();
+        appointment.setStatus(Status.CANCELLED);
+        Payment payment = this.paymentRepository.findByAppointment(appointment);
+        payment.setStatus(Payment.PaymentStatus.FAILED);
+        payment.setPaymentDate(LocalDate.now());
+        this.paymentRepository.save(payment);
+        this.appointmentRepository.save(appointment);
+        return convertToReqAppointment(appointment);
+    }
+
+    public ResAppointment completeAppointment(String id) {
+        Appointment appointment = appointmentRepository.findById(Long.parseLong(id)).get();
+        appointment.setStatus(Status.COMPLETED);
+        Payment payment = this.paymentRepository.findByAppointment(appointment);
+        if (payment.getPaymentMethod().equals(Payment.PaymentMethod.CASH)) {
+            payment.setStatus(Payment.PaymentStatus.COMPLETED);
+            payment.setPaymentDate(LocalDate.now());
+        }
+        this.paymentRepository.save(payment);
         this.appointmentRepository.save(appointment);
         return convertToReqAppointment(appointment);
     }

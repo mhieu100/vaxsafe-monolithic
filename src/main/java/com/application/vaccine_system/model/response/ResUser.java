@@ -17,7 +17,7 @@ public class ResUser {
     String fullname;
     String email;
     String phoneNumber;
-    LocalDate dateOfBirth;
+    LocalDate birthday;
     String address;
     String centerName;
     String roleName;
