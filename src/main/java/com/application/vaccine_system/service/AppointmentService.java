@@ -8,6 +8,8 @@ import com.application.vaccine_system.model.response.Pagination;
 import com.application.vaccine_system.model.response.ResAppointment;
 import com.application.vaccine_system.repository.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
+    private final VNPayService vnPayService;
+
     private final AppointmentRepository appointmentRepository;
     private final VaccineRepository vaccineRepository;
     private final CenterRepository centerRepository;
@@ -41,7 +45,7 @@ public class AppointmentService {
         return res;
     }
 
-    public ResAppointment createAppointment(ReqAppointment reqAppointment, String paymentMethod)
+    public ResAppointment createAppointmentWithCash(ReqAppointment reqAppointment)
             throws UnsupportedEncodingException {
         Vaccine vaccine = vaccineRepository.findById(reqAppointment.getVaccineId()).get();
         vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
@@ -54,29 +58,51 @@ public class AppointmentService {
                 .appointmentTime(reqAppointment.getAppointmentTime())
                 .status(Status.PENDING).build();
         appointmentRepository.save(appointment);
-        if (paymentMethod.equals("CASH")) {
-            Payment payment = Payment.builder()
-                    .appointment(appointment)
-                    .paymentDate(LocalDate.now())
-                    .amount(vaccine.getPrice())
-                    .paymentMethod(Payment.PaymentMethod.CASH)
-                    .status(Payment.PaymentStatus.PENDING)
-                    .build();
-            paymentRepository.save(payment);
-        } else if (paymentMethod.equals("CREDIT_CARD")) {
-            Payment payment = Payment.builder()
-                    .appointment(appointment)
-                    .paymentDate(LocalDate.now())
-                    .amount(vaccine.getPrice())
-                    .paymentMethod(Payment.PaymentMethod.CREDIT_CARD)
-                    .status(Payment.PaymentStatus.COMPLETED)
-                    .build();
-            paymentRepository.save(payment);
-        }
-        // PaymentMethod.infoVNPay(vaccine.getPrice());
+
+        Payment payment = Payment.builder()
+                .appointment(appointment)
+                .paymentDate(LocalDate.now())
+                .amount(vaccine.getPrice())
+                .paymentMethod(Payment.PaymentMethod.CASH)
+                .status(Payment.PaymentStatus.PENDING)
+                .build();
+        paymentRepository.save(payment);
+
         ResAppointment res = convertToReqAppointment(appointment);
         return res;
     }
+
+    @Transactional
+    public String createAppointmentWithCreditCard(ReqAppointment reqAppointment, String ipAddress)
+            throws UnsupportedEncodingException {
+        Vaccine vaccine = vaccineRepository.findById(reqAppointment.getVaccineId()).get();
+        vaccine.setStockQuantity(vaccine.getStockQuantity() - 1);
+
+        Appointment appointment = Appointment.builder()
+                .vaccine(vaccineRepository.save(vaccine))
+                .patient(userRepository.findById(reqAppointment.getPatientId()).get())
+                .center(centerRepository.findById(reqAppointment.getCenterId()).get())
+                .appointmentDate(reqAppointment.getAppointmentDate())
+                .appointmentTime(reqAppointment.getAppointmentTime())
+                .status(Status.PENDING).build();
+        appointmentRepository.save(appointment);
+
+        Payment payment = Payment.builder()
+                .appointment(appointment)
+                .paymentDate(LocalDate.now())
+                .amount(vaccine.getPrice())
+                .paymentMethod(Payment.PaymentMethod.CREDIT_CARD)
+                .status(Payment.PaymentStatus.PENDING)
+                .build();
+        Payment newPayment = paymentRepository.save(payment);
+
+        String paymentUrl = vnPayService.createPaymentUrl(Math.round(vaccine.getPrice()),
+                String.valueOf(newPayment.getPaymentId()), ipAddress);
+
+        return paymentUrl;
+    }
+
+    
 
     public Pagination getAllAppointments(Specification<Appointment> specification, Pageable pageable) {
 
@@ -137,5 +163,20 @@ public class AppointmentService {
         this.paymentRepository.save(payment);
         this.appointmentRepository.save(appointment);
         return convertToReqAppointment(appointment);
+    }
+
+    @Transactional
+    public String updatePaymentStatus(int paymentId, String vnpResponse) {
+        Payment payment = paymentRepository.findById((long)paymentId).get();
+    
+        if (vnpResponse.equals("00")) {
+            payment.setStatus(Payment.PaymentStatus.COMPLETED);
+            payment.setPaymentDate(LocalDate.now());
+        } else {
+            payment.setStatus(Payment.PaymentStatus.FAILED);
+            payment.setPaymentDate(LocalDate.now());
+        }
+        paymentRepository.save(payment);
+        return "Payment status updated";
     }
 }

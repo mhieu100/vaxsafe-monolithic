@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 
 import com.application.vaccine_system.annotation.ApiMessage;
@@ -17,6 +18,8 @@ import com.application.vaccine_system.service.AppointmentService;
 import com.application.vaccine_system.service.UserService;
 import com.turkraft.springfilter.boot.Filter;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.UnsupportedEncodingException;
 
 @RestController
@@ -26,11 +29,26 @@ public class AppointmentController {
         private final AppointmentService appointmentService;
         private final UserService userService;
 
-        @PostMapping
-        @ApiMessage("Create a appointments")
-        public ResponseEntity<ResAppointment> createAppointment(@RequestBody ReqAppointment reqAppointment,
-                        @RequestParam("payment_method") String paymentMethod) throws UnsupportedEncodingException {
-                return ResponseEntity.ok().body(appointmentService.createAppointment(reqAppointment, paymentMethod));
+        @PostMapping("/cash")
+        @ApiMessage("Create a appointments with cash")
+        public ResponseEntity<ResAppointment> createAppointmentWithCash(@RequestBody ReqAppointment reqAppointment)
+                        throws UnsupportedEncodingException {
+                return ResponseEntity.ok().body(appointmentService.createAppointmentWithCash(reqAppointment));
+        }
+
+        @PostMapping("/credit-card")
+        @ApiMessage("Create a appointments with credit card")
+        public ResponseEntity<String> createAppointmentWithCreditCard(@RequestBody ReqAppointment reqAppointment, HttpServletRequest request)
+                        throws UnsupportedEncodingException {
+                                String ipAddress = request.getRemoteAddr();
+                return ResponseEntity.ok().body(appointmentService.createAppointmentWithCreditCard(reqAppointment, ipAddress));
+        }
+
+        @PostMapping("/update-payment")
+        @ApiMessage("Update status of payment")
+        public ResponseEntity<String> updatePaymentStatus(@RequestParam int paymentId, @RequestParam String vnpResponse) {
+                System.out.println(paymentId + " " + vnpResponse);
+                return ResponseEntity.ok().body(appointmentService.updatePaymentStatus(paymentId, vnpResponse));
         }
 
         @GetMapping
