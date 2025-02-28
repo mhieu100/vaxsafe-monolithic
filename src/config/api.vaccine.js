@@ -1,4 +1,4 @@
-import axios from "./axios-customize";
+import axios from './axios-customize';
 
 /**
  *
@@ -17,7 +17,7 @@ export const callCreateVaccine = (
   stockQuantity,
   requiredDoses
 ) => {
-  return axios.post("/vaccines", {
+  return axios.post('/vaccines', {
     name,
     description,
     image,

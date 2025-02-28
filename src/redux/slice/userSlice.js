@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchUser } from "../../config/api.user";
+import { callFetchUser } from '../../config/api.user';
 
 export const fetchUser = createAsyncThunk(
-  "user/fetchUser",
+  'user/fetchUser',
   async ({ query }) => {
     const response = await callFetchUser(query);
     return response;
@@ -22,7 +22,7 @@ const initialState = {
 };
 
 export const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

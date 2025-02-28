@@ -1,9 +1,9 @@
-import axiosClient from "axios";
-import { notification } from "antd";
-import { Mutex } from "async-mutex";
+import axiosClient from 'axios';
+import { notification } from 'antd';
+import { Mutex } from 'async-mutex';
 
-import { store } from "../redux/store";
-import { setRefreshTokenAction } from "../redux/slice/accountSlide";
+import { store } from '../redux/store';
+import { setRefreshTokenAction } from '../redux/slice/accountSlide';
 
 /**
  * Creates an initial 'axios' instance with custom settings.
@@ -26,12 +26,12 @@ const handleRefreshToken = async () => {
 };
 
 instance.interceptors.request.use(function (config) {
-    if (typeof window !== "undefined" && window && window.localStorage && window.localStorage.getItem('access_token')) {
+    if (typeof window !== 'undefined' && window && window.localStorage && window.localStorage.getItem('access_token')) {
         config.headers.Authorization = 'Bearer ' + window.localStorage.getItem('access_token');
     }
-    if (!config.headers.Accept && config.headers["Content-Type"]) {
-        config.headers.Accept = "application/json";
-        config.headers["Content-Type"] = "application/json; charset=utf-8";
+    if (!config.headers.Accept && config.headers['Content-Type']) {
+        config.headers.Accept = 'application/json';
+        config.headers['Content-Type'] = 'application/json; charset=utf-8';
     }
     return config;
 });
@@ -61,16 +61,16 @@ instance.interceptors.response.use(
             error.config && error.response
             && +error.response.status === 400
             && error.config.url === '/auth/refresh'
-            && location.pathname.startsWith("/admin")
+            && location.pathname.startsWith('/admin')
         ) {
-            const message = error?.response?.data?.error ?? "Có lỗi xảy ra, vui lòng login.";
+            const message = error?.response?.data?.error ?? 'Có lỗi xảy ra, vui lòng login.';
             store.dispatch(setRefreshTokenAction({ status: true, message }));
         }
 
         if (+error.response.status === 403) {
             notification.error({
-                message: error?.response?.data?.message ?? "",
-                description: error?.response?.data?.error ?? ""
+                message: error?.response?.data?.message ?? '',
+                description: error?.response?.data?.error ?? ''
             });
         }
 

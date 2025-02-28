@@ -1,4 +1,4 @@
-import axios from "./axios-customize";
+import axios from './axios-customize';
 
 /**
  *
@@ -10,7 +10,7 @@ export const callRegister = (
   email,
   password,
 ) => {
-  return axios.post("/auth/register", {
+  return axios.post('/auth/register', {
     fullname,
     email,
     password
@@ -18,18 +18,18 @@ export const callRegister = (
 };
 
 export const callLogin = (username, password) => {
-  return axios.post("/auth/login", { username, password });
+  return axios.post('/auth/login', { username, password });
 };
 
 export const callFetchAccount = () => {
-  return axios.get("/auth/account");
+  return axios.get('/auth/account');
 };
 
 export const callRefreshToken = () => {
-  return axios.get("/auth/refresh");
+  return axios.get('/auth/refresh');
 };
 
 export const callLogout = () => {
-  return axios.post("/auth/logout");
+  return axios.post('/auth/logout');
 };
 

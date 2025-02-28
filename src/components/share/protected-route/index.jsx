@@ -1,20 +1,20 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
-import Loading from "../loading";
+import Loading from '../loading';
 
-import NotPermitted from "./not-permitted";
+import NotPermitted from './not-permitted';
 
 const RoleBaseRoute = (props) => {
   const user = useSelector((state) => state.account.user);
 
   if (
-    user.roleName === "ADMIN" ||
-    user.roleName === "DOCTOR" ||
-    user.roleName === "CASHIER"
+    user.roleName === 'ADMIN' ||
+    user.roleName === 'DOCTOR' ||
+    user.roleName === 'CASHIER'
   ) {
     return <>{props.children}</>;
   } else {
@@ -39,7 +39,7 @@ const ProtectedRoute = (props) => {
   }, [isLoading]);
 
   if (redirectToLogin) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to='/login' replace />;
   }
 
   return (
@@ -53,7 +53,7 @@ const ProtectedRoute = (props) => {
               <RoleBaseRoute>{props.children}</RoleBaseRoute>
             </>
           ) : (
-            <Navigate to="/login" replace />
+            <Navigate to='/login' replace />
           )}
         </>
       )}

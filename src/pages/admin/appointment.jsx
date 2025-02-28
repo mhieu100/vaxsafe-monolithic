@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 import { useRef, useState } from 'react'
-import queryString from "query-string";
-import { useDispatch, useSelector } from "react-redux";
+import queryString from 'query-string';
+import { useDispatch, useSelector } from 'react-redux';
+import { sfLike } from 'spring-filter-query-builder';
 import { Badge, Space } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
@@ -26,10 +26,10 @@ const AppointmentPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const columns = [
     {
-      title: "STT",
-      key: "index",
+      title: 'STT',
+      key: 'index',
       width: 50,
-      align: "center",
+      align: 'center',
       render: (text, record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
@@ -37,59 +37,64 @@ const AppointmentPage = () => {
     },
 
     {
-      title: "VaccineName",
-      dataIndex: "vaccineName",
+      title: 'VaccineName',
+      dataIndex: 'vaccineName',
       sorter: true,
     },
     {
-      title: "Patient",
-      dataIndex: "patientName",
+      title: 'Patient',
+      dataIndex: 'patientName',
       sorter: true,
     },
     {
-      title: "Date",
-      dataIndex: "appointmentDate",
+      title: 'Date',
+      dataIndex: 'appointmentDate',
       sorter: true,
     },
     {
-      title: "Time",
-      dataIndex: "appointmentTime",
+      title: 'Time',
+      dataIndex: 'appointmentTime',
       sorter: true,
     },
     {
-      title: "Status",
-      dataIndex: "status",
+      title: 'Status',
+      dataIndex: 'status',
       sorter: true,
       render: (_value, entity) => {
         let color;
         switch (entity.status) {
-          case "PENDING":
-            color = "#faad14";
+          case 'PENDING':
+            color = '#faad14';
             break;
-          case "PROCESSING":
-            color = "#52c41a";
+          case 'COMPLETED':
+            color = '#1890ff';
+            break;
+          case 'PROCESSING':
+            color = '#52c41a';
             break;
         }
         return <Badge count={entity.status} showZero color={color} />;
       },
     },
     {
-      title: "Actions",
+      title: 'Actions',
       hideInSearch: true,
       width: 50,
       render: (_value, entity) => (
+
+        entity.status === 'PENDING' ? (
         <Space>
           <EditOutlined
             style={{
               fontSize: 20,
-              color: "#ffa500",
+              color: '#ffa500',
             }}
             onClick={() => {
               setOpenModal(true);
               setDataInit(entity);
             }}
           />
-        </Space>
+        </Space>) : null
       ),
     },
   ]
@@ -99,26 +104,26 @@ const AppointmentPage = () => {
     const q = {
       page: params.current,
       size: params.pageSize,
-      filter: "",
+      filter: '',
     };
 
-    if (clone.vaccineName) q.filter = `${sfLike("vaccineName", clone.vaccineName)}`;
+    if (clone.vaccineName) q.filter = `${sfLike('vaccineName', clone.vaccineName)}`;
     if (clone.patientName) {
       q.filter = clone.vaccineName
-        ? q.filter + " and " + `${sfLike("patientName", clone.patientName)}`
-        : `${sfLike("patientName", clone.patientName)}`;
+        ? q.filter + ' and ' + `${sfLike('patientName', clone.patientName)}`
+        : `${sfLike('patientName', clone.patientName)}`;
     }
 
     if (!q.filter) delete q.filter;
 
     const temp = queryString.stringify(q);
 
-    let sortBy = "";
+    let sortBy = '';
     if (sort && sort.patientName) {
-      sortBy = sort.patientName === "ascend" ? "sort=patientName,asc" : "sort=patientName,desc";
+      sortBy = sort.patientName === 'ascend' ? 'sort=patientName,asc' : 'sort=patientName,desc';
     }
     if (sort && sort.address) {
-      sortBy = sort.address === "ascend" ? "sort=vaccineName,asc" : "sort=vaccineName,desc";
+      sortBy = sort.address === 'ascend' ? 'sort=vaccineName,asc' : 'sort=vaccineName,desc';
     }
 
     return temp;
@@ -128,8 +133,8 @@ const AppointmentPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle="Danh sách Lịch tiêm chủng"
-        rowKey="appointId"
+        headerTitle='Danh sách Lịch tiêm chủng'
+        rowKey='appointId'
         loading={isFetching}
         columns={columns}
         dataSource={appointments}

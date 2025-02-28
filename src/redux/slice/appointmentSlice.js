@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchAppointment } from "../../config/api.appointment";
+import { callFetchAppointment } from '../../config/api.appointment';
 
 export const fetchAppointment = createAsyncThunk(
-  "appointment/fetchAppointment",
+  'appointment/fetchAppointment',
   async ({ query }) => {
     const response = await callFetchAppointment(query);
     return response;
@@ -22,7 +22,7 @@ const initialState = {
 };
 
 export const appointmentSlice = createSlice({
-  name: "appointment",
+  name: 'appointment',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckSquareOutlined } from '@ant-design/icons';
 import { Col, Form, message, notification, Row } from 'antd';
 import {
@@ -14,6 +14,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import { callCreateUser, callUpdateUser } from '../../config/api.user';
 import '../../styles/reset.scss';
+import { callFetchCenter } from '../../config/api.center';
 
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';
@@ -23,9 +24,24 @@ const ModalUser = (props) => {
 
   const [form] = Form.useForm();
   const [animation, setAnimation] = useState('open');
+  const [displayCenter, setDisplayCenter] = useState(null);
+  const [role, setRole] = useState();
+
+
+  useEffect(() => {
+    fetchCenter();
+  }, []);
+
+
+  const fetchCenter = async () => {
+    const res = await callFetchCenter();
+    if (res && res.data) {
+      setDisplayCenter(res.data.result);
+    }
+  };
 
   const submitUser = async (valuesForm) => {
-    const { fullname, email, phoneNumber, role, dateOfBirth, address } = valuesForm;
+    const { fullname, email, phoneNumber, roleName, birthday, address, centerName } = valuesForm;
 
     try {
       if (dataInit?.userId) {
@@ -33,12 +49,10 @@ const ModalUser = (props) => {
         const res = await callUpdateUser(
           dataInit.userId,
           fullname,
-          email,
           phoneNumber,
-          '12345',
-          dataInit.role,
-          dateOfBirth,
+          birthday,
           address,
+          centerName
         );
 
         if (res.data) {
@@ -55,10 +69,10 @@ const ModalUser = (props) => {
           fullname,
           email,
           phoneNumber,
-          '12345',
-          role,
-          dateOfBirth,
+          roleName,
+          birthday,
           address,
+          centerName,
         );
 
         if (res.data) {
@@ -84,13 +98,14 @@ const ModalUser = (props) => {
   const handleReset = async () => {
     form.resetFields();
     setDataInit(null);
-
+    setRole(null);
     // Add animation when closing modal
     setAnimation('close');
     await new Promise((resolve) => setTimeout(resolve, 400));
     setOpenModal(false);
     setAnimation('open');
   };
+
 
   return (
     <>
@@ -137,14 +152,6 @@ const ModalUser = (props) => {
             </Col>
             <Col span={12}>
               <ProFormText
-                label='Password'
-                name='password'
-                disabled
-                placeholder='Default: 123456'
-              />
-            </Col>
-            <Col span={12}>
-              <ProFormText
                 label='Email'
                 name='email'
                 rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
@@ -161,10 +168,10 @@ const ModalUser = (props) => {
             </Col>
             <Col span={12}>
               <ProFormDatePicker
-                name='dateOfBirth'
+                name='birthday'
                 label='Ngày sinh'
                 placeholder='Nhập ngày sinh...'
-                value={dataInit?.dateOfBirth ? dayjs(dataInit.dateOfBirth, dateFormat) : null}
+                value={dataInit?.birthday ? dayjs(dataInit.birthday, dateFormat) : null}
                 width='100%'
               />
             </Col>
@@ -180,21 +187,10 @@ const ModalUser = (props) => {
               />
             </Col>
             <Col span={12}>
-              {dataInit?.userId ? (
+              {dataInit?.userId ? null : (
                 <ProFormSelect
                   width='100%'
-                  disabled
-                  options={[
-                    { value: 'DOCTOR', label: 'DOCTOR' },
-                    { value: 'PATIENT', label: 'PATIENT' },
-                    { value: 'CASHIER', label: 'CASHIER' },
-                  ]}
-                  name='roleName'
-                  label='Vai trò'
-                />
-              ) : (
-                <ProFormSelect
-                  width='100%'
+                  onChange={(value) => setRole(value)}
                   options={[
                     { value: 'DOCTOR', label: 'DOCTOR' },
                     { value: 'PATIENT', label: 'PATIENT' },
@@ -206,6 +202,26 @@ const ModalUser = (props) => {
                   rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
                 />
               )}
+            </Col>
+            <Col span={12}>
+              {
+                role === 'DOCTOR' || role === 'CASHIER' || dataInit?.roleName === 'DOCTOR' || dataInit?.roleName === 'CASHIER' ? (<ProFormSelect
+                  width='100%'
+                  options={
+                    displayCenter &&
+                    displayCenter.map((center) => {
+                      return {
+                        label: center.name,
+                        value: center.name,
+                      };
+                    })
+                  }
+                  name='centerName'
+                  label='Chọn trung tâm công tác'
+                  placeholder='Chọn vai trò...'
+                  rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                />) : null
+              }
             </Col>
           </Row>
         </ModalForm>

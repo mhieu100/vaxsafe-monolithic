@@ -1,14 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useRef, useState } from "react";
-import queryString from "query-string";
-import { sfLike } from "spring-filter-query-builder";
-import { Button, message, notification, Popconfirm, Space } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from 'react-redux';
+import { useRef, useState } from 'react';
+import queryString from 'query-string';
+import { sfLike } from 'spring-filter-query-builder';
+import { Button, message, notification, Popconfirm, Space } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { fetchCenter } from "../../redux/slice/centerSlice";
-import DataTable from "../../components/data-table";
-import ModalCenter from "../../components/modal/modal.center";
-import { callDeleteCenter } from "../../config/api.center";
+import { fetchCenter } from '../../redux/slice/centerSlice';
+import DataTable from '../../components/data-table';
+import ModalCenter from '../../components/modal/modal.center';
+import { callDeleteCenter } from '../../config/api.center';
 
 const CenterPage = () => {
   const tableRef = useRef();
@@ -29,11 +29,11 @@ const CenterPage = () => {
     if (id) {
       const res = await callDeleteCenter(id);
       if (res && +res.statusCode === 200) {
-        message.success("Xóa Trung tâm thành công");
+        message.success('Xóa Trung tâm thành công');
         reloadTable();
       } else {
         notification.error({
-          message: "Có lỗi xảy ra",
+          message: 'Có lỗi xảy ra',
           description: res.message,
         });
       }
@@ -42,60 +42,60 @@ const CenterPage = () => {
 
   const columns = [
     {
-      title: "STT",
-      key: "index",
+      title: 'STT',
+      key: 'index',
       width: 50,
-      align: "center",
+      align: 'center',
       render: (text, record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
       hideInSearch: true,
     },
     {
-      title: "Image",
-      dataIndex: "image",
+      title: 'Image',
+      dataIndex: 'image',
       hideInSearch: true,
       render: (text) => (
         <img
-          src={"http://localhost:8080/storage/center/" + text}
-          alt="center"
+          src={'http://localhost:8080/storage/center/' + text}
+          alt='center'
           style={{
-            width: "50px",
-            height: "auto",
-            objectFit: "cover",
-            borderRadius: "8px",
+            width: '50px',
+            height: 'auto',
+            objectFit: 'cover',
+            borderRadius: '8px',
           }}
         />
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: 'Name',
+      dataIndex: 'name',
       sorter: true,
     },
     {
-      title: "Address",
-      dataIndex: "address",
+      title: 'Address',
+      dataIndex: 'address',
       sorter: true,
     },
     {
-      title: "Phone",
-      dataIndex: "phoneNumber",
+      title: 'Phone',
+      dataIndex: 'phoneNumber',
       hideInSearch: true,
     },
     {
-      title: "Capacity",
-      dataIndex: "capacity",
+      title: 'Capacity',
+      dataIndex: 'capacity',
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Working",
+      title: 'Working',
       hideInSearch: true,
-      dataIndex: "workingHours",
+      dataIndex: 'workingHours',
     },
     {
-      title: "Actions",
+      title: 'Actions',
       hideInSearch: true,
       width: 50,
       render: (_value, entity) => (
@@ -103,7 +103,7 @@ const CenterPage = () => {
           <EditOutlined
             style={{
               fontSize: 20,
-              color: "#ffa500",
+              color: '#ffa500',
             }}
             onClick={() => {
               setOpenModal(true);
@@ -112,18 +112,18 @@ const CenterPage = () => {
           />
 
           <Popconfirm
-            placement="leftTop"
-            title="Xác nhận xóa company"
-            description="Bạn có chắc chắn muốn xóa company này ?"
+            placement='leftTop'
+            title='Xác nhận xóa company'
+            description='Bạn có chắc chắn muốn xóa company này ?'
             onConfirm={() => handleDeleteCompany(entity.centerId)}
-            okText="Xác nhận"
-            cancelText="Hủy"
+            okText='Xác nhận'
+            cancelText='Hủy'
           >
-            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+            <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
                 style={{
                   fontSize: 20,
-                  color: "#ff4d4f",
+                  color: '#ff4d4f',
                 }}
               />
             </span>
@@ -138,31 +138,31 @@ const CenterPage = () => {
     const q = {
       page: params.current,
       size: params.pageSize,
-      filter: "",
+      filter: '',
     };
 
-    if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
+    if (clone.name) q.filter = `${sfLike('name', clone.name)}`;
     if (clone.address) {
       q.filter = clone.name
-        ? q.filter + " and " + `${sfLike("address", clone.address)}`
-        : `${sfLike("address", clone.address)}`;
+        ? q.filter + ' and ' + `${sfLike('address', clone.address)}`
+        : `${sfLike('address', clone.address)}`;
     }
 
     if (!q.filter) delete q.filter;
 
     let temp = queryString.stringify(q);
 
-    let sortBy = "";
+    let sortBy = '';
     if (sort && sort.name) {
-      sortBy = sort.name === "ascend" ? "sort=name,asc" : "sort=name,desc";
+      sortBy = sort.name === 'ascend' ? 'sort=name,asc' : 'sort=name,desc';
     }
     if (sort && sort.address) {
       sortBy =
-        sort.address === "ascend" ? "sort=address,asc" : "sort=address,desc";
+        sort.address === 'ascend' ? 'sort=address,asc' : 'sort=address,desc';
     }
     if (sort && sort.capacity) {
       sortBy =
-        sort.capacity === "ascend" ? "sort=capacity,asc" : "sort=capacity,desc";
+        sort.capacity === 'ascend' ? 'sort=capacity,asc' : 'sort=capacity,desc';
     }
     temp = `${temp}&${sortBy}`;
 
@@ -173,8 +173,8 @@ const CenterPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle="Danh sách Trung tâm tiêm chủng"
-        rowKey="centerId"
+        headerTitle='Danh sách Trung tâm tiêm chủng'
+        rowKey='centerId'
         loading={isFetching}
         columns={columns}
         dataSource={centers}
@@ -191,7 +191,7 @@ const CenterPage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {" "}
+                {' '}
                 {range[0]}-{range[1]} trên {total} rows
               </div>
             );
@@ -202,7 +202,7 @@ const CenterPage = () => {
           return (
             <Button
               icon={<PlusOutlined />}
-              type="primary"
+              type='primary'
               onClick={() => setOpenModal(true)}
             >
               Thêm mới

@@ -1,14 +1,14 @@
-import { Badge, Button, message, notification, Popconfirm, Space } from "antd";
-import { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { sfLike } from "spring-filter-query-builder";
-import queryString from "query-string";
+import { Badge, Button, message, notification, Popconfirm, Space } from 'antd';
+import { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { sfLike } from 'spring-filter-query-builder';
+import queryString from 'query-string';
 
-import { callDeleteUser } from "../../config/api.user";
-import DataTable from "../../components/data-table";
-import { fetchUser } from "../../redux/slice/userSlice";
-import ModalUser from "../../components/modal/modal.user";
+import { callDeleteUser } from '../../config/api.user';
+import DataTable from '../../components/data-table';
+import { fetchUser } from '../../redux/slice/userSlice';
+import ModalUser from '../../components/modal/modal.user';
 
 const UserPage = () => {
   const tableRef = useRef();
@@ -29,7 +29,7 @@ const UserPage = () => {
     if (id) {
       const res = await callDeleteUser(id);
       if (res && +res.statusCode === 200) {
-        message.success("Xóa user thành công");
+        message.success('Xóa user thành công');
         reloadTable();
       } else {
         notification.error({
@@ -42,70 +42,70 @@ const UserPage = () => {
 
   const columns = [
     {
-      title: "STT",
-      key: "index",
+      title: 'STT',
+      key: 'index',
       width: 50,
-      align: "center",
+      align: 'center',
       hideInSearch: true,
       render: (text, record, index) => {
         return <>{index + 1 + (meta.page - 1) * meta.pageSize}</>;
       },
     },
     {
-      title: "Name",
-      dataIndex: "fullname",
+      title: 'Name',
+      dataIndex: 'fullname',
       sorter: true,
     },
     {
-      title: "Email",
-      dataIndex: "email",
+      title: 'Email',
+      dataIndex: 'email',
       sorter: true,
     },
 
     {
-      title: "Phone",
-      dataIndex: "phoneNumber",
+      title: 'Phone',
+      dataIndex: 'phoneNumber',
       hideInSearch: true,
     },
     {
-      title: "Center",
-      dataIndex: "centerName",
+      title: 'Center',
+      dataIndex: 'centerName',
       
     },
     {
-      title: "Role",
-      dataIndex: "role",
+      title: 'Role',
+      dataIndex: 'role',
       render: (_value, entity) => {
         let color;
         switch (entity.roleName) {
-          case "ADMIN":
-            color = "#faad14";
+          case 'ADMIN':
+            color = '#faad14';
             break;
-          case "DOCTOR":
-            color = "#52c41a";
+          case 'DOCTOR':
+            color = '#52c41a';
             break;
-          case "CASHIER":
-            color = "#1890ff";
+          case 'CASHIER':
+            color = '#1890ff';
             break;
           default:
-            color = "#d9d9d9";
+            color = '#d9d9d9';
         }
         return <Badge count={entity.roleName} showZero color={color} />;
       },
     },
     {
-      title: "Birthday",
-      dataIndex: "dateOfBirth",
+      title: 'Birthday',
+      dataIndex: 'birthday',
       hideInSearch: true,
       sorter: true,
     },
     {
-      title: "Address",
-      dataIndex: "address",
+      title: 'Address',
+      dataIndex: 'address',
       hideInSearch: true,
     },
     {
-      title: "Actions",
+      title: 'Actions',
       hideInSearch: true,
       width: 50,
       render: (_value, entity) => (
@@ -113,7 +113,7 @@ const UserPage = () => {
           <EditOutlined
             style={{
               fontSize: 20,
-              color: "#ffa500",
+              color: '#ffa500',
             }}
             onClick={() => {
               setOpenModal(true);
@@ -122,18 +122,18 @@ const UserPage = () => {
           />
 
           <Popconfirm
-            placement="leftTop"
-            title="Xác nhận xóa user"
-            description="Bạn có chắc chắn muốn xóa user này ?"
+            placement='leftTop'
+            title='Xác nhận xóa user'
+            description='Bạn có chắc chắn muốn xóa user này ?'
             onConfirm={() => handleDeleteUser(entity.userId)}
-            okText="Xác nhận"
-            cancelText="Hủy"
+            okText='Xác nhận'
+            cancelText='Hủy'
           >
-            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+            <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
                 style={{
                   fontSize: 20,
-                  color: "#ff4d4f",
+                  color: '#ff4d4f',
                 }}
               />
             </span>
@@ -148,32 +148,32 @@ const UserPage = () => {
     const q = {
       page: params.current,
       size: params.pageSize,
-      filter: "",
+      filter: '',
     };
 
-    if (clone.fullname) q.filter = `${sfLike("fullname", clone.fullname)}`;
+    if (clone.fullname) q.filter = `${sfLike('fullname', clone.fullname)}`;
     if (clone.email) {
       q.filter = clone.fullname
-        ? q.filter + " and " + `${sfLike("email", clone.email)}`
-        : `${sfLike("email", clone.email)}`;
+        ? q.filter + ' and ' + `${sfLike('email', clone.email)}`
+        : `${sfLike('email', clone.email)}`;
     }
     if (clone.role) {
       q.filter = q.filter
-        ? `${q.filter} and ${sfLike("role", clone.role)}`
-        : `${sfLike("role", clone.role)}`;
+        ? `${q.filter} and ${sfLike('role', clone.role)}`
+        : `${sfLike('role', clone.role)}`;
     }
 
     if (!q.filter) delete q.filter;
 
     let temp = queryString.stringify(q);
 
-    let sortBy = "";
+    let sortBy = '';
     if (sort && sort.fullname) {
       sortBy =
-        sort.fullname === "ascend" ? "sort=fullname,asc" : "sort=fullname,desc";
+        sort.fullname === 'ascend' ? 'sort=fullname,asc' : 'sort=fullname,desc';
     }
     if (sort && sort.email) {
-      sortBy = sort.email === "ascend" ? "sort=email,asc" : "sort=email,desc";
+      sortBy = sort.email === 'ascend' ? 'sort=email,asc' : 'sort=email,desc';
     }
     temp = `${temp}&${sortBy}`;
 
@@ -184,8 +184,8 @@ const UserPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle="Danh sách User"
-        rowKey="userId"
+        headerTitle='Danh sách User'
+        rowKey='userId'
         loading={isFetching}
         columns={columns}
         dataSource={users}
@@ -212,7 +212,7 @@ const UserPage = () => {
           return (
             <Button
               icon={<PlusOutlined />}
-              type="primary"
+              type='primary'
               onClick={() => setOpenModal(true)}
             >
               Thêm mới

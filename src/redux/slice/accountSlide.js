@@ -1,10 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchAccount } from "../../config/api.auth";
+import { callFetchAccount } from '../../config/api.auth';
 
 // First, create the thunk
 export const fetchAccount = createAsyncThunk(
-  "account/fetchAccount",
+  'account/fetchAccount',
   async () => {
     const response = await callFetchAccount();
     return response.data;
@@ -12,22 +12,25 @@ export const fetchAccount = createAsyncThunk(
 );
 
 const initialState = {
-  isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
+  isAuthenticated: localStorage.getItem('isAuthenticated') === 'true',
   isLoading: true,
   isRefreshToken: false,
-  errorRefreshToken: "",
-  user: JSON.parse(localStorage.getItem("user")) || {
-    id: "",
-    email: "",
-    fullname: "",
-    centerName: "",
-    roleName: "",
+  errorRefreshToken: '',
+  user: JSON.parse(localStorage.getItem('user')) || {
+    id: '',
+    email: '',
+    fullname: '',
+    address: '',
+    phone: '',
+    birthday: '',
+    centerName: '',
+    roleName: '',
   },
-  activeMenu: "home",
+  activeMenu: 'home',
 };
 
 export const accountSlice = createSlice({
-  name: "account",
+  name: 'account',
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
@@ -41,27 +44,29 @@ export const accountSlice = createSlice({
       state.user.email = action.payload.email;
       state.user.centerName = action.payload.centerName;
       state.user.fullname = action.payload.fullname;
-      
+      state.user.address = action.payload.address;
+      state.user.phone = action.payload.phoneNumber;
+      state.user.birthday = action.payload.birthday;
       state.user.roleName = action?.payload?.roleName;
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user", JSON.stringify(action.payload));
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('user', JSON.stringify(action.payload));
     },
     setLogoutAction: (state) => {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("user");
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('user');
       state.isAuthenticated = false;
       state.user = {
-        id: "",
-        email: "",
-        fullname: "",
-        centerName: "",
-        roleName: "",
+        id: '',
+        email: '',
+        fullname: '',
+        centerName: '',
+        roleName: '',
       };
     },
     setRefreshTokenAction: (state, action) => {
       state.isRefreshToken = action.payload?.status ?? false;
-      state.errorRefreshToken = action.payload?.message ?? "";
+      state.errorRefreshToken = action.payload?.message ?? '';
     },
   },
   extraReducers: (builder) => {
@@ -80,6 +85,9 @@ export const accountSlice = createSlice({
         state.user.email = action.payload.user?.email;
         state.user.fullname = action.payload.user?.fullname;
         state.user.centerName = action.payload.user?.centerName;
+        state.user.address = action.payload.user?.address;
+        state.user.phone = action.payload.user?.phoneNumber;
+        state.user.birthday = action.payload.user?.birthday;
         state.user.roleName = action?.payload?.user?.roleName;
       }
     });

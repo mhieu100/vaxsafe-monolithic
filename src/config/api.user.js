@@ -1,5 +1,4 @@
-import axios from "./axios-customize";
-
+import axios from './axios-customize';
 /**
  *
 Module User
@@ -9,41 +8,36 @@ export const callCreateUser = (
   fullname,
   email,
   phoneNumber,
-  password,
-  role,
-  dateOfBirth,
-  address
+  roleName,
+  birthday,
+  address,
+  centerName
 ) => {
-  return axios.post("/users", {
+  return axios.post('/users', {
     fullname,
     email,
     phoneNumber,
-    password,
-    role,
-    dateOfBirth,
+    roleName,
+    birthday,
     address,
+    centerName,
   });
 };
 
 export const callUpdateUser = (
   userId,
   fullname,
-  email,
   phoneNumber,
-  password,
-  role,
-  dateOfBirth,
-  address
+  birthday,
+  address,
+  centerName
 ) => {
   return axios.put(`/users/${userId}`, {
-    userId,
     fullname,
-    email,
     phoneNumber,
-    password,
-    role,
-    dateOfBirth,
+    birthday,
     address,
+    centerName
   });
 };
 
@@ -56,5 +50,5 @@ export const callDeleteUser = (id) => {
 };
 
 export const callFetchDoctor = () => {
-  return axios.get("/users/doctors");
+  return axios.get('/users/doctors');
 }

@@ -1,4 +1,4 @@
-import axios from "./axios-customize";
+import axios from './axios-customize';
 
 /**
  *
@@ -13,7 +13,7 @@ export const callCreateCenter = (
   workingHours,
   image
 ) => {
-  return axios.post("/centers", {
+  return axios.post('/centers', {
     name,
     address,
     phoneNumber,

@@ -51,11 +51,15 @@ const LayoutAdmin = () => {
 
   const items = [
     {
-      key: '1',
+      key: 'home',
       label: <Link to='/'>Trang chủ</Link>,
     },
     {
-      key: '2',
+      key: 'profile',
+      label: <Link to='/profile'>Trang cá nhân</Link>,
+    },
+    {
+      key: 'logout',
       danger: true,
       label: <label onClick={handleLogout}>Đăng xuất</label>,
     },
@@ -91,7 +95,7 @@ const LayoutAdmin = () => {
       icon: <MenuFoldOutlined />,
       children: [
         { key: '/admin/appointments', label: <Link to='/admin/appointments'>Appointments</Link>, roles: ['CASHIER'] },
-        { key: '/admin/my-schedule', label: <Link to='/admin/appointments'>My Schedule</Link>, roles: ['DOCTOR'] },
+        { key: '/admin/my-schedule', label: <Link to='/admin/my-schedule'>My Schedule</Link>, roles: ['DOCTOR'] },
       ],
       roles: ['DOCTOR', 'CASHIER']
     },

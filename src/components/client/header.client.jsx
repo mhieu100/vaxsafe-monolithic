@@ -37,18 +37,18 @@ const NavbarTop = () => {
       label: `Welcome ${user?.fullname}`,
     },
 
-    {
-      key: '1',
-      label: <Link to='/'>Hồ sơ</Link>,
-    },
+
     user.roleName !== 'PATIENT'
       ? {
-          key: '2',
-          label: <Link to='/admin'>Trang quản trị</Link>,
-        }
-      : '',
+        key: 'system',
+        label: <Link to='/admin'>Trang quản trị</Link>,
+      }
+      : {
+        key: 'profile',
+        label: <Link to='/profile'>Hồ sơ</Link>,
+      },
     {
-      key: '3',
+      key: 'logout',
       danger: true,
       label: <label onClick={handleLogout}>Đăng xuất</label>,
     },
@@ -79,10 +79,6 @@ const NavbarTop = () => {
             {
               key: '/shop',
               label: <Link to='/shop'>Kho vaccine</Link>,
-            },
-            {
-              key: '/center',
-              label: <Link to='/center'>Trung tâm tiêm chủng</Link>,
             },
           ]}
           style={{ flex: 1, minWidth: 0 }}
