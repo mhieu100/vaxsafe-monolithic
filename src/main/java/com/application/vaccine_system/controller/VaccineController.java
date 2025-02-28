@@ -1,5 +1,7 @@
 package com.application.vaccine_system.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ import com.application.vaccine_system.service.VaccineService;
 import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/vaccines")
@@ -62,4 +66,10 @@ public class VaccineController {
     public void deleteVaccine(@PathVariable Long id) throws InvalidException {
         vaccineService.deleteVaccine(id);
     }
+
+    @GetMapping("/listSearch")
+    public ResponseEntity<List<Vaccine>> getMethodName(@PathVariable("name") String name) {
+        return ResponseEntity.ok().body(vaccineService.getVaccinesByName(name));
+    }
+    
 }

@@ -79,7 +79,8 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
 
         String[] whiteList = {
-                    "/", "/auth/login", "/auth/register", "/auth/refresh", "/storage/**"
+                    "/", "/auth/login", "/auth/register", "/auth/refresh", "/storage/**",
+                    "/api/vnpay/**"
             };
 
         http

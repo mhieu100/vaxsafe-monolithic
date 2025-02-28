@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,12 @@ public class UserController {
                 .equal(root.get("role").get("name"), "DOCTOR")).and(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
                 .equal(root.get("center").get("name"), centerName));
         return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
+    }
+
+    @PostMapping
+    @ApiMessage("Create a user")
+    public ResponseEntity<ResUser> createUser(@Valid @RequestBody ReqUser reqUser) throws InvalidException {
+        return ResponseEntity.ok().body(userService.createUser(reqUser));
     }
 
     @PutMapping("/{id}")

@@ -67,4 +67,8 @@ public class VaccineService {
         }
         vaccineRepository.deleteById(id);
     }
+
+    public List<Vaccine> getVaccinesByName(String name) {
+        return vaccineRepository.findAllByName(name);
+    }
 }

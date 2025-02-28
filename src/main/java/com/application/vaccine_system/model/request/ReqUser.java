@@ -8,8 +8,12 @@ import lombok.Data;
 @Data
 public class ReqUser {
     @NotBlank(message = "Full name không được trống")
-    private String fullname;
+    String fullname;
+    String email;
+    String password;
     String phoneNumber;
     LocalDate birthday;
     String address;
+    String roleName;
+    String centerName;
 }

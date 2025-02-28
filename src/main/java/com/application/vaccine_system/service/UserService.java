@@ -17,6 +17,7 @@ import com.application.vaccine_system.model.request.ReqRegister;
 import com.application.vaccine_system.model.request.ReqUser;
 import com.application.vaccine_system.model.response.Pagination;
 import com.application.vaccine_system.model.response.ResUser;
+import com.application.vaccine_system.repository.CenterRepository;
 import com.application.vaccine_system.repository.RoleRepository;
 import com.application.vaccine_system.repository.UserRepository;
 
@@ -28,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CenterRepository centerRepository;
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -54,7 +56,7 @@ public class UserService {
         resUser.setBirthday(user.getBirthday());
         resUser.setAddress(user.getAddress());
         if (user.getCenter() == null) {
-            resUser.setCenterName(null); 
+            resUser.setCenterName(null);
         } else {
             resUser.setCenterName(user.getCenter().getName());
         }
@@ -83,15 +85,23 @@ public class UserService {
         return pagination;
     }
 
-    public ResUser createUser(User user) throws InvalidException {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new InvalidException("Email đã tồn tài : " + user.getEmail());
+    public ResUser createUser(ReqUser reqUser) throws InvalidException {
+        if (userRepository.existsByEmail(reqUser.getEmail())) {
+            throw new InvalidException("Email đã tồn tài : " + reqUser.getEmail());
         }
-        String hashPassword = this.passwordEncoder.encode(user.getPassword());
+        User user = new User();
+        String hashPassword = this.passwordEncoder.encode("123456");
         user.setPassword(hashPassword);
-        user.setRole(this.roleRepository.findByName("PATIENT"));
-        User savedUser = userRepository.save(user);
-        return convertToResUser(savedUser);
+        user.setFullname(reqUser.getFullname());
+        user.setEmail(reqUser.getEmail());
+        user.setPhoneNumber(reqUser.getPhoneNumber());
+        user.setBirthday(reqUser.getBirthday());
+        user.setAddress(reqUser.getAddress());
+        user.setRole(this.roleRepository.findByName(reqUser.getRoleName()));
+        if(reqUser.getCenterName() != null) {
+            user.setCenter(this.centerRepository.findByName(reqUser.getCenterName()));
+        }
+        return convertToResUser(userRepository.save(user));
     }
 
     public ResUser updateUser(Long id, ReqUser reqUser) throws InvalidException {
@@ -99,12 +109,15 @@ public class UserService {
         if (currentUser.isEmpty()) {
             throw new InvalidException("User not found with id: " + id);
         }
+        System.out.println(reqUser.getCenterName() + "123131313123123123132");
         currentUser.get().setUserId(id);
         currentUser.get().setFullname(reqUser.getFullname());
         currentUser.get().setPhoneNumber(reqUser.getPhoneNumber());
         currentUser.get().setBirthday(reqUser.getBirthday());
         currentUser.get().setAddress(reqUser.getAddress());
-
+        if(reqUser.getCenterName() != null) {
+            currentUser.get().setCenter(this.centerRepository.findByName(reqUser.getCenterName()));
+        }
         return convertToResUser(userRepository.save(currentUser.get()));
 
     }
