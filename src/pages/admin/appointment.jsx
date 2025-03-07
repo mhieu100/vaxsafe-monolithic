@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import queryString from 'query-string';
 import { useDispatch, useSelector } from 'react-redux';
 import { sfLike } from 'spring-filter-query-builder';
-import { Badge, Space } from 'antd';
+import { Badge, Space, Table } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
 import { fetchAppointment } from '../../redux/slice/appointmentSlice';
@@ -83,18 +83,18 @@ const AppointmentPage = () => {
       render: (_value, entity) => (
 
         entity.status === 'PENDING' ? (
-        <Space>
-          <EditOutlined
-            style={{
-              fontSize: 20,
-              color: '#ffa500',
-            }}
-            onClick={() => {
-              setOpenModal(true);
-              setDataInit(entity);
-            }}
-          />
-        </Space>) : null
+          <Space>
+            <EditOutlined
+              style={{
+                fontSize: 20,
+                color: '#ffa500',
+              }}
+              onClick={() => {
+                setOpenModal(true);
+                setDataInit(entity);
+              }}
+            />
+          </Space>) : null
       ),
     },
   ]

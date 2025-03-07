@@ -23,19 +23,18 @@ const ShopPage = () => {
     const handlePaymentCallback = async () => {
       if (vnpResponse && paymentId) { // Chỉ gọi khi có cả hai giá trị
         try {
-          const response = await callUpdatePayment(paymentId, vnpResponse);
+          await callUpdatePayment(paymentId, vnpResponse);
           if (vnpResponse === '00') {
             message.success('Đặt lịch thành công');
           } else {
             message.error('Đặt lịch thất bại');
           }
         } catch (error) {
-          console.error('Error updating payment:', error);
           message.error('Có lỗi xảy ra khi cập nhật thanh toán');
         }
       }
     };
-  
+
     handlePaymentCallback();
   }, [vnpResponse, paymentId]);
 
@@ -71,8 +70,6 @@ const ShopPage = () => {
       setTotal(res.data.meta.total);
     }
   };
-
-
 
   return (
     <>

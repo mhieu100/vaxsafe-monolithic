@@ -1,7 +1,7 @@
  
-import { ProTable } from "@ant-design/pro-components";
-import vi_VN from "antd/locale/vi_VN";
-import { ConfigProvider } from "antd";
+import { ProTable } from '@ant-design/pro-components';
+import vi_VN from 'antd/locale/vi_VN';
+import { ConfigProvider } from 'antd';
 
 const DataTable = ({
   columns,
@@ -19,7 +19,7 @@ const DataTable = ({
   toolBarRender,
   headerTitle,
   actionRef,
-  dateFormatter = "string",
+  dateFormatter = 'string',
   rowSelection,
 }) => {
   return (
