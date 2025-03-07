@@ -1,14 +1,18 @@
 package com.application.vaccine_system.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,9 +48,12 @@ public class AuthController {
     @PostMapping("/login")
     @ApiMessage("Login successful")
     public ResponseEntity<ResLogin> login(@Valid @RequestBody ReqLogin reqLogin) {
+        System.out.println("Step 1");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 reqLogin.getUsername(), reqLogin.getPassword());
+        System.out.println("Step 2");
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        System.out.println("Step 4");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLogin ResLogin = new ResLogin();
@@ -64,7 +71,7 @@ public class AuthController {
             ResLogin.setUser(userLogin);
             System.out.println(">>> Login successful : " + userLogin);
         }
-
+        
         String access_token = this.securityUtil.createAccessToken(reqLogin.getUsername(), ResLogin.getUser());
         String refresh_token = this.securityUtil.createRefreshToken(reqLogin.getUsername(), ResLogin);
         userService.updateUserToken(refresh_token, reqLogin.getUsername());
@@ -100,6 +107,16 @@ public class AuthController {
             userLogin.setCenterName(currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             userGetAccount.setUser(userLogin);
         }
+        // Lấy thông tin xác thực hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Ép kiểu Principal thành Jwt
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        // Lấy thông tin từ JWT
+        String username = jwt.getClaim("sub"); // "sub" là trường chứa username trong JWT
+        List<String> authorities = jwt.getClaim("permission"); // "roles" là trường chứa các quyền trong JWT
+        // In ra thông tin
+        System.out.println("Username: " + username);
+        System.out.println("Authorities: " + authorities);
         return ResponseEntity.ok().body(userGetAccount);
     }
 

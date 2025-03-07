@@ -35,6 +35,7 @@ public class SecurityUtil {
     public SecurityUtil(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
+
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
     @Value("${mhieu.jwt.base64-secret}")
@@ -51,7 +52,7 @@ public class SecurityUtil {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, SecurityUtil.JWT_ALGORITHM.getName());
     }
 
-    public Jwt checkValidRefreshToken(String token){
+    public Jwt checkValidRefreshToken(String token) {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
                 getSecretKey()).macAlgorithm(JWT_ALGORITHM).build();
         try {
@@ -128,6 +129,7 @@ public class SecurityUtil {
         } else if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
             return springSecurityUser.getUsername();
         } else if (authentication.getPrincipal() instanceof Jwt jwt) {
+            System.out.println(">>> JWT - 1 : " + jwt.getSubject());
             return jwt.getSubject();
         } else if (authentication.getPrincipal() instanceof String s) {
             return s;
@@ -135,16 +137,4 @@ public class SecurityUtil {
         return null;
     }
 
-    /**
-     * Get the JWT of the current user.
-     *
-     * @return the JWT of the current user.
-     */
-    public static Optional<String> getCurrentUserJWT() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        return Optional.ofNullable(securityContext.getAuthentication())
-                .filter(authentication -> authentication.getCredentials() instanceof String)
-                .map(authentication -> (String) authentication.getCredentials());
-    }
-
-    }
+}

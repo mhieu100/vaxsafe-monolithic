@@ -31,8 +31,6 @@ public class CenterController {
 
     private final CenterService centerService;
 
-    
-
     @GetMapping("/{id}")
     @ApiMessage("Get a center by id")
     public ResponseEntity<ResCenter> getCenterById(@PathVariable Long id) throws InvalidException {

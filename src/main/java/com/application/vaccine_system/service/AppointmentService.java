@@ -102,7 +102,20 @@ public class AppointmentService {
         return paymentUrl;
     }
 
+    @Transactional
+    public String updatePaymentStatus(int paymentId, String vnpResponse) {
+        Payment payment = paymentRepository.findById((long)paymentId).get();
     
+        if (vnpResponse.equals("00")) {
+            payment.setStatus(Payment.PaymentStatus.COMPLETED);
+            payment.setPaymentDate(LocalDate.now());
+        } else {
+            payment.setStatus(Payment.PaymentStatus.FAILED);
+            payment.setPaymentDate(LocalDate.now());
+        }
+        paymentRepository.save(payment);
+        return "Payment status updated";
+    }
 
     public Pagination getAllAppointments(Specification<Appointment> specification, Pageable pageable) {
 
@@ -165,18 +178,5 @@ public class AppointmentService {
         return convertToReqAppointment(appointment);
     }
 
-    @Transactional
-    public String updatePaymentStatus(int paymentId, String vnpResponse) {
-        Payment payment = paymentRepository.findById((long)paymentId).get();
     
-        if (vnpResponse.equals("00")) {
-            payment.setStatus(Payment.PaymentStatus.COMPLETED);
-            payment.setPaymentDate(LocalDate.now());
-        } else {
-            payment.setStatus(Payment.PaymentStatus.FAILED);
-            payment.setPaymentDate(LocalDate.now());
-        }
-        paymentRepository.save(payment);
-        return "Payment status updated";
-    }
 }
