@@ -107,16 +107,12 @@ public class AuthController {
             userLogin.setCenterName(currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             userGetAccount.setUser(userLogin);
         }
-        // Lấy thông tin xác thực hiện tại
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // Ép kiểu Principal thành Jwt
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        // Lấy thông tin từ JWT
-        String username = jwt.getClaim("sub"); // "sub" là trường chứa username trong JWT
-        List<String> authorities = jwt.getClaim("permission"); // "roles" là trường chứa các quyền trong JWT
-        // In ra thông tin
-        System.out.println("Username: " + username);
-        System.out.println("Authorities: " + authorities);
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Jwt jwt = (Jwt) authentication.getPrincipal();
+        // String username = jwt.getClaim("sub"); // "sub" là trường chứa username trong JWT
+        // List<String> authorities = jwt.getClaim("permission"); // "roles" là trường chứa các quyền trong JWT
+        // System.out.println("Username: " + username);
+        // System.out.println("Authorities: " + authorities);
         return ResponseEntity.ok().body(userGetAccount);
     }
 

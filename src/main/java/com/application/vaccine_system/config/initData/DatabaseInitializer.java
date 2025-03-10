@@ -36,13 +36,13 @@ public class DatabaseInitializer implements CommandLineRunner {
         if (countPermissions == 0) {
             ArrayList<Permission> arr = new ArrayList<>();
             arr.add(new Permission("Create a center", "/centers", "POST", "CENTERS"));
-            arr.add(new Permission("Update a center", "/centers", "PUT", "CENTERS"));
+            arr.add(new Permission("Update a center", "/centers/{id}", "PUT", "CENTERS"));
             arr.add(new Permission("Delete a center", "/centers/{id}", "DELETE", "CENTERS"));
             arr.add(new Permission("Get a center by id", "/centers/{id}", "GET", "CENTERS"));
             arr.add(new Permission("Get centers with pagination", "/centers", "GET", "CENTERS"));
 
             arr.add(new Permission("Create a vaccine", "/vaccines", "POST", "VACCINES"));
-            arr.add(new Permission("Update a vaccine", "/vaccines", "PUT", "VACCINES"));
+            arr.add(new Permission("Update a vaccine", "/vaccines/{id}", "PUT", "VACCINES"));
             arr.add(new Permission("Delete a vaccine", "/vaccines/{id}", "DELETE", "VACCINES"));
             arr.add(new Permission("Get a vaccine by id", "/vaccines/{id}", "GET", "VACCINES"));
             arr.add(new Permission("Get vaccines with pagination", "/vaccines", "GET", "VACCINES"));
@@ -54,11 +54,12 @@ public class DatabaseInitializer implements CommandLineRunner {
             arr.add(new Permission("Get permissions with pagination", "/permissions", "GET", "PERMISSIONS"));
 
             arr.add(new Permission("Create a user", "/users", "POST", "USERS"));
-            arr.add(new Permission("Update a user", "/users", "PUT", "USERS"));
+            arr.add(new Permission("Update a user", "/users/{id}", "PUT", "USERS"));
             arr.add(new Permission("Delete a user", "/users/{id}", "DELETE", "USERS"));
             arr.add(new Permission("Get a user by id", "/users/{id}", "GET", "USERS"));
             arr.add(new Permission("Get users with pagination", "/users", "GET", "USERS"));
 
+            arr.add(new Permission("Access profile", "/auth/account", "GET", "AUTH"));
 
             arr.add(new Permission("Upload a file", "/files", "GET", "FILES"));
 

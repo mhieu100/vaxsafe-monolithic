@@ -129,7 +129,6 @@ public class SecurityUtil {
         } else if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
             return springSecurityUser.getUsername();
         } else if (authentication.getPrincipal() instanceof Jwt jwt) {
-            System.out.println(">>> JWT - 1 : " + jwt.getSubject());
             return jwt.getSubject();
         } else if (authentication.getPrincipal() instanceof String s) {
             return s;
