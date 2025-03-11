@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchCenter } from '../../config/api.center';
+import { callFetchRole } from '../../config/api.role';
 
-export const fetchCenter = createAsyncThunk(
-  'center/fetchCenter',
+export const fetchRole = createAsyncThunk(
+  'role/fetchRole',
   async ({ query }) => {
-    const response = await callFetchCenter(query);
+    const response = await callFetchRole(query);
     return response;
   }
 );
@@ -21,19 +21,19 @@ const initialState = {
   result: [],
 };
 
-export const centerSlice = createSlice({
-  name: 'center',
+export const roleSlice = createSlice({
+  name: 'role',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCenter.pending, (state) => {
+      .addCase(fetchRole.pending, (state) => {
         state.isFetching = true;
       })
-      .addCase(fetchCenter.rejected, (state) => {
+      .addCase(fetchRole.rejected, (state) => {
         state.isFetching = false;
       })
-      .addCase(fetchCenter.fulfilled, (state, action) => {
+      .addCase(fetchRole.fulfilled, (state, action) => {
         if (action.payload && action.payload.data) {
           state.isFetching = false;
           state.meta = action.payload.data.meta;
@@ -43,4 +43,5 @@ export const centerSlice = createSlice({
   },
 });
 
-export default centerSlice.reducer;
+export default roleSlice.reducer;
+

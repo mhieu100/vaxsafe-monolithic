@@ -141,17 +141,15 @@ const ModalVaccine = (props) => {
       requiredDoses,
     } = valuesForm;
 
-    if (dataLogo.length === 0) {
-      message.error('Vui lòng upload ảnh Vaccine');
-      return;
-    }
+   
 
     if (dataInit?.vaccineId) {
+      const logoName = !dataLogo || dataLogo.length === 0 || dataLogo[0].name === undefined ? dataInit.image : dataLogo[0].name;
       const res = await callUpdateVaccine(
         dataInit.vaccineId,
         name,
         value,
-        dataLogo[0].name,
+        logoName,
         manufacturer,
         disease,
         dosage,
@@ -171,6 +169,10 @@ const ModalVaccine = (props) => {
         });
       }
     } else {
+      if (dataLogo.length === 0) {
+        message.error('Vui lòng upload ảnh Vaccine');
+        return;
+      }
       const res = await callCreateVaccine(
         name,
         value,

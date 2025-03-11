@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchCenter } from '../../config/api.center';
+import { callFetchPermission } from '../../config/api.permission';
 
-export const fetchCenter = createAsyncThunk(
-  'center/fetchCenter',
+
+export const fetchPermission = createAsyncThunk(
+  'permission/fetchPermission',
   async ({ query }) => {
-    const response = await callFetchCenter(query);
+    const response = await callFetchPermission(query);
     return response;
   }
 );
@@ -21,19 +22,19 @@ const initialState = {
   result: [],
 };
 
-export const centerSlice = createSlice({
-  name: 'center',
+export const permissionSlice = createSlice({
+  name: 'permission',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCenter.pending, (state) => {
+      .addCase(fetchPermission.pending, (state) => {
         state.isFetching = true;
       })
-      .addCase(fetchCenter.rejected, (state) => {
+      .addCase(fetchPermission.rejected, (state) => {
         state.isFetching = false;
       })
-      .addCase(fetchCenter.fulfilled, (state, action) => {
+      .addCase(fetchPermission.fulfilled, (state, action) => {
         if (action.payload && action.payload.data) {
           state.isFetching = false;
           state.meta = action.payload.data.meta;
@@ -43,4 +44,5 @@ export const centerSlice = createSlice({
   },
 });
 
-export default centerSlice.reducer;
+export default permissionSlice.reducer;
+

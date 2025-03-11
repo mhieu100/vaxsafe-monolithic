@@ -7,6 +7,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   AppstoreOutlined,
+  UserSwitchOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -89,6 +90,19 @@ const LayoutAdmin = () => {
       icon: <UploadOutlined />,
       label: <Link to='/admin/centers'>Center</Link>,
       roles: ['ADMIN', 'DOCTOR', 'CASHIER']
+    },
+
+    {
+      key: '/admin/permissions',
+      icon: <UploadOutlined />,
+      label: <Link to='/admin/permissions'>Permission</Link>,
+      roles: ['ADMIN']
+    },
+    {
+      key: '/admin/roles',
+      icon: <UserSwitchOutlined />,
+      label: <Link to='/admin/roles'>Role</Link>,
+      roles: ['ADMIN']
     },
     {
       label: 'Appointment',

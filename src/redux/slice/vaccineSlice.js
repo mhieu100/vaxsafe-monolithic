@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { callFetchVaccine } from "../../config/api.vaccine";
+import { callFetchVaccine } from '../../config/api.vaccine';
 
 export const fetchVaccine = createAsyncThunk(
-  "vaccine/fetchVaccine",
+  'vaccine/fetchVaccine',
   async ({ query }) => {
     const response = await callFetchVaccine(query);
     return response;
@@ -22,7 +22,7 @@ const initialState = {
 };
 
 export const vaccineSlice = createSlice({
-  name: "vaccine",
+  name: 'vaccine',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

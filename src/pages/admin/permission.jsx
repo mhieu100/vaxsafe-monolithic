@@ -1,23 +1,24 @@
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  Badge,
   Button,
   message,
   notification,
   Popconfirm,
   Space,
-  Tooltip,
 } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, MenuUnfoldOutlined, PlusOutlined } from '@ant-design/icons';
 import { sfLike } from 'spring-filter-query-builder';
 import queryString from 'query-string';
 
-import { callDeleteVaccine } from '../../config/api.vaccine';
 import DataTable from '../../components/data-table';
-import { fetchVaccine } from '../../redux/slice/vaccineSlice';
-import ModalVaccine from '../../components/modal/modal.vaccine';
+import { callDeletePermission } from '../../config/api.permission';
+import { fetchPermission } from '../../redux/slice/permissionSlice';
+import ModalPermission from '../../components/modal/modal.permission';
+import ViewDetailPermission from '../../components/modal/view.permission';
 
-const VaccinePage = () => {
+const PermissionPage = () => {
   const tableRef = useRef();
   const reloadTable = () => {
     tableRef?.current?.reload();
@@ -25,18 +26,19 @@ const VaccinePage = () => {
 
   const [dataInit, setDataInit] = useState(null);
 
-  const isFetching = useSelector((state) => state.vaccine.isFetching);
-  const meta = useSelector((state) => state.vaccine.meta);
-  const centers = useSelector((state) => state.vaccine.result);
+  const isFetching = useSelector((state) => state.permission.isFetching);
+  const meta = useSelector((state) => state.permission.meta);
+  const permissions = useSelector((state) => state.permission.result);
   const dispatch = useDispatch();
 
   const [openModal, setOpenModal] = useState(false);
+  const [openViewDetail, setOpenViewDetail] = useState(false);
 
-  const handleDeleteVaccine = async (id) => {
+  const handleDeletePermission = async (id) => {
     if (id) {
-      const res = await callDeleteVaccine(id);
+      const res = await callDeletePermission(id);
       if (res && +res.statusCode === 200) {
-        message.success('Xóa vaccine thành công');
+        message.success('Xóa permission thành công');
         reloadTable();
       } else {
         notification.error({
@@ -59,71 +61,41 @@ const VaccinePage = () => {
       hideInSearch: true,
     },
     {
-      title: 'Image',
-      dataIndex: 'image',
-      hideInSearch: true,
-      render: (text) => (
-        <img
-        src={'http://localhost:8080/storage/vaccine/' + text}
-          alt='center'
-          style={{
-            width: '50px',
-            height: 'auto',
-            objectFit: 'cover',
-            borderRadius: '8px',
-          }}
-        />
-      ),
+      title: 'API',
+      dataIndex: 'apiPath',
+      sorter: true,
+
+    },
+
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      render: (_value, entity) => {
+        let color;
+        switch (entity.method) {
+          case 'PUT':
+            color = '#faad14';
+            break;
+          case 'GET':
+            color = '#52c41a';
+            break;
+          case 'DELETE':
+            color = '#1890ff';
+            break;
+          default:
+            color = '#d9d9d9';
+        }
+        return <Badge count={entity.method} showZero color={color} />;
+      },
     },
     {
       title: 'Name',
       dataIndex: 'name',
       sorter: true,
-      render: (text) => (
-        <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
-      ),
     },
     {
-      title: 'Manufacturer',
-      dataIndex: 'manufacturer',
-      sorter: true,
-    },
-    {
-      title: 'Disease',
-      dataIndex: 'disease',
-      render: (text) => (
-        <Tooltip title={text}>
-          {text.length > 20 ? text.slice(0, 20) + '...' : text}
-        </Tooltip>
-      ),
-    },
-    {
-      title: 'Dosage',
-      dataIndex: 'dosage',
-      hideInSearch: true,
-    },
-    {
-      title: 'AgeRange',
-      dataIndex: 'ageRange',
-      hideInSearch: true,
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      hideInSearch: true,
-      sorter: true,
-    },
-    {
-      title: 'Stock',
-      dataIndex: 'stockQuantity',
-      hideInSearch: true,
-      sorter: true,
-    },
-    {
-      title: 'Doses',
-      dataIndex: 'requiredDoses',
+      title: 'Module',
+      dataIndex: 'module',
       hideInSearch: true,
     },
     {
@@ -142,16 +114,27 @@ const VaccinePage = () => {
               setDataInit(entity);
             }}
           />
+          <MenuUnfoldOutlined
+
+            style={{
+              fontSize: 20,
+              color: '#1890ff',
+            }}
+            onClick={() => {
+              setOpenViewDetail(true);
+              setDataInit(entity);
+            }}
+          />
 
           <Popconfirm
             placement='leftTop'
-            title='Xác nhận xóa company'
+            title='Xác nhận xóa quyền này ?'
             description='Bạn có chắc chắn muốn xóa vaccine này ?'
-            onConfirm={() => handleDeleteVaccine(entity.vaccineId)}
+            onConfirm={() => handleDeletePermission(entity.id)}
             okText='Xác nhận'
             cancelText='Hủy'
           >
-            <span style={{ cursor: 'pointer', margin: '0 10px' }}>
+            <span style={{ cursor: 'pointer', margin: '0' }}>
               <DeleteOutlined
                 style={{
                   fontSize: 20,
@@ -217,14 +200,14 @@ const VaccinePage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Vaccine'
-        rowKey='vaccineId'
+        headerTitle='Danh sách Quyền'
+        rowKey='id'
         loading={isFetching}
         columns={columns}
-        dataSource={centers}
+        dataSource={permissions}
         request={async (params, sort, filter) => {
           const query = buildQuery(params, sort, filter);
-          dispatch(fetchVaccine({ query }));
+          dispatch(fetchPermission({ query }));
         }}
         scroll={{ x: true }}
         pagination={{
@@ -253,14 +236,20 @@ const VaccinePage = () => {
           );
         }}
       />
-      <ModalVaccine
+      <ModalPermission
         openModal={openModal}
         setOpenModal={setOpenModal}
         reloadTable={reloadTable}
         dataInit={dataInit}
         setDataInit={setDataInit}
       />
+      <ViewDetailPermission
+        onClose={setOpenViewDetail}
+        open={openViewDetail}
+        dataInit={dataInit}
+        setDataInit={setDataInit}
+      />
     </>
   );
 };
-export default VaccinePage;
+export default PermissionPage;

@@ -23,6 +23,12 @@ export const ALL_PERMISSIONS = {
         UPDATE: { method: 'PUT', apiPath: '/users', module: 'USERS' },
         DELETE: { method: 'DELETE', apiPath: '/users/{id}', module: 'USERS' },
     },
+    ROLES: {
+        GET_PAGINATE: { method: 'GET', apiPath: '/roles', module: 'ROLES' },
+    },
+    AUTH: {
+        PROFILE: { method: 'GET', apiPath: '/auth/account', module: 'AUTH' },
+    }
 }
 
 export const ALL_MODULES = {
@@ -30,4 +36,6 @@ export const ALL_MODULES = {
     VACCINES: 'VACCINES',
     PERMISSIONS: 'PERMISSIONS',
     USERS: 'USERS',
+    ROLES: 'ROLES',
+    AUTH: 'AUTH'
 }

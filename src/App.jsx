@@ -20,6 +20,8 @@ import UserPage from './pages/admin/user';
 import MySchedulePage from './pages/admin/my-schedule';
 import ProfilePage from './pages/auth/profile';
 import ProtectedUserRoute from './components/share/protected-route/user-protected';
+import PermissionPage from './pages/admin/permission';
+import RolePage from './pages/admin/role';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -80,6 +82,14 @@ const App = () => {
         {
           path: 'centers',
           element: <CenterPage />,
+        },
+        {
+          path: 'permissions',
+          element: <PermissionPage />,
+        },
+        {
+          path: 'roles',
+          element: <RolePage />,
         },
         {
           path: 'appointments',
