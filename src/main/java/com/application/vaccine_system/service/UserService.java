@@ -109,7 +109,6 @@ public class UserService {
         if (currentUser.isEmpty()) {
             throw new InvalidException("User not found with id: " + id);
         }
-        System.out.println(reqUser.getCenterName() + "123131313123123123132");
         currentUser.get().setUserId(id);
         currentUser.get().setFullname(reqUser.getFullname());
         currentUser.get().setPhoneNumber(reqUser.getPhoneNumber());

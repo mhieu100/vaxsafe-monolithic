@@ -13,7 +13,7 @@ public class PermissionInterceptorConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(@SuppressWarnings("null") InterceptorRegistry registry) {
         String[] whiteList = {
             "/", "/auth/login", "/auth/register", "/auth/refresh", "/auth/logout", "/storage/**"
     };

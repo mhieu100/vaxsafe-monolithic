@@ -140,6 +140,28 @@ public class AppointmentService {
         return pagination;
     }
 
+    public Pagination getAllAppointmentsOfUser(Specification<Appointment> specification, Pageable pageable) {
+        Page<Appointment> pageAppointment = appointmentRepository.findAll(specification, pageable);
+        Pagination pagination = new Pagination();
+        Pagination.Meta meta = new Pagination.Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageAppointment.getTotalPages());
+        meta.setTotal(pageAppointment.getTotalElements());
+
+        pagination.setMeta(meta);
+
+        List<ResAppointment> listAppointments = pageAppointment.getContent()
+                .stream().map(this::convertToReqAppointment)
+                .collect(Collectors.toList());
+
+        pagination.setResult(listAppointments);
+
+        return pagination;
+    }
+
     public ResAppointment updateAppointmentOfCashier(String id, ReqAppointment reqAppointment) {
         String email = SecurityUtil.getCurrentUserLogin().isPresent()
                 ? SecurityUtil.getCurrentUserLogin().get()

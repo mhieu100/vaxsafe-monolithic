@@ -1,18 +1,16 @@
 package com.application.vaccine_system.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.application.vaccine_system.annotation.ApiMessage;
 import com.application.vaccine_system.config.security.SecurityUtil;
 import com.application.vaccine_system.exception.InvalidException;
-
+import com.application.vaccine_system.model.Appointment;
 import com.application.vaccine_system.model.User;
 import com.application.vaccine_system.model.request.ReqLogin;
 import com.application.vaccine_system.model.request.ReqRegister;
+import com.application.vaccine_system.model.response.Pagination;
+import com.application.vaccine_system.model.response.ResAppointment;
 import com.application.vaccine_system.model.response.ResLogin;
+import com.application.vaccine_system.service.AppointmentService;
 import com.application.vaccine_system.service.UserService;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final AppointmentService appointmentService;
     @Value("${mhieu.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
@@ -71,7 +74,7 @@ public class AuthController {
             ResLogin.setUser(userLogin);
             System.out.println(">>> Login successful : " + userLogin);
         }
-        
+
         String access_token = this.securityUtil.createAccessToken(reqLogin.getUsername(), ResLogin.getUser());
         String refresh_token = this.securityUtil.createRefreshToken(reqLogin.getUsername(), ResLogin);
         userService.updateUserToken(refresh_token, reqLogin.getUsername());
@@ -91,7 +94,7 @@ public class AuthController {
 
     @GetMapping("/account")
     @ApiMessage("Get profile")
-    public ResponseEntity<ResLogin.UserGetAccount> getAll() {
+    public ResponseEntity<ResLogin.UserGetAccount> getProfile() {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         User currentUserDB = userService.getUserByEmail(email);
         ResLogin.UserLogin userLogin = new ResLogin.UserLogin();
@@ -107,13 +110,27 @@ public class AuthController {
             userLogin.setCenterName(currentUserDB.getCenter() == null ? null : currentUserDB.getCenter().getName());
             userGetAccount.setUser(userLogin);
         }
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Authentication authentication =
+        // SecurityContextHolder.getContext().getAuthentication();
         // Jwt jwt = (Jwt) authentication.getPrincipal();
-        // String username = jwt.getClaim("sub"); // "sub" là trường chứa username trong JWT
-        // List<String> authorities = jwt.getClaim("permission"); // "roles" là trường chứa các quyền trong JWT
+        // String username = jwt.getClaim("sub"); // "sub" là trường chứa username trong
+        // JWT
+        // List<String> authorities = jwt.getClaim("permission"); // "roles" là trường
+        // chứa các quyền trong JWT
         // System.out.println("Username: " + username);
         // System.out.println("Authorities: " + authorities);
         return ResponseEntity.ok().body(userGetAccount);
+    }
+
+    @GetMapping("/my-appointments")
+    @ApiMessage("Get all appointments of user")
+    public ResponseEntity<Pagination> getAllAppointmentsOfUser(@Filter Specification<Appointment> specification,
+            Pageable pageable) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        User currentUserDB = userService.getUserByEmail(email);
+        specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
+                .equal(root.get("patient"), currentUserDB));
+        return ResponseEntity.ok().body(appointmentService.getAllAppointmentsOfUser(specification, pageable));
     }
 
     @GetMapping("/refresh")
@@ -182,9 +199,8 @@ public class AuthController {
         // update refresh token = null
         this.userService.updateUserToken(null, email);
 
-        @SuppressWarnings("null")
         ResponseCookie deleteSpringCookie = ResponseCookie
-                .from("refresh_token", null)
+                .from("refresh_token", "null")
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
