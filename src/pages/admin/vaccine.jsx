@@ -36,11 +36,11 @@ const VaccinePage = () => {
     if (id) {
       const res = await callDeleteVaccine(id);
       if (res && +res.statusCode === 200) {
-        message.success('Xóa vaccine thành công');
+        message.success('Vaccine deleted successfully');
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
@@ -49,7 +49,7 @@ const VaccinePage = () => {
 
   const columns = [
     {
-      title: 'STT',
+      title: 'No.',
       key: 'index',
       width: 50,
       align: 'center',
@@ -64,7 +64,7 @@ const VaccinePage = () => {
       hideInSearch: true,
       render: (text) => (
         <img
-        src={'http://localhost:8080/storage/vaccine/' + text}
+          src={'http://localhost:8080/storage/vaccine/' + text}
           alt='center'
           style={{
             width: '50px',
@@ -86,7 +86,7 @@ const VaccinePage = () => {
       ),
     },
     {
-      title: 'Manufacturer',
+      title: 'Factory',
       dataIndex: 'manufacturer',
       sorter: true,
     },
@@ -145,11 +145,11 @@ const VaccinePage = () => {
 
           <Popconfirm
             placement='leftTop'
-            title='Xác nhận xóa company'
-            description='Bạn có chắc chắn muốn xóa vaccine này ?'
+            title='Confirm delete company' // or 'Confirm delete vaccine'
+            description='Are you sure you want to delete this vaccine?'
             onConfirm={() => handleDeleteVaccine(entity.vaccineId)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText='Confirm'
+            cancelText='Cancel'
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -179,6 +179,11 @@ const VaccinePage = () => {
       q.filter = clone.name
         ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
         : `${sfLike('manufacturer', clone.manufacturer)}`;
+    }
+    if (clone.disease) {
+      q.filter = q.filter
+        ? `${q.filter} and ${sfLike('disease', clone.disease)}`
+        : `${sfLike('disease', clone.disease)}`;
     }
 
     if (!q.filter) delete q.filter;
@@ -217,7 +222,7 @@ const VaccinePage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Vaccine'
+        headerTitle='Vaccine List'
         rowKey='vaccineId'
         loading={isFetching}
         columns={columns}
@@ -235,7 +240,7 @@ const VaccinePage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {range[0]}-{range[1]} trên {total} rows
+                {range[0]}-{range[1]} of {total} rows
               </div>
             );
           },
@@ -248,7 +253,7 @@ const VaccinePage = () => {
               type='primary'
               onClick={() => setOpenModal(true)}
             >
-              Thêm mới
+              Add new
             </Button>
           );
         }}

@@ -8,6 +8,7 @@ import '../../styles/reset.scss';
 
 import { callAddAppointmentCash, callAddAppointmentCreditCard } from '../../config/api.appointment';
 import { callFetchCenter } from '../../config/api.center';
+import { useNavigate } from 'react-router-dom';
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -18,7 +19,7 @@ const waitTime = (time = 100) => {
 };
 
 const ModalOrder = (props) => {
-
+  const navigate = useNavigate();
   const [displayCenter, setDisplayCenter] = useState(null);
   const [animation, setAnimation] = useState('open');
   const { openModal, setOpenModal, vaccine } = props;
@@ -36,17 +37,16 @@ const ModalOrder = (props) => {
   };
 
   const submitOrder = async (valuesForm) => {
-    await waitTime(2000);
-
     const { date, time, center, paymentType } = valuesForm;
-
+  
     if (paymentType === 'CREDIT_CARD') {
       const res = await callAddAppointmentCreditCard(
         vaccine.vaccineId,
         user.id,
         center,
         date,
-        time,);
+        time,
+      );
       window.location.href = res;
     } else {
       const res = await callAddAppointmentCash(
@@ -57,153 +57,157 @@ const ModalOrder = (props) => {
         time,
       );
       if (res.statusCode === 200) {
-        message.success('Đặt lịch thành công');
+        message.success('Appointment booked successfully');
         handleReset();
+        navigate('/success');
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
     }
   };
+  
   const paymentType = [
-    { type: 'CASH', name: 'Tiền mặt' },
-    { type: 'CREDIT_CARD', name: 'Thẻ' },
+    { type: 'CASH', name: 'Cash' },
+    { type: 'CREDIT_CARD', name: 'Card ATM' },
   ];
-
+  
   useEffect(() => {
     fetchCenter();
   }, []);
-
+  
   const fetchCenter = async () => {
     const res = await callFetchCenter();
     if (res && res.data) {
       setDisplayCenter(res.data.result);
     }
   };
-
+  
   return (
     <>
-      {openModal && (<ModalForm title="Đặt lịch tiêm chủng" open={openModal} scrollToFirstError={true}
-        preserve={false}
-        form={form}
-        submitter={{
-          searchConfig: {
-            submitText: 'Đặt lịch',
-            resetText: 'Hủy bỏ',
-          },
-
-        }}
-        onFinish={submitOrder} modalProps={{
-          onCancel: () => {
-            handleReset();
-          },
-
-          afterClose: () => handleReset(),
-          destroyOnClose: true,
-          footer: null,
-          keyboard: false,
-          maskClosable: false,
-          className: `modal-company ${animation}`,
-          rootClassName: `modal-company-root ${animation}`,
-        }}>
-        <Row gutter={16}>
-
-          <Col span={12}>
-            <ProFormDatePicker
-              colProps={{ xl: 12, md: 24 }}
-              width='md'
-              label='Ngày tiêm'
-              name='date'
-              placeholder='Chọn ngày tiêm'
-              rules={[
-                {
-                  required: true,
-                  message: 'Vui lòng chọn ngày tiêm!',
-                },
-                {
-                  validator: (_, value) => {
-                    if (value && value.isBefore(new Date(), 'day')) {
-                      return Promise.reject(
-                        'Ngày tiêm không được là ngày trong quá khứ!'
-                      );
-                    }
-                    return Promise.resolve();
+      {openModal && (
+        <ModalForm
+          title="Book Vaccination Appointment"
+          open={openModal}
+          scrollToFirstError={true}
+          preserve={false}
+          form={form}
+          submitter={{
+            searchConfig: {
+              submitText: 'Book Appointment',
+              resetText: 'Cancel',
+            },
+          }}
+          onFinish={submitOrder}
+          modalProps={{
+            onCancel: () => {
+              handleReset();
+            },
+            afterClose: () => handleReset(),
+            destroyOnClose: true,
+            footer: null,
+            keyboard: false,
+            maskClosable: false,
+            className: `modal-company ${animation}`,
+            rootClassName: `modal-company-root ${animation}`,
+          }}
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <ProFormDatePicker
+                colProps={{ xl: 12, md: 24 }}
+                width="md"
+                label="Vaccination Date"
+                name="date"
+                placeholder="Select vaccination date"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a vaccination date!',
                   },
-                },
-              ]}
-            />
-          </Col>
-          <Col span={12}>
-            <ProFormTimePicker
-              colProps={{ xl: 12, md: 24 }}
-              width='md'
-              label='Giờ tiêm'
-              name='time'
-              placeholder='Chọn giờ tiêm'
-              fieldProps={{
-                format: 'HH:mm',
-              }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Vui lòng chọn giờ tiêm!',
-                },
-              ]}
-            />
-          </Col>
-          <Col span={12}>
-            <ProFormSelect
-              colProps={{ xl: 12, md: 24 }}
-              width='md'
-              name='center'
-              label='Trung tâm tiêm chủng'
-              placeholder='Chọn trung tâm tiêm chủng'
-              rules={[
-                {
-                  required: true,
-                  message: 'Vui lòng chọn địa điểm tiêm chủng!',
-                },
-
-              ]}
-              options={
-                displayCenter &&
-                displayCenter.map((center) => {
-                  return {
-                    label: center.name,
-                    value: center.centerId,
-                  };
-                })
-              }
-            />
-          </Col>
-          <Col span={12}>
-            <ProFormSelect
-              colProps={{ xl: 12, md: 24 }}
-              width='md'
-              name='paymentType'
-              label='Phương thức thanh toán'
-              placeholder='Chọn phương thức thanh toán'
-              rules={[
-                {
-                  required: true,
-                  message: 'Vui lòng chọn phương thức thanh toán!',
-                },
-
-              ]}
-              options={
-                paymentType &&
-                paymentType.map((item) => {
-                  return {
-                    label: item.name,
-                    value: item.type,
-                  };
-                })
-              }
-            />
-          </Col>
-        </Row>
+                  {
+                    validator: (_, value) => {
+                      if (value && value.isBefore(new Date(), 'day')) {
+                        return Promise.reject(
+                          'Vaccination date cannot be in the past!'
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              />
+            </Col>
+            <Col span={12}>
+              <ProFormTimePicker
+                colProps={{ xl: 12, md: 24 }}
+                width="md"
+                label="Vaccination Time"
+                name="time"
+                placeholder="Select vaccination time"
+                fieldProps={{
+                  format: 'HH:mm',
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a vaccination time!',
+                  },
+                ]}
+              />
+            </Col>
+            <Col span={12}>
+              <ProFormSelect
+                colProps={{ xl: 12, md: 24 }}
+                width="md"
+                name="center"
+                label="Vaccination Center"
+                placeholder="Select vaccination center"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a vaccination location!',
+                  },
+                ]}
+                options={
+                  displayCenter &&
+                  displayCenter.map((center) => {
+                    return {
+                      label: center.name,
+                      value: center.centerId,
+                    };
+                  })
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <ProFormSelect
+                colProps={{ xl: 12, md: 24 }}
+                width="md"
+                name="paymentType"
+                label="Payment Method"
+                placeholder="Select payment method"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select a payment method!',
+                  },
+                ]}
+                options={
+                  paymentType &&
+                  paymentType.map((item) => {
+                    return {
+                      label: item.name,
+                      value: item.type,
+                    };
+                  })
+                }
+              />
+            </Col>
+          </Row>
+       
       </ModalForm>)}
 
     </>

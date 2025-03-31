@@ -2,7 +2,6 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
-  MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
@@ -11,19 +10,15 @@ import {
 } from '@ant-design/icons';
 import {
   Avatar,
-  Button,
   Dropdown,
-  Layout,
-  Menu,
   message,
   Space,
-  theme,
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { callLogout } from '../../config/api.auth';
 import { setLogoutAction } from '../../redux/slice/accountSlide';
-const { Header, Sider, Content } = Layout;
+import { ProLayout } from '@ant-design/pro-components';
 
 const LayoutAdmin = () => {
   const navigate = useNavigate();
@@ -36,10 +31,7 @@ const LayoutAdmin = () => {
   useEffect(() => {
     setActiveMenu(location.pathname);
   }, [location]);
-  const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+
 
   const handleLogout = async () => {
     const res = await callLogout();
@@ -68,48 +60,50 @@ const LayoutAdmin = () => {
 
   const menuSidebar = [
     {
-      key: '/admin',
+      path: '/admin/dashboard',
       icon: <AppstoreOutlined />,
-      label: <Link to='/admin'>Dashboard</Link>,
+      name: <Link to='/admin/dashboard'>Dashboard</Link>,
       roles: ['ADMIN', 'DOCTOR', 'CASHIER']
     },
     {
-      key: '/admin/users',
+      path: '/admin/users',
       icon: <UserOutlined />,
-      label: <Link to='/admin/users'>User</Link>,
+      name: <Link to='/admin/users'>User</Link>,
       roles: ['ADMIN']
     },
     {
-      key: '/admin/vaccines',
+      path: '/admin/vaccines',
       icon: <VideoCameraOutlined />,
-      label: <Link to='/admin/vaccines'>Vaccine</Link>,
+      name: <Link to='/admin/vaccines'>Vaccine</Link>,
       roles: ['ADMIN', 'DOCTOR', 'CASHIER']
     },
     {
-      key: '/admin/centers',
+      path: '/admin/centers',
       icon: <UploadOutlined />,
-      label: <Link to='/admin/centers'>Center</Link>,
+      name: <Link to='/admin/centers'>Center</Link>,
       roles: ['ADMIN', 'DOCTOR', 'CASHIER']
     },
 
     {
-      key: '/admin/permissions',
+      path: '/admin/permissions',
       icon: <UploadOutlined />,
-      label: <Link to='/admin/permissions'>Permission</Link>,
+      name: <Link to='/admin/permissions'>Permission</Link>,
       roles: ['ADMIN']
     },
+   
     {
-      key: '/admin/roles',
+      path: '/admin/roles',
       icon: <UserSwitchOutlined />,
-      label: <Link to='/admin/roles'>Role</Link>,
+      name: <Link to='/admin/roles'>Role</Link>,
       roles: ['ADMIN']
     },
     {
-      label: 'Appointment',
+      path: '/admin/appointments',
+      name: 'Appointment',
       icon: <MenuFoldOutlined />,
       children: [
-        { key: '/admin/appointments', label: <Link to='/admin/appointments'>Appointments</Link>, roles: ['CASHIER'] },
-        { key: '/admin/my-schedule', label: <Link to='/admin/my-schedule'>My Schedule</Link>, roles: ['DOCTOR'] },
+        { path: '/admin/appointments/update', name: <Link to='/admin/appointments/update'>Update</Link>, roles: ['CASHIER'] },
+        { path: '/admin/my-schedule', name: <Link to='/admin/my-schedule'>My Schedule</Link>, roles: ['DOCTOR'] },
       ],
       roles: ['DOCTOR', 'CASHIER']
     },
@@ -132,37 +126,15 @@ const LayoutAdmin = () => {
 
   return (
     <>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-          <div className='demo-logo-vertical' />
-          <Menu
-            theme='dark'
-            mode='inline'
-            selectedKeys={[activeMenu]}
-            onClick={(e) => setActiveMenu(e.key)}
-            items={filteredMenuSidebar}
-          />
-        </Sider>
-        <Layout>
-          <Header
-            style={{
-              padding: 0,
-              background: colorBgContainer,
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingRight: 20,
-            }}
-          >
-            <Button
-              type='text'
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: '16px',
-                width: 64,
-                height: 64,
-              }}
-            />
+
+      <ProLayout
+        fixSiderbar
+        fixedHeader
+        defaultCollapsed
+        pageTitleRender={false}
+        
+        actionsRender={() => [
+          <>
             <Dropdown
               menu={{
                 items,
@@ -174,20 +146,17 @@ const LayoutAdmin = () => {
                 </Space>
               </a>
             </Dropdown>
-          </Header>
-          <Content
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Outlet />
-          </Content>
-        </Layout>
-      </Layout>
+          </>
+        ]}
+        menuDataRender={() => filteredMenuSidebar}
+        layout="mix"
+        location={{
+          pathname: activeMenu,
+        }}
+      >
+        <Outlet />
+      </ProLayout>
+
     </>
   );
 };

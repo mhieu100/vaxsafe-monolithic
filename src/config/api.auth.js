@@ -25,6 +25,11 @@ export const callFetchAccount = () => {
   return axios.get('/auth/account');
 };
 
+export const callMyAppointments = () => {
+  return axios.get('/auth/my-appointments');
+};
+
+
 export const callRefreshToken = () => {
   return axios.get('/auth/refresh');
 };

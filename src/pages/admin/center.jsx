@@ -29,11 +29,11 @@ const CenterPage = () => {
     if (id) {
       const res = await callDeleteCenter(id);
       if (res && +res.statusCode === 200) {
-        message.success('Xóa Trung tâm thành công');
+        message.success('Center deleted successfully');
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
@@ -42,7 +42,7 @@ const CenterPage = () => {
 
   const columns = [
     {
-      title: 'STT',
+      title: 'No.',
       key: 'index',
       width: 50,
       align: 'center',
@@ -113,11 +113,11 @@ const CenterPage = () => {
 
           <Popconfirm
             placement='leftTop'
-            title='Xác nhận xóa company'
-            description='Bạn có chắc chắn muốn xóa company này ?'
+            title='Confirm delete center'
+            description='Are you sure you want to delete this center?'
             onConfirm={() => handleDeleteCompany(entity.centerId)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText='Confirm'
+            cancelText='Cancel'
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -173,7 +173,7 @@ const CenterPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Trung tâm tiêm chủng'
+        headerTitle='Vaccination Center List'
         rowKey='centerId'
         loading={isFetching}
         columns={columns}
@@ -191,8 +191,7 @@ const CenterPage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {' '}
-                {range[0]}-{range[1]} trên {total} rows
+                {range[0]}-{range[1]} of {total} rows
               </div>
             );
           },
@@ -205,7 +204,7 @@ const CenterPage = () => {
               type='primary'
               onClick={() => setOpenModal(true)}
             >
-              Thêm mới
+              Add new
             </Button>
           );
         }}

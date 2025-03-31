@@ -56,10 +56,10 @@ const ModalUser = (props) => {
         );
 
         if (res.data) {
-          message.success('Cập nhật người dùng thành công');
+          message.success('User updated successfully');
         } else {
           notification.error({
-            message: 'Có lỗi xảy ra',
+            message: 'An error occurred',
             description: res.message,
           });
         }
@@ -76,10 +76,10 @@ const ModalUser = (props) => {
         );
 
         if (res.data) {
-          message.success('Thêm mới người dùng thành công');
+          message.success('User created successfully');
         } else {
           notification.error({
-            message: 'Tạo người dùng thất bại',
+            message: 'User creation failed',
             description: res.error,
           });
         }
@@ -89,8 +89,8 @@ const ModalUser = (props) => {
       reloadTable();
     } catch (error) {
       notification.error({
-        message: 'Có lỗi xảy ra',
-        description: error.message || 'Lỗi không xác định',
+        message: 'An error occurred',
+        description: error.message || 'Unknown error',
       });
     }
   };
@@ -111,7 +111,7 @@ const ModalUser = (props) => {
     <>
       {openModal && (
         <ModalForm
-          title={dataInit?.userId ? 'Cập nhật Người dùng' : 'Tạo mới Người dùng'}
+          title={dataInit?.userId ? 'Update User' : 'Create New User'}
           open={openModal}
           modalProps={{
             onCancel: () => {
@@ -136,51 +136,51 @@ const ModalUser = (props) => {
               icon: <CheckSquareOutlined />,
             },
             searchConfig: {
-              resetText: 'Hủy',
-              submitText: <>{dataInit?.userId ? 'Cập nhật' : 'Tạo mới'}</>,
+              resetText: 'Cancel',
+              submitText: <>{dataInit?.userId ? 'Update' : 'Create'}</>,
             },
           }}
         >
           <Row gutter={16}>
             <Col span={12}>
               <ProFormText
-                label='Tên người dùng'
-                name='fullname'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên người dùng...'
+                label="User Name"
+                name="fullname"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter user name..."
               />
             </Col>
             <Col span={12}>
               <ProFormText
-                label='Email'
-                name='email'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập email...'
+                label="Email"
+                name="email"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter email..."
               />
             </Col>
             <Col span={12}>
               <ProFormText
-                label='Số điện thoại'
-                name='phoneNumber'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập số điện thoại...'
+                label="Phone Number"
+                name="phoneNumber"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter phone number..."
               />
             </Col>
             <Col span={12}>
               <ProFormDatePicker
-                name='birthday'
-                label='Ngày sinh'
-                placeholder='Nhập ngày sinh...'
+                name="birthday"
+                label="Birthday"
+                placeholder="Enter birthday..."
                 value={dataInit?.birthday ? dayjs(dataInit.birthday, dateFormat) : null}
-                width='100%'
+                width="100%"
               />
             </Col>
             <Col span={12}>
               <ProFormTextArea
-                label='Địa chỉ'
-                name='address'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập địa chỉ...'
+                label="Address"
+                name="address"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter address..."
                 fieldProps={{
                   autoSize: { minRows: 4 },
                 }}
@@ -189,24 +189,24 @@ const ModalUser = (props) => {
             <Col span={12}>
               {dataInit?.userId ? null : (
                 <ProFormSelect
-                  width='100%'
+                  width="100%"
                   onChange={(value) => setRole(value)}
                   options={[
                     { value: 'DOCTOR', label: 'DOCTOR' },
                     { value: 'PATIENT', label: 'PATIENT' },
                     { value: 'CASHIER', label: 'CASHIER' },
                   ]}
-                  name='roleName'
-                  label='Vai trò'
-                  placeholder='Chọn vai trò...'
-                  rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                  name="roleName"
+                  label="Role"
+                  placeholder="Select role..."
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
                 />
               )}
             </Col>
             <Col span={12}>
-              {
-                role === 'DOCTOR' || role === 'CASHIER' || dataInit?.roleName === 'DOCTOR' || dataInit?.roleName === 'CASHIER' ? (<ProFormSelect
-                  width='100%'
+              {role === 'DOCTOR' || role === 'CASHIER' || dataInit?.roleName === 'DOCTOR' || dataInit?.roleName === 'CASHIER' ? (
+                <ProFormSelect
+                  width="100%"
                   options={
                     displayCenter &&
                     displayCenter.map((center) => {
@@ -216,12 +216,12 @@ const ModalUser = (props) => {
                       };
                     })
                   }
-                  name='centerName'
-                  label='Chọn trung tâm công tác'
-                  placeholder='Chọn vai trò...'
-                  rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                />) : null
-              }
+                  name="centerName"
+                  label="Select Working Center"
+                  placeholder="Select role..."
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                />
+              ) : null}
             </Col>
           </Row>
         </ModalForm>

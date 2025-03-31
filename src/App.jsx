@@ -4,8 +4,7 @@ import { useEffect } from 'react';
 
 import LayoutClient from './components/client/layout.client';
 import NotFound from './components/share/not.found';
-import HomePage from './pages/home';
-import ShopPage from './pages/shop';
+import ShopPage from './pages/client/_shop';
 import DashboardPage from './pages/admin/dashboard';
 import RegisterPage from './pages/auth/register';
 import LoginPage from './pages/auth/login';
@@ -22,6 +21,10 @@ import ProfilePage from './pages/auth/profile';
 import ProtectedUserRoute from './components/share/protected-route/user-protected';
 import PermissionPage from './pages/admin/permission';
 import RolePage from './pages/admin/role';
+
+import BlogPage from './pages/client/_blog';
+import HomePage from './pages/client/_home';
+import SuccessPage from './pages/client/_success';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -47,6 +50,8 @@ const App = () => {
       children: [
         { index: true, element: <HomePage /> },
         { path: 'shop', element: <ShopPage /> },
+        { path: 'blog', element: <BlogPage /> },
+        { path: 'success', element: <SuccessPage /> },
         {
           path: 'profile', element:
             <ProtectedUserRoute>
@@ -55,7 +60,7 @@ const App = () => {
         },
       ],
     },
-
+    
     {
       path: '/admin',
       element: (
@@ -69,6 +74,7 @@ const App = () => {
       children: [
         {
           index: true,
+          path: 'dashboard',
           element: <DashboardPage />,
         },
         {
@@ -92,7 +98,7 @@ const App = () => {
           element: <RolePage />,
         },
         {
-          path: 'appointments',
+          path: 'appointments/update',
           element: <AppointmentPage />,
         },
         {

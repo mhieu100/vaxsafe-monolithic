@@ -4,127 +4,122 @@ import { useState } from 'react';
 
 import { callUpdateUser } from '../../config/api.user';
 
-
 const ModalProfile = (props) => {
-
-    const { openModal, setOpenModal, reloadData, user } = props
-
+    const { openModal, setOpenModal, reloadData, user } = props;
+  
     const [animation, setAnimation] = useState('open');
-
+  
     const [form] = Form.useForm();
-
+  
     const updateProfile = async (valuesForm) => {
-        const { fullname, phone, birthday, address } = valuesForm;
-
-        const res = await callUpdateUser(
-            user.id,
-            fullname,
-            phone,
-            birthday,
-            address,
-        );
-
-        if (res.data) {
-            message.success('Cập nhật người dùng thành công');
-        } else {
-            notification.error({
-                message: 'Có lỗi xảy ra',
-                description: res.message,
-            });
-        }
-        handleReset();
-        reloadData();
+      const { fullname, phone, birthday, address } = valuesForm;
+  
+      const res = await callUpdateUser(
+        user.id,
+        fullname,
+        phone,
+        birthday,
+        address
+      );
+  
+      if (res.data) {
+        message.success('User updated successfully');
+      } else {
+        notification.error({
+          message: 'An error occurred',
+          description: res.message,
+        });
+      }
+      handleReset();
+      reloadData();
     };
-
+  
     const handleReset = async () => {
-        form.resetFields();
-
-        setAnimation('close');
-        await new Promise((r) => setTimeout(r, 400));
-        setOpenModal(false);
-        setAnimation('open');
+      form.resetFields();
+  
+      setAnimation('close');
+      await new Promise((r) => setTimeout(r, 400));
+      setOpenModal(false);
+      setAnimation('open');
     };
-
+  
     return (
-        <>{openModal && <ModalForm title="Chỉnh sửa thông tin" open={openModal} preserve={false}
+      <>
+        {openModal && (
+          <ModalForm
+            title="Edit Profile Information"
+            open={openModal}
+            preserve={false}
             form={form}
             submitter={{
-                searchConfig: {
-                    submitText: 'Cập nhật',
-                    resetText: 'Hủy bỏ',
-                },
+              searchConfig: {
+                submitText: 'Update',
+                resetText: 'Cancel',
+              },
             }}
             initialValues={user}
-            onFinish={updateProfile} modalProps={{
-                onCancel: () => {
-                    handleReset();
-                },
-
-                afterClose: () => handleReset(),
-                destroyOnClose: true,
-                footer: null,
-                keyboard: false,
-                maskClosable: false,
-                className: `modal-company ${animation}`,
-                rootClassName: `modal-company-root ${animation}`,
-            }} >
-
+            onFinish={updateProfile}
+            modalProps={{
+              onCancel: () => {
+                handleReset();
+              },
+              afterClose: () => handleReset(),
+              destroyOnClose: true,
+              footer: null,
+              keyboard: false,
+              maskClosable: false,
+              className: `modal-company ${animation}`,
+              rootClassName: `modal-company-root ${animation}`,
+            }}
+          >
             <Row gutter={16}>
-                <Col span={12}>
-                    <ProFormText
-                        label='Tên đầy đủ'
-                        name='fullname'
-                        rules={[
-                            { required: true, message: 'Vui lòng không bỏ trống' },
-                        ]}
-                        placeholder='Nhập tên ...'
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormText
-                        label='Email'
-                        name='email'
-                        disabled
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormText
-                        label='Địa chỉ'
-                        name='address'
-                        rules={[
-                            { required: true, message: 'Vui lòng không bỏ trống' },
-                        ]}
-                        placeholder='Nhập địa chỉ...'
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormText
-                        label='Số điện thoại'
-                        name='phone'
-                        rules={[
-                            { required: true, message: 'Vui lòng không bỏ trống' },
-                        ]}
-                        placeholder='Nhập số điện thoại...'
-                    />
-                </Col>
-                <Col span={12}>
-                    <ProFormDatePicker
-                        colProps={{ xl: 12, md: 24 }}
-                        width='md'
-                        label='Ngày sinh'
-                        name='birthday'
-                        placeholder='Chọn ngày sinh'
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Vui lòng chọn ngày sinh!',
-                            }
-                        ]}
-                    />
-                </Col>
+              <Col span={12}>
+                <ProFormText
+                  label="Full Name"
+                  name="fullname"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Enter name ..."
+                />
+              </Col>
+              <Col span={12}>
+                <ProFormText label="Email" name="email" disabled />
+              </Col>
+              <Col span={12}>
+                <ProFormText
+                  label="Address"
+                  name="address"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Enter address..."
+                />
+              </Col>
+              <Col span={12}>
+                <ProFormText
+                  label="Phone Number"
+                  name="phone"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Enter phone number..."
+                />
+              </Col>
+              <Col span={12}>
+                <ProFormDatePicker
+                  colProps={{ xl: 12, md: 24 }}
+                  width="md"
+                  label="Birthday"
+                  name="birthday"
+                  placeholder="Select birthday"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select birthday!',
+                    },
+                  ]}
+                />
+              </Col>
             </Row>
-        </ModalForm>}</>
-    )
-}
+          </ModalForm>
+        )}
+      </>
+    );
+  };
 
 export default ModalProfile;

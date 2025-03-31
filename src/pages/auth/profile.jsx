@@ -1,5 +1,6 @@
 import {
-  Descriptions, 
+  Button,
+  Descriptions,
 } from 'antd'
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,11 +8,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import '../../styles/reset.scss';
 import ModalProfile from '../../components/modal/modal.profile';
 import { fetchAccount } from '../../redux/slice/accountSlide';
+import TabOption from '../../components/auth/_tabs';
+import { UploadOutlined } from '@ant-design/icons';
 
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.account.user);
-   
+
 
   const dispatch = useDispatch();
 
@@ -43,16 +46,24 @@ const ProfilePage = () => {
     },
     {
       label: 'Action',
-      children: <a onClick={() => setOpenModal(true)} className=''>Update Profile</a>,
+      children: <Button onClick={() => setOpenModal(true)} className=''><UploadOutlined /> Update Profile</Button>,
     },
 
   ];
 
   const [openModal, setOpenModal] = useState(false)
 
+
+
+
   return (
     <>
       <Descriptions title="Thông tin cá nhân" items={items} layout="vertical" bordered />
+      {
+        user?.roleName === 'PATIENT' &&  <TabOption />
+      }
+     
+
       <ModalProfile openModal={openModal} setOpenModal={setOpenModal} reloadData={reloadData} user={user} />
     </>
 

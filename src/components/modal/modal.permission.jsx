@@ -4,6 +4,7 @@ import { Col, Form, message, notification, Row } from 'antd';
 import {
   FooterToolbar,
   ModalForm,
+  ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-components';
 
@@ -30,12 +31,12 @@ const ModalPermission = (props) => {
           apiPath,
           module
         );
-
+  
         if (res.data) {
-          message.success('Cập nhật quyền thành công');
+          message.success('Permission updated successfully');
         } else {
           notification.error({
-            message: 'Có lỗi xảy ra',
+            message: 'An error occurred',
             description: res.message,
           });
         }
@@ -47,23 +48,23 @@ const ModalPermission = (props) => {
           apiPath,
           module
         );
-
+  
         if (res.data) {
-          message.success('Thêm mới quyền thành công');
+          message.success('Permission created successfully');
         } else {
           notification.error({
-            message: 'Tạo quyền thất bại',
+            message: 'Permission creation failed',
             description: res.error,
           });
         }
       }
-
+  
       handleReset();
       reloadTable();
     } catch (error) {
       notification.error({
-        message: 'Có lỗi xảy ra',
-        description: error.message || 'Lỗi không xác định',
+        message: 'An error occurred',
+        description: error.message || 'Unknown error',
       });
     }
   };
@@ -78,77 +79,81 @@ const ModalPermission = (props) => {
     setAnimation('open');
   };
 
-
   return (
     <>
-      {openModal && (
-        <ModalForm
-          title={dataInit?.userId ? 'Cập nhật quyền' : 'Tạo mới quyền'}
-          open={openModal}
-          modalProps={{
-            onCancel: () => {
-              handleReset();
-            },
-            afterClose: () => handleReset(),
-            destroyOnClose: true,
-            footer: null,
-            keyboard: false,
-            maskClosable: false,
-            className: `modal-company ${animation}`,
-            rootClassName: `modal-company-root ${animation}`,
+     {openModal && (
+  <ModalForm
+    title={dataInit?.userId ? 'Update Permission' : 'Create New Permission'}
+    open={openModal}
+    modalProps={{
+      onCancel: () => {
+        handleReset();
+      },
+      afterClose: () => handleReset(),
+      destroyOnClose: true,
+      footer: null,
+      keyboard: false,
+      maskClosable: false,
+      className: `modal-company ${animation}`,
+      rootClassName: `modal-company-root ${animation}`,
+    }}
+    scrollToFirstError
+    preserve={false}
+    form={form}
+    onFinish={submitUser}
+    initialValues={dataInit?.id ? dataInit : {}}
+    submitter={{
+      render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+      submitButtonProps: {
+        icon: <CheckSquareOutlined />,
+      },
+      searchConfig: {
+        resetText: 'Cancel',
+        submitText: <>{dataInit?.id ? 'Update' : 'Create'}</>,
+      },
+    }}
+  >
+    <Row gutter={16}>
+      <Col span={12}>
+        <ProFormText
+          label="Permission Name"
+          name="name"
+          rules={[{ required: true, message: 'Please do not leave blank' }]}
+          placeholder="Enter permission name..."
+        />
+      </Col>
+      <Col span={12}>
+        <ProFormSelect
+          label="Method"
+          name="method"
+          valueEnum={{
+            GET: 'GET',
+            POST: 'POST',
+            PUT: 'PUT',
+            DELETE: 'DELETE',
           }}
-          scrollToFirstError
-          preserve={false}
-          form={form}
-          onFinish={submitUser}
-          initialValues={dataInit?.id ? dataInit : {}}
-          submitter={{
-            render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
-            submitButtonProps: {
-              icon: <CheckSquareOutlined />,
-            },
-            searchConfig: {
-              resetText: 'Hủy',
-              submitText: <>{dataInit?.id ? 'Cập nhật' : 'Tạo mới'}</>,
-            },
-          }}
-        >
-          <Row gutter={16}>
-            <Col span={12}>
-              <ProFormText
-                label='Tên quyền'
-                name='name'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên quyền...'
-              />
-            </Col>
-            <Col span={12}>
-              <ProFormText
-                label='Method'
-                name='method'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên method...'
-              />
-            </Col>
-            <Col span={12}>
-              <ProFormText
-                label='API'
-                name='apiPath'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên api...'
-              />
-            </Col>
-            <Col span={12}>
-              <ProFormText
-                label='Module'
-                name='module'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên module...'
-              />
-            </Col>
-          </Row>
-        </ModalForm>
-      )}
+        />
+      </Col>
+
+      <Col span={12}>
+        <ProFormText
+          label="API"
+          name="apiPath"
+          rules={[{ required: true, message: 'Please do not leave blank' }]}
+          placeholder="Enter API name..."
+        />
+      </Col>
+      <Col span={12}>
+        <ProFormText
+          label="Module"
+          name="module"
+          rules={[{ required: true, message: 'Please do not leave blank' }]}
+          placeholder="Enter module name..."
+        />
+      </Col>
+    </Row>
+  </ModalForm>
+)}
     </>
   );
 };

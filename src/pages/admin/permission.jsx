@@ -17,6 +17,7 @@ import { callDeletePermission } from '../../config/api.permission';
 import { fetchPermission } from '../../redux/slice/permissionSlice';
 import ModalPermission from '../../components/modal/modal.permission';
 import ViewDetailPermission from '../../components/modal/view.permission';
+import { blue, green, orange, red } from '@ant-design/colors';
 
 const PermissionPage = () => {
   const tableRef = useRef();
@@ -29,6 +30,7 @@ const PermissionPage = () => {
   const isFetching = useSelector((state) => state.permission.isFetching);
   const meta = useSelector((state) => state.permission.meta);
   const permissions = useSelector((state) => state.permission.result);
+
   const dispatch = useDispatch();
 
   const [openModal, setOpenModal] = useState(false);
@@ -38,11 +40,11 @@ const PermissionPage = () => {
     if (id) {
       const res = await callDeletePermission(id);
       if (res && +res.statusCode === 200) {
-        message.success('Xóa permission thành công');
+        message.success('Permission deleted successfully');
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
@@ -51,7 +53,7 @@ const PermissionPage = () => {
 
   const columns = [
     {
-      title: 'STT',
+      title: 'No.',
       key: 'index',
       width: 50,
       align: 'center',
@@ -64,9 +66,7 @@ const PermissionPage = () => {
       title: 'API',
       dataIndex: 'apiPath',
       sorter: true,
-
     },
-
     {
       title: 'Method',
       dataIndex: 'method',
@@ -74,16 +74,16 @@ const PermissionPage = () => {
         let color;
         switch (entity.method) {
           case 'PUT':
-            color = '#faad14';
+            color = orange[6];
             break;
           case 'GET':
-            color = '#52c41a';
+            color = blue[6];
             break;
           case 'DELETE':
-            color = '#1890ff';
+            color = red[6];
             break;
           default:
-            color = '#d9d9d9';
+            color = green[6];
         }
         return <Badge count={entity.method} showZero color={color} />;
       },
@@ -91,12 +91,11 @@ const PermissionPage = () => {
     {
       title: 'Name',
       dataIndex: 'name',
-      sorter: true,
+      hideInSearch: true,
     },
     {
       title: 'Module',
       dataIndex: 'module',
-      hideInSearch: true,
     },
     {
       title: 'Actions',
@@ -115,7 +114,6 @@ const PermissionPage = () => {
             }}
           />
           <MenuUnfoldOutlined
-
             style={{
               fontSize: 20,
               color: '#1890ff',
@@ -128,11 +126,11 @@ const PermissionPage = () => {
 
           <Popconfirm
             placement='leftTop'
-            title='Xác nhận xóa quyền này ?'
-            description='Bạn có chắc chắn muốn xóa vaccine này ?'
+            title='Confirm delete this permission?'
+            description='Are you sure you want to delete this permission?'
             onConfirm={() => handleDeletePermission(entity.id)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText='Confirm'
+            cancelText='Cancel'
           >
             <span style={{ cursor: 'pointer', margin: '0' }}>
               <DeleteOutlined
@@ -156,41 +154,26 @@ const PermissionPage = () => {
       filter: '',
     };
 
-    if (clone.name)
-      q.filter = `${sfLike('name', clone.name)}`;
-    if (clone.manufacturer) {
-      q.filter = clone.name
-        ? q.filter + ' and ' + `${sfLike('manufacturer', clone.manufacturer)}`
-        : `${sfLike('manufacturer', clone.manufacturer)}`;
+    if (clone.apiPath) q.filter = `${sfLike('apiPath', clone.apiPath)}`;
+    if (clone.module) {
+      q.filter = clone.apiPath
+        ? q.filter + ' and ' + `${sfLike('module', clone.module)}`
+        : `${sfLike('module', clone.module)}`;
     }
-
+    if (clone.method) {
+      q.filter = clone.apiPath
+        ? q.filter + ' and ' + `${sfLike('method', clone.method)}`
+        : `${sfLike('method', clone.method)}`;
+    }
     if (!q.filter) delete q.filter;
 
     let temp = queryString.stringify(q);
 
     let sortBy = '';
-    if (sort && sort.name) {
-      sortBy =
-        sort.name === 'ascend'
-          ? 'sort=name,asc'
-          : 'sort=name,desc';
+    if (sort && sort.apiPath) {
+      sortBy = sort.apiPath === 'ascend' ? 'sort=apiPath,asc' : 'sort=apiPath,desc';
     }
-    if (sort && sort.manufacturer) {
-      sortBy =
-        sort.manufacturer === 'ascend'
-          ? 'sort=manufacturer,asc'
-          : 'sort=manufacturer,desc';
-    }
-
-    if (sort && sort.price) {
-      sortBy = sort.price === 'ascend' ? 'sort=price,asc' : 'sort=price,desc';
-    }
-    if (sort && sort.stockQuantity) {
-      sortBy =
-        sort.stockQuantity === 'ascend'
-          ? 'sort=stockQuantity,asc'
-          : 'sort=stockQuantity,desc';
-    }
+    
     temp = `${temp}&${sortBy}`;
 
     return temp;
@@ -200,7 +183,7 @@ const PermissionPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách Quyền'
+        headerTitle='Permission List'
         rowKey='id'
         loading={isFetching}
         columns={columns}
@@ -218,7 +201,7 @@ const PermissionPage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {range[0]}-{range[1]} trên {total} rows
+                {range[0]}-{range[1]} of {total} rows
               </div>
             );
           },
@@ -231,7 +214,7 @@ const PermissionPage = () => {
               type='primary'
               onClick={() => setOpenModal(true)}
             >
-              Thêm mới
+              Add new
             </Button>
           );
         }}

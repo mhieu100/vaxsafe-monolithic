@@ -1,4 +1,4 @@
- 
+
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -82,7 +82,7 @@ const ModalVaccine = (props) => {
     if (info.file.status === 'error') {
       setLoadingUpload(false);
       message.error(
-        info?.file?.error?.event?.message ?? 'Đã có lỗi xảy ra khi upload file.'
+        info?.file?.error?.event?.message ?? 'An error occurred while uploading the file.'
       );
     }
   };
@@ -90,11 +90,11 @@ const ModalVaccine = (props) => {
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
+      message.error('You can only upload JPG/PNG files!');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must be smaller than 2MB!');
     }
     return isJpgOrPng && isLt2M;
   };
@@ -141,8 +141,6 @@ const ModalVaccine = (props) => {
       requiredDoses,
     } = valuesForm;
 
-   
-
     if (dataInit?.vaccineId) {
       const logoName = !dataLogo || dataLogo.length === 0 || dataLogo[0].name === undefined ? dataInit.image : dataLogo[0].name;
       const res = await callUpdateVaccine(
@@ -159,18 +157,18 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success('Cập nhật vaccine thành công');
+        message.success('Vaccine updated successfully');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
     } else {
       if (dataLogo.length === 0) {
-        message.error('Vui lòng upload ảnh Vaccine');
+        message.error('Please upload a Vaccine image');
         return;
       }
       const res = await callCreateVaccine(
@@ -186,12 +184,12 @@ const ModalVaccine = (props) => {
         requiredDoses
       );
       if (res.data) {
-        message.success('Thêm mới vaccine thành công');
+        message.success('Vaccine created successfully');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
@@ -211,7 +209,7 @@ const ModalVaccine = (props) => {
           <ModalForm
             title={
               <>
-                {dataInit?.vaccineId ? 'Cập nhật Vaccine' : 'Tạo mới Vaccine'}
+                {dataInit?.vaccineId ? 'Update Vaccine' : 'Create New Vaccine'}
               </>
             }
             open={openModal}
@@ -238,70 +236,60 @@ const ModalVaccine = (props) => {
                 icon: <CheckSquareOutlined />,
               },
               searchConfig: {
-                resetText: 'Hủy',
-                submitText: <>{dataInit?.vaccineId ? 'Cập nhật' : 'Tạo mới'}</>,
+                resetText: 'Cancel',
+                submitText: <>{dataInit?.vaccineId ? 'Update' : 'Create'}</>,
               },
             }}
           >
             <Row gutter={16}>
               <Col span={12}>
                 <ProFormText
-                  label='Tên vaccine'
-                  name='name'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Nhập tên vaccine...'
+                  label="Vaccine Name"
+                  name="name"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Enter vaccine name..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Nơi sản xuất'
-                  name='manufacturer'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Nơi sản xuất...'
+                  label="Manufacturer"
+                  name="manufacturer"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Manufacturer..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Loại bệnh'
-                  name='disease'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Loại bệnh...'
+                  label="Disease Type"
+                  name="disease"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Disease type..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Price'
-                  name='price'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='giá tiền...'
+                  label="Price"
+                  name="price"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Price..."
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Stock'
-                  name='stockQuantity'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Số lượng kho...'
+                  label="Stock"
+                  name="stockQuantity"
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder="Stock quantity..."
                 />
               </Col>
 
               <Col span={8}>
-                <Form.Item labelCol={{ span: 24 }} label='Ảnh Vaccine' name='logo'>
+                <Form.Item labelCol={{ span: 24 }} label="Vaccine Image" name="logo">
                   <ConfigProvider locale={enUS}>
                     <Upload
-                      name='logo'
-                      listType='picture-card'
-                      className='avatar-uploader'
+                      name="logo"
+                      listType="picture-card"
+                      className="avatar-uploader"
                       maxCount={1}
                       multiple={false}
                       customRequest={handleUploadFileLogo}
@@ -318,7 +306,6 @@ const ModalVaccine = (props) => {
                               status: 'done',
                               url: `${'http://localhost:8080/'}storage/vaccine/${dataInit?.image
                                 }`,
-                              
                             },
                           ]
                           : []
@@ -334,15 +321,15 @@ const ModalVaccine = (props) => {
               </Col>
 
               <ProCard
-                title='Miêu tả'
+                title="Description"
                 headStyle={{ color: '#d81921' }}
                 style={{ marginBottom: 20 }}
                 headerBordered
-                size='small'
+                size="small"
                 bordered
               >
                 <Col span={24}>
-                  <ReactQuill theme='snow' value={value} onChange={setValue} />
+                  <ReactQuill theme="snow" value={value} onChange={setValue} />
                 </Col>
               </ProCard>
             </Row>
@@ -354,7 +341,7 @@ const ModalVaccine = (props) => {
             onCancel={() => setPreviewOpen(false)}
             style={{ zIndex: 1500 }}
           >
-            <img alt='example' style={{ width: '100%' }} src={previewImage} />
+            <img alt="example" style={{ width: '100%' }} src={previewImage} />
           </Modal>
         </>
       )}

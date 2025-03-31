@@ -18,10 +18,10 @@ const ModalAppointment = (props) => {
   const [animation, setAnimation] = useState('open');
   const [listDoctor, setListDoctor] = useState([]);
 
-  // Fetch danh sách bác sĩ
+  // Fetch doctor list
   useEffect(() => {
     fetchDoctor();
-  }, []); // Empty dependency array để chỉ chạy một lần khi component mount
+  }, []); // Empty dependency array to run only once when the component mounts
 
   const fetchDoctor = async () => {
     const res = await callFetchDoctor();
@@ -30,29 +30,29 @@ const ModalAppointment = (props) => {
     }
   };
 
-  // Xử lý submit form
+  // Handle form submission
   const submitAppointment = async (valuesForm) => {
     const { doctorId } = valuesForm;
     const res = await callUpdateAppointment(dataInit.appointmentId, doctorId);
 
     if (res.data) {
-      message.success('Cập nhật lịch tiêm chủng thành công');
+      message.success('Appointment updated successfully');
       handleReset();
       reloadTable();
     } else {
       notification.error({
-        message: 'Có lỗi xảy ra',
+        message: 'An error occurred',
         description: res.message,
       });
     }
   };
 
-  // Reset form và đóng modal
+  // Reset form and close modal
   const handleReset = async () => {
     form.resetFields();
     setDataInit(null);
 
-    // Thêm animation khi đóng modal
+    // Add animation when closing the modal
     setAnimation('close');
     await new Promise((resolve) => setTimeout(resolve, 400));
     setOpenModal(false);
@@ -63,7 +63,7 @@ const ModalAppointment = (props) => {
     <>
       {openModal && (
         <ModalForm
-          title="Cập nhật đơn tiêm chủng"
+          title="Update Appointment"
           open={openModal}
           modalProps={{
             onCancel: () => {
@@ -88,33 +88,33 @@ const ModalAppointment = (props) => {
               icon: <CheckSquareOutlined />,
             },
             searchConfig: {
-              resetText: 'Hủy',
-              submitText: <>Cập nhật</>,
+              resetText: 'Cancel',
+              submitText: <>Update</>,
             },
           }}
         >
           <Row gutter={16}>
             <Col span={12}>
-              <ProFormText label="Tên Vaccine" name="vaccineName" disabled />
+              <ProFormText label="Vaccine Name" name="vaccineName" disabled />
             </Col>
             <Col span={12}>
-              <ProFormText label="Tên bệnh nhân" name="patientName" disabled />
+              <ProFormText label="Patient Name" name="patientName" disabled />
             </Col>
             <Col span={12}>
-              <ProFormText label="Ngày hẹn" name="appointmentDate" disabled />
+              <ProFormText label="Appointment Date" name="appointmentDate" disabled />
             </Col>
             <Col span={12}>
-              <ProFormText label="Giờ hẹn" name="appointmentTime" disabled />
+              <ProFormText label="Appointment Time" name="appointmentTime" disabled />
             </Col>
             <Col span={12}>
-              <ProFormText label="Trạng thái" name="status" disabled />
+              <ProFormText label="Status" name="status" disabled />
             </Col>
             <Col span={12}>
               <ProFormSelect
                 width="100%"
                 name="doctorId"
-                label="Bác sĩ đảm nhận"
-                placeholder="Chọn bác sĩ"
+                label="Assign Doctor"
+                placeholder="Select Doctor"
                 options={listDoctor.map((doctor) => ({
                   label: doctor.fullname,
                   value: doctor.userId,
@@ -122,7 +122,7 @@ const ModalAppointment = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Vui lòng chọn bác sĩ!',
+                    message: 'Please select a doctor!',
                   },
                 ]}
               />

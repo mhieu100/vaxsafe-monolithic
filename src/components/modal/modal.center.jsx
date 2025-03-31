@@ -70,7 +70,7 @@ const ModalCenter = (props) => {
   const handleRemoveFile = () => {
     setDataLogo([]);
   };
-
+  
   const handleChange = (info) => {
     if (info.file.status === 'uploading') {
       setLoadingUpload(true);
@@ -81,23 +81,23 @@ const ModalCenter = (props) => {
     if (info.file.status === 'error') {
       setLoadingUpload(false);
       message.error(
-        info?.file?.error?.event?.message ?? 'Đã có lỗi xảy ra khi upload file.'
+        info?.file?.error?.event?.message ?? 'An error occurred while uploading the file.'
       );
     }
   };
-
+  
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
+      message.error('You can only upload JPG/PNG files!');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must be smaller than 2MB!');
     }
     return isJpgOrPng && isLt2M;
   };
-
+  
   const handleUploadFileLogo = async ({ file, onSuccess, onError }) => {
     const res = await callUploadSingleFile(file, 'center');
     if (res && res.data) {
@@ -116,25 +116,25 @@ const ModalCenter = (props) => {
       }
     }
   };
-
+  
   const handleReset = async () => {
     form.resetFields();
     setDataInit(null);
-
+  
     setAnimation('close');
     await new Promise((r) => setTimeout(r, 400));
     setOpenModal(false);
     setAnimation('open');
   };
-
+  
   const submitCenter = async (valuesForm) => {
     const { name, address, phoneNumber, capacity, workingHours } = valuesForm;
-
+  
     if (dataLogo.length === 0) {
-      message.error('Vui lòng upload ảnh Logo');
+      message.error('Please upload a Logo image');
       return;
     }
-
+  
     if (dataInit?.centerId) {
       const res = await callUpdateCenter(
         dataInit.centerId,
@@ -146,12 +146,12 @@ const ModalCenter = (props) => {
         dataLogo[0].name
       );
       if (res.data) {
-        message.success('Cập nhật trung tâm thành công');
+        message.success('Center updated successfully');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
@@ -165,18 +165,18 @@ const ModalCenter = (props) => {
         dataLogo[0].name
       );
       if (res.data) {
-        message.success('Thêm mới trung tâm thành công');
+        message.success('Center created successfully');
         handleReset();
         reloadTable();
       } else {
         notification.error({
-          message: 'Có lỗi xảy ra',
+          message: 'An error occurred',
           description: res.message,
         });
       }
     }
   };
-
+  
   return (
     <>
       {openModal && (
@@ -184,9 +184,7 @@ const ModalCenter = (props) => {
           <ModalForm
             title={
               <>
-                {dataInit?.centerId
-                  ? 'Cập nhật Trung tâm'
-                  : 'Tạo mới Trung tâm'}
+                {dataInit?.centerId ? 'Update Center' : 'Create New Center'}
               </>
             }
             open={openModal}
@@ -213,54 +211,46 @@ const ModalCenter = (props) => {
                 icon: <CheckSquareOutlined />,
               },
               searchConfig: {
-                resetText: 'Hủy',
-                submitText: <>{dataInit?.centerId ? 'Cập nhật' : 'Tạo mới'}</>,
+                resetText: 'Cancel',
+                submitText: <>{dataInit?.centerId ? 'Update' : 'Create'}</>,
               },
             }}
           >
             <Row gutter={16}>
               <Col span={12}>
                 <ProFormText
-                  label='Tên trung tâm'
+                  label='Center Name'
                   name='name'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Nhập tên trung tâm...'
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder='Enter center name...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Số điện thoại'
+                  label='Phone Number'
                   name='phoneNumber'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Số điện thoại trung tâm...'
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder='Center phone number...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
                   label='Capacity'
                   name='capacity'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Nhập sức chứa...'
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder='Enter capacity...'
                 />
               </Col>
               <Col span={12}>
                 <ProFormText
-                  label='Giờ làm việc'
+                  label='Working Hours'
                   name='workingHours'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Giờ hoạt động của trung tâm...'
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder='Center working hours...'
                 />
               </Col>
               <Col span={8}>
-                <Form.Item labelCol={{ span: 24 }} label='Ảnh Logo' name='logo'>
+                <Form.Item labelCol={{ span: 24 }} label='Logo Image' name='logo'>
                   <ConfigProvider locale={enUS}>
                     <Upload
                       name='logo'
@@ -276,14 +266,13 @@ const ModalCenter = (props) => {
                       defaultFileList={
                         dataInit?.centerId
                           ? [
-                            {
-                              uid: uuidv4(),
-                              name: dataInit?.image ?? '',
-                              status: 'done',
-                              url: `${'http://localhost:8080/'}storage/center/${dataInit?.image
-                                }`,
-                            },
-                          ]
+                              {
+                                uid: uuidv4(),
+                                name: dataInit?.image ?? '',
+                                status: 'done',
+                                url: `${'http://localhost:8080/'}storage/center/${dataInit?.image}`,
+                              },
+                            ]
                           : []
                       }
                     >
@@ -295,15 +284,13 @@ const ModalCenter = (props) => {
                   </ConfigProvider>
                 </Form.Item>
               </Col>
-
+  
               <Col span={16}>
                 <ProFormTextArea
-                  label='Địa chỉ'
+                  label='Address'
                   name='address'
-                  rules={[
-                    { required: true, message: 'Vui lòng không bỏ trống' },
-                  ]}
-                  placeholder='Nhập địa chỉ công ty...'
+                  rules={[{ required: true, message: 'Please do not leave blank' }]}
+                  placeholder='Enter company address...'
                   fieldProps={{
                     autoSize: { minRows: 4 },
                   }}

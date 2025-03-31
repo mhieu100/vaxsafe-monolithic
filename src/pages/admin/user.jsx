@@ -29,7 +29,7 @@ const UserPage = () => {
     if (id) {
       const res = await callDeleteUser(id);
       if (res && +res.statusCode === 200) {
-        message.success('Xóa user thành công');
+        message.success('User deleted successfully');
         reloadTable();
       } else {
         notification.error({
@@ -42,7 +42,7 @@ const UserPage = () => {
 
   const columns = [
     {
-      title: 'STT',
+      title: 'No.',
       key: 'index',
       width: 50,
       align: 'center',
@@ -61,20 +61,25 @@ const UserPage = () => {
       dataIndex: 'email',
       sorter: true,
     },
-
     {
       title: 'Phone',
       dataIndex: 'phoneNumber',
       hideInSearch: true,
     },
     {
+      title: 'Address',
+      dataIndex: 'address',
+      sorter: true,
+    },
+    {
       title: 'Center',
       dataIndex: 'centerName',
-      
+      hideInSearch: true,
     },
     {
       title: 'Role',
       dataIndex: 'role',
+      hideInSearch: true,
       render: (_value, entity) => {
         let color;
         switch (entity.roleName) {
@@ -97,12 +102,6 @@ const UserPage = () => {
       title: 'Birthday',
       dataIndex: 'birthday',
       hideInSearch: true,
-      sorter: true,
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      hideInSearch: true,
     },
     {
       title: 'Actions',
@@ -123,11 +122,11 @@ const UserPage = () => {
 
           <Popconfirm
             placement='leftTop'
-            title='Xác nhận xóa user'
-            description='Bạn có chắc chắn muốn xóa user này ?'
+            title='Confirm user deletion'
+            description='Are you sure you want to delete this user?'
             onConfirm={() => handleDeleteUser(entity.userId)}
-            okText='Xác nhận'
-            cancelText='Hủy'
+            okText='Confirm'
+            cancelText='Cancel'
           >
             <span style={{ cursor: 'pointer', margin: '0 10px' }}>
               <DeleteOutlined
@@ -157,10 +156,10 @@ const UserPage = () => {
         ? q.filter + ' and ' + `${sfLike('email', clone.email)}`
         : `${sfLike('email', clone.email)}`;
     }
-    if (clone.role) {
+    if (clone.address) {
       q.filter = q.filter
-        ? `${q.filter} and ${sfLike('role', clone.role)}`
-        : `${sfLike('role', clone.role)}`;
+        ? `${q.filter} and ${sfLike('address', clone.address)}`
+        : `${sfLike('address', clone.address)}`;
     }
 
     if (!q.filter) delete q.filter;
@@ -175,6 +174,9 @@ const UserPage = () => {
     if (sort && sort.email) {
       sortBy = sort.email === 'ascend' ? 'sort=email,asc' : 'sort=email,desc';
     }
+    if (sort && sort.address) {
+      sortBy = sort.address === 'ascend' ? 'sort=address,asc' : 'sort=address,desc';
+    }
     temp = `${temp}&${sortBy}`;
 
     return temp;
@@ -184,7 +186,7 @@ const UserPage = () => {
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle='Danh sách User'
+        headerTitle='User List'
         rowKey='userId'
         loading={isFetching}
         columns={columns}
@@ -202,7 +204,7 @@ const UserPage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {range[0]}-{range[1]} trên {total} rows
+                {range[0]}-{range[1]} of {total} rows
               </div>
             );
           },
@@ -215,7 +217,7 @@ const UserPage = () => {
               type='primary'
               onClick={() => setOpenModal(true)}
             >
-              Thêm mới
+              Add New
             </Button>
           );
         }}

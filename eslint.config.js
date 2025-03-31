@@ -96,13 +96,13 @@ export default [
       ], // Cảnh báo khi export không phải là component
       'import/no-unresolved': 'error', // Báo lỗi khi import không thể resolve
       'import/no-extraneous-dependencies': 'error', // Báo lỗi khi import dependencies không cần thiết
-      'import/order': [
-        'error',
-        {
-          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-          'newlines-between': 'always', // Thêm dòng trống giữa các nhóm import
-        },
-      ], // Quy tắc sắp xếp thứ tự import
+      // 'import/order': [
+      //   'error',
+      //   {
+      //     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+      //     'newlines-between': 'always', // Thêm dòng trống giữa các nhóm import
+      //   },
+      // ], // Quy tắc sắp xếp thứ tự import
       'jsdoc/require-jsdoc': [
         'warn',
         {

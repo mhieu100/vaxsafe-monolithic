@@ -1,97 +1,130 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { message, notification } from "antd";
+import { Link, useNavigate } from 'react-router-dom';
+import { message, notification, Space, theme } from 'antd';
 
-import { callRegister } from "../../config/api.auth";
+import { callRegister } from '../../config/api.auth';
+import { LoginForm, ProConfigProvider, ProFormText } from '@ant-design/pro-components';
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { token } = theme.useToken();
 
-  const [name, setName] = useState("user");
-  const [email, setEmail] = useState("user@gmail.com");
-  const [password, setPassword] = useState("123456");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const res = await callRegister(name, email, password);
+  const handleSubmit = async (values) => {
+    const { email, password, fullname } = values;
+    const res = await callRegister(fullname, email, password);
     if (res?.data?.email) {
       message.success('Đăng ký tài khoản thành công!');
       navigate('/login')
-  } else {
+    } else {
       notification.error({
-          message: res.error,
-          description:
-              res.message && Array.isArray(res.message) ? res.message[0] : res.message,
-          duration: 5
+        message: res.error,
+        description:
+          res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+        duration: 5
       })
-  }
+    }
   };
   return (
-    <>
-      <div className="text-center mt-5">
-        <form className="form-signin" onSubmit={handleSubmit}>
-          <img
-            className="mb-4"
-            src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg"
-            alt=""
-            width="72"
-            height="72"
-          />
-          <h1 className="h3 mb-3 font-weight-normal">Đăng ký</h1>
-          <div className="row g-4">
-            <div className="col-lg-12">
-              <label htmlFor="inputName" className="sr-only">
-                Tên
-              </label>
-              <input
-                type="text"
-                id="inputName"
-                className="form-control"
-                placeholder="Tên của bạn..."
-                autoFocus
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="col-lg-12">
-              <label htmlFor="inputEmail" className="sr-only">
-                Email
-              </label>
-              <input
-                type="email"
-                id="inputEmail"
-                className="form-control"
-                placeholder="Email"
-                autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
+    <ProConfigProvider hashed={false}>
+      <div style={{ backgroundColor: token.colorBgContainer }}>
+        <LoginForm
+          logo="https://github.githubassets.com/favicons/favicon.png"
+          title="Github"
+          subTitle="Đăng ký vào Shoppe Frontend"
+          actions={
+            <Space>
+              Đã có tài khoản?
+              <Link to="/login">Đăng nhập</Link>
+            </Space>
+          }
+          onFinish={handleSubmit}
+          submitter={{
+            searchConfig: {
+              submitText: 'Đăng ký',
+            },
+          }}
+        >
 
-            <div className="col-lg-12">
-              <label htmlFor="inputPassword" className="sr-only">
-                Password
-              </label>
-              <input
-                type="password"
-                id="inputPassword"
-                className="form-control"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          
-          </div>
-          <button className="btn btn-primary btn-block mt-3" type="submit">
-            Submit
-          </button>
-          <p className="mt-3 text-muted">
-            Đã có tài khoản ! <a href="/login">Đăng nhập</a>
-          </p>
-        </form>
+          <>
+            <ProFormText
+              name="email"
+              fieldProps={{
+                size: 'large',
+                prefix: <MailOutlined className="prefixIcon" style={{ marginRight: 10 }} />,
+              }}
+              placeholder="Email hoặc tên đăng nhập"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng nhập email hoặc tên đăng nhập!',
+                },
+              ]}
+            />
+            <ProFormText
+              name="fullname"
+              fieldProps={{
+                size: 'large',
+                prefix: <UserOutlined className="prefixIcon" style={{ marginRight: 10 }} />,
+              }}
+              placeholder="Họ và tên"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng nhập họ và tên!',
+                },
+              ]}
+            />
+            <ProFormText.Password
+              name="password"
+              fieldProps={{
+                size: 'large',
+                prefix: <LockOutlined className="prefixIcon" style={{ marginRight: 10 }} />,
+                strengthText:
+                  'Mật khẩu của bạn cần phải chứa ít nhất 6 ký tự, bao gồm chữ cái và số.',
+                statusRender: (value) => {
+                  const getStatus = () => {
+                    if (value && value.length > 12) {
+                      return 'ok';
+                    }
+                    if (value && value.length > 6) {
+                      return 'pass';
+                    }
+                    return 'poor';
+                  };
+                  const status = getStatus();
+                  if (status === 'pass') {
+                    return (
+                      <div style={{ color: token.colorWarning }}>
+                        Độ mạnh: Trung bình
+                      </div>
+                    );
+                  }
+                  if (status === 'ok') {
+                    return (
+                      <div style={{ color: token.colorSuccess }}>
+                        Độ mạnh: Mạnh
+                      </div>
+                    );
+                  }
+                  return (
+                    <div style={{ color: token.colorError }}>Độ mạnh: Yếu</div>
+                  );
+                },
+              }}
+              placeholder="Mật khẩu"
+              rules={[
+                {
+                  required: true,
+                  message: 'Vui lòng nhập mật khẩu!',
+                },
+              ]}
+            />
+          </>
+
+
+        </LoginForm>
       </div>
-    </>
+    </ProConfigProvider>
   );
 };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CheckSquareOutlined } from '@ant-design/icons';
-import { Col, Form, Row } from 'antd';
+import { Col, Form, message, notification, Row } from 'antd';
 import {
   FooterToolbar,
   ModalForm,
@@ -10,10 +10,10 @@ import {
 
 import '../../styles/reset.scss';
 import ModuleApi from './module.api';
-
+import { callUpdateRole } from '../../config/api.role';
 
 const ModalRole = (props) => {
-  const { openModal, setOpenModal, listPermissions, singleRole, setSingleRole } = props;
+  const { openModal, setOpenModal, listPermissions, singleRole, reloadTable } = props;
   const [animation, setAnimation] = useState('open');
   const [form] = Form.useForm();
 
@@ -24,12 +24,43 @@ const ModalRole = (props) => {
     setAnimation('open');
   };
 
+  const submitRole = async (valuesForm) => {
+    const { name, permissions } = valuesForm;
+
+    const checkedPermissions = [];
+
+    if (permissions) {
+      for (const key in permissions) {
+        if (key.match(/^[1-9][0-9]*$/) && permissions[key] === true) {
+          checkedPermissions.push({ id: key });
+        }
+      }
+    }
+    if (singleRole?.id) {
+      //update
+      const role = {
+        name,
+        permissions: checkedPermissions,
+      };
+      const res = await callUpdateRole(role, singleRole.id);
+      if (res.data) {
+        message.success('Role updated successfully');
+        handleReset();
+        reloadTable();
+      } else {
+        notification.error({
+          message: 'An error occurred',
+          description: res.message,
+        });
+      }
+    }
+  };
 
   return (
     <>
       {openModal && (
         <ModalForm
-          title="Cập nhật vai trò"
+          title="Update Role"
           open={openModal}
           modalProps={{
             onCancel: () => {
@@ -44,6 +75,7 @@ const ModalRole = (props) => {
             rootClassName: `modal-company-root ${animation}`,
           }}
           scrollToFirstError
+          onFinish={submitRole}
           preserve={false}
           form={form}
           initialValues={singleRole}
@@ -53,24 +85,24 @@ const ModalRole = (props) => {
               icon: <CheckSquareOutlined />,
             },
             searchConfig: {
-              resetText: 'Hủy',
-              submitText: 'Cập nhật',
+              resetText: 'Cancel',
+              submitText: 'Update',
             },
           }}
         >
           <Row gutter={16}>
             <Col span={24}>
               <ProFormText
-                label='Vai trò'
-                name='name'
-                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                placeholder='Nhập tên vai trò...'
+                label="Role"
+                name="name"
+                rules={[{ required: true, message: 'Please do not leave blank' }]}
+                placeholder="Enter role name..."
               />
             </Col>
             <Col span={24}>
               <ProCard
-                title="Quyền hạn"
-                subTitle="Các quyền hạn được phép cho vai trò này"
+                title="Permissions"
+                subTitle="Permissions allowed for this role"
                 headStyle={{ color: '#d81921' }}
                 style={{ marginBottom: 20 }}
                 headerBordered
@@ -83,7 +115,6 @@ const ModalRole = (props) => {
                   singleRole={singleRole}
                   openModal={openModal}
                 />
-
               </ProCard>
             </Col>
           </Row>

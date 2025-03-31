@@ -11,6 +11,8 @@ export const groupByPermission = (data) => {
     });
 };
 
+
+
 export const colorMethod = (method) => {
     switch (method) {
         case 'POST':
