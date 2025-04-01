@@ -38,4 +38,5 @@ public class Vaccine {
     Integer requiredDoses;
     Double price;
     Integer stockQuantity;
+    boolean isDeleted;
 }

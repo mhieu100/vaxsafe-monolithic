@@ -34,6 +34,7 @@ public class User {
     String password;
     LocalDate birthday;
     String address;
+    boolean isDeleted;
     @Column(columnDefinition = "MEDIUMTEXT")
     String refreshToken;
     @ManyToOne

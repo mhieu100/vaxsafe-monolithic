@@ -38,6 +38,8 @@ public class AppointmentService {
         res.setAppointmentId(appointment.getAppointmentId());
         res.setVaccineName(appointment.getVaccine().getName());
         res.setPatientName(appointment.getPatient().getFullname());
+        res.setDoctorName(appointment.getDoctor() != null ? appointment.getDoctor().getFullname() : "");
+        res.setCashierName(appointment.getCashier() != null ? appointment.getCashier().getFullname() : "");
         res.setCenterName(appointment.getCenter().getName());
         res.setAppointmentDate(appointment.getAppointmentDate());
         res.setAppointmentTime(appointment.getAppointmentTime());

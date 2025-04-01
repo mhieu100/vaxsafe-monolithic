@@ -38,6 +38,8 @@ public class UserController {
     @ApiMessage("Get all users")
     public ResponseEntity<Pagination> getAllUsers(@Filter Specification<User> specification,
             Pageable pageable) {
+                specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
+                                .equal(root.get("isDeleted"), false));
         return ResponseEntity.ok().body(userService.getAllUsers(specification, pageable));
     }
 

@@ -16,6 +16,8 @@ public class ResAppointment {
     String vaccineName;
     String patientName;
     String centerName;
+    String doctorName;
+    String cashierName;
     LocalDate appointmentDate;
     LocalTime appointmentTime;
     Status status;

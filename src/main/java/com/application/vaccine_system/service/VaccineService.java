@@ -65,7 +65,9 @@ public class VaccineService {
         if (!vaccineRepository.existsById(id)) {
             throw new InvalidException("Vaccine not found with id: " + id);
         }
-        vaccineRepository.deleteById(id);
+        Vaccine vaccine = vaccineRepository.findById(id).get();
+        vaccine.setDeleted(true);
+        vaccineRepository.save(vaccine);
     }
 
     public List<Vaccine> getVaccinesByName(String name) {

@@ -46,6 +46,8 @@ public class VaccineController {
     @ApiMessage("Get all vaccines")
     public ResponseEntity<Pagination> getAllVaccines(@Filter Specification<Vaccine> specification,
             Pageable pageable) {
+                specification = Specification.where(specification).and((root, query, criteriaBuilder) -> criteriaBuilder
+                .equal(root.get("isDeleted"), false));
         return ResponseEntity.ok().body(vaccineService.getAllVaccines(specification, pageable));
     }
 

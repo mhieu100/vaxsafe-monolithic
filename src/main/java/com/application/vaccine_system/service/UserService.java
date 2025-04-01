@@ -126,7 +126,8 @@ public class UserService {
         if (user.isEmpty()) {
             throw new InvalidException("User not found with id: " + id);
         }
-        userRepository.deleteById(id);
+        user.get().setDeleted(true);
+        userRepository.save(user.get());
     }
 
     public ReqRegister registerUser(ReqRegister reqRegister) throws InvalidException {
