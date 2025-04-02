@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
+import queryString from 'query-string';
 import { Badge, Popconfirm, Space, message, notification } from 'antd';
+import { sfLike } from 'spring-filter-query-builder';
 import { CheckSquareOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
@@ -52,26 +54,28 @@ const MySchedulePage = () => {
         }
     };
 
+    // Fetch danh sách bác sĩ
     useEffect(() => {
         fetchMySchedule();
-    }, []);
+    }, []); // Empty dependency array để chỉ chạy một lần khi component mount
 
     const fetchMySchedule = async () => {
-        setFetching(true);
+        setFetching(true); // Bắt đầu quá trình fetching
 
+        // Giả lập quá trình fetching mất 1.5 giây
         setTimeout(async () => {
-            const res = await callMySchedule();
+            const res = await callMySchedule(); // Gọi API
             if (res && res.data) {
                 setMeta(res.data.meta);
                 setListSchedule(res.data.result);
             }
-            setFetching(false);
-        }, 500);
+            setFetching(false); // Kết thúc quá trình fetching
+        }, 500); // Trì hoãn 1.5 giây
     };
 
     const columns = [
         {
-            title: 'No.',
+            title: 'STT',
             key: 'index',
             width: 50,
             align: 'center',
@@ -81,28 +85,32 @@ const MySchedulePage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Vaccine',
+            title: 'VaccineName',
             dataIndex: 'vaccineName',
-        },
-        {
+            sorter: true,
+        },{
             title: 'Cashier',
             dataIndex: 'cashierName',
         },
         {
             title: 'Patient',
             dataIndex: 'patientName',
+            sorter: true,
         },
         {
             title: 'Date',
             dataIndex: 'appointmentDate',
+            sorter: true,
         },
         {
             title: 'Time',
             dataIndex: 'appointmentTime',
+            sorter: true,
         },
         {
             title: 'Status',
             dataIndex: 'status',
+            sorter: true,
             render: (_value, entity) => {
                 let color;
                 switch (entity.status) {
@@ -115,8 +123,6 @@ const MySchedulePage = () => {
                     case 'PROCESSING':
                         color = '#52c41a';
                         break;
-                    default:
-                        color = 'gray'
                 }
                 return <Badge count={entity.status} showZero color={color} />;
             },
@@ -125,7 +131,7 @@ const MySchedulePage = () => {
             title: 'Actions',
             hideInSearch: true,
             width: 50,
-            render: (_value, entity) =>
+            render: (_value, entity) => (
                 entity.status === 'PROCESSING' ? (
                     <Space>
                         <CheckSquareOutlined
@@ -133,7 +139,9 @@ const MySchedulePage = () => {
                                 fontSize: 20,
                                 color: '#1be632',
                             }}
-                            onClick={() => handleComplete(entity.appointmentId)}
+                            onClick={() =>
+                                handleComplete(entity.appointmentId)
+                            }
                         />
 
                         <Popconfirm
@@ -153,23 +161,54 @@ const MySchedulePage = () => {
                                 />
                             </span>
                         </Popconfirm>
-                    </Space>
-                ) : null,
+                    </Space>) : null
+            ),
         },
-    ];
+    ]
 
+    const buildQuery = (params, sort) => {
+        const clone = { ...params };
+        const q = {
+            page: params.current,
+            size: params.pageSize,
+            filter: '',
+        };
 
+        if (clone.vaccineName) q.filter = `${sfLike('vaccineName', clone.vaccineName)}`;
+        if (clone.patientName) {
+            q.filter = clone.vaccineName
+                ? q.filter + ' and ' + `${sfLike('patientName', clone.patientName)}`
+                : `${sfLike('patientName', clone.patientName)}`;
+        }
+
+        if (!q.filter) delete q.filter;
+
+        const temp = queryString.stringify(q);
+
+        let sortBy = '';
+        if (sort && sort.patientName) {
+            sortBy = sort.patientName === 'ascend' ? 'sort=patientName,asc' : 'sort=patientName,desc';
+        }
+        if (sort && sort.address) {
+            sortBy = sort.address === 'ascend' ? 'sort=vaccineName,asc' : 'sort=vaccineName,desc';
+        }
+
+        return temp;
+    };
 
     return (
         <>
             <DataTable
                 actionRef={tableRef}
-                headerTitle="Today's Doctor Appointment Schedule"
-                rowKey="appointId"
+                headerTitle='Lịch tiêm chủng của bác sĩ hôm nay'
+                rowKey='appointId'
                 loading={isFetching}
                 columns={columns}
                 dataSource={listSchedule}
-                search={false}
+                request={async (params, sort, filter) => {
+                    const query = buildQuery(params, sort, filter);
+                    await fetchMySchedule({ query });
+                }}
                 scroll={{ x: true }}
                 pagination={{
                     current: meta.page,
@@ -179,15 +218,18 @@ const MySchedulePage = () => {
                     showTotal: (total, range) => {
                         return (
                             <div>
-                                {range[0]}-{range[1]} of {total} rows
+                                {range[0]}-{range[1]} trên {total} rows
                             </div>
                         );
                     },
                 }}
                 rowSelection={false}
             />
-        </>
-    );
-};
 
-export default MySchedulePage;
+        </>
+
+
+    )
+}
+
+export default MySchedulePage

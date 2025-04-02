@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useState } from 'react';
+import { useRef, useState } from 'react'
+import queryString from 'query-string';
 import { useDispatch, useSelector } from 'react-redux';
-import { Badge, Tag } from 'antd';
+import { sfLike } from 'spring-filter-query-builder';
+import { Badge, Space, Table, Tag } from 'antd';
 import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons';
 
+import { fetchAppointment } from '../../redux/slice/appointmentSlice';
 import DataTable from '../../components/data-table';
 import ModalAppointment from '../../components/modal/modal.appointment';
 
@@ -21,10 +24,9 @@ const AppointmentPage = () => {
   const appointments = useSelector((state) => state.appointment.result);
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
-
   const columns = [
     {
-      title: 'No.',
+      title: 'STT',
       key: 'index',
       width: 50,
       align: 'center',
@@ -33,13 +35,16 @@ const AppointmentPage = () => {
       },
       hideInSearch: true,
     },
+
     {
-      title: 'Vaccine',
+      title: 'VaccineName',
       dataIndex: 'vaccineName',
+      sorter: true,
     },
     {
       title: 'Patient',
       dataIndex: 'patientName',
+      sorter: true,
     },
     {
       title: 'Doctor',
@@ -55,14 +60,17 @@ const AppointmentPage = () => {
     {
       title: 'Date',
       dataIndex: 'appointmentDate',
+      sorter: true,
     },
     {
       title: 'Time',
       dataIndex: 'appointmentTime',
+      sorter: true,
     },
     {
       title: 'Status',
       dataIndex: 'status',
+      sorter: true,
       render: (_value, entity) => {
         let color;
         switch (entity.status) {
@@ -75,8 +83,6 @@ const AppointmentPage = () => {
           case 'PROCESSING':
             color = '#52c41a';
             break;
-          default:
-            color = 'gray';
         }
         return <Badge count={entity.status} showZero color={color} />;
       },
@@ -85,34 +91,68 @@ const AppointmentPage = () => {
       title: 'Actions',
       hideInSearch: true,
       width: 50,
-      render: (_value, entity) =>
+      render: (_value, entity) => (
+
         entity.status === 'PENDING' ? (
-
-          <EditOutlined
-            style={{
-              fontSize: 20,
-              color: '#ffa500',
-            }}
-            onClick={() => {
-              setOpenModal(true);
-              setDataInit(entity);
-            }}
-          />
-
-        ) : null,
+          <Space>
+            <EditOutlined
+              style={{
+                fontSize: 20,
+                color: '#ffa500',
+              }}
+              onClick={() => {
+                setOpenModal(true);
+                setDataInit(entity);
+              }}
+            />
+          </Space>) : null
+      ),
     },
-  ];
+  ]
+
+  const buildQuery = (params, sort) => {
+    const clone = { ...params };
+    const q = {
+      page: params.current,
+      size: params.pageSize,
+      filter: '',
+    };
+
+    if (clone.vaccineName) q.filter = `${sfLike('vaccineName', clone.vaccineName)}`;
+    if (clone.patientName) {
+      q.filter = clone.vaccineName
+        ? q.filter + ' and ' + `${sfLike('patientName', clone.patientName)}`
+        : `${sfLike('patientName', clone.patientName)}`;
+    }
+
+    if (!q.filter) delete q.filter;
+
+    const temp = queryString.stringify(q);
+
+    let sortBy = '';
+    if (sort && sort.patientName) {
+      sortBy = sort.patientName === 'ascend' ? 'sort=patientName,asc' : 'sort=patientName,desc';
+    }
+    if (sort && sort.address) {
+      sortBy = sort.address === 'ascend' ? 'sort=vaccineName,asc' : 'sort=vaccineName,desc';
+    }
+
+    return temp;
+  };
 
   return (
     <>
       <DataTable
         actionRef={tableRef}
-        headerTitle="Appointment List"
-        rowKey="appointId"
+        headerTitle='Danh sách Lịch tiêm chủng'
+        rowKey='appointId'
         loading={isFetching}
         columns={columns}
         dataSource={appointments}
-        search={false}
+        request={async (params, sort, filter) => {
+          const query = buildQuery(params, sort, filter);
+          dispatch(fetchAppointment({ query }));
+        }}
         scroll={{ x: true }}
         pagination={{
           current: meta.page,
@@ -122,7 +162,7 @@ const AppointmentPage = () => {
           showTotal: (total, range) => {
             return (
               <div>
-                {range[0]}-{range[1]} of {total} rows
+                {range[0]}-{range[1]} trên {total} rows
               </div>
             );
           },
@@ -137,7 +177,11 @@ const AppointmentPage = () => {
         setDataInit={setDataInit}
       />
     </>
-  );
-};
 
-export default AppointmentPage;
+
+  )
+}
+
+export default AppointmentPage
+
+

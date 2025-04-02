@@ -1,21 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { EditOutlined } from '@ant-design/icons';
 
 import DataTable from '../../components/data-table';
 import { callFetchPermission } from '../../config/api.permission';
 import { groupByPermission } from '../../config/utils';
 import ModalRole from '../../components/modal/modal.role';
-
+import { fetchRole } from '../../redux/slice/roleSlice';
+import queryString from 'query-string';
+import { sfLike } from 'spring-filter-query-builder';
 const RolePage = () => {
   const tableRef = useRef();
   const reloadTable = () => {
     tableRef?.current?.reload();
   };
+  const dispatch = useDispatch();
+
   const isFetching = useSelector((state) => state.role.isFetching);
   const meta = useSelector((state) => state.role.meta);
   const roles = useSelector((state) => state.role.result);
-
   const [openModal, setOpenModal] = useState(false);
   const [listPermissions, setListPermissions] = useState();
   const [singleRole, setSingleRole] = useState();
@@ -63,7 +66,38 @@ const RolePage = () => {
       ),
     },
   ];
+  const buildQuery = (params, sort) => {
+    const clone = { ...params };
+    const q = {
+      page: params.current,
+      size: params.pageSize,
+      filter: '',
+    };
 
+    if (clone.apiPath) q.filter = `${sfLike('apiPath', clone.apiPath)}`;
+    if (clone.module) {
+      q.filter = clone.apiPath
+        ? q.filter + ' and ' + `${sfLike('module', clone.module)}`
+        : `${sfLike('module', clone.module)}`;
+    }
+    if (clone.method) {
+      q.filter = clone.apiPath
+        ? q.filter + ' and ' + `${sfLike('method', clone.method)}`
+        : `${sfLike('method', clone.method)}`;
+    }
+    if (!q.filter) delete q.filter;
+
+    let temp = queryString.stringify(q);
+
+    let sortBy = '';
+    if (sort && sort.apiPath) {
+      sortBy = sort.apiPath === 'ascend' ? 'sort=apiPath,asc' : 'sort=apiPath,desc';
+    }
+    
+    temp = `${temp}&${sortBy}`;
+
+    return temp;
+  };
   return (
     <>
       <DataTable
@@ -74,6 +108,10 @@ const RolePage = () => {
         columns={columns}
         search={false}
         dataSource={roles}
+        request={async (params, sort, filter) => {
+          const query = buildQuery(params, sort, filter);
+          dispatch(fetchRole({ query }));
+        }}
         scroll={{ x: true }}
         pagination={{
           current: meta.page,
