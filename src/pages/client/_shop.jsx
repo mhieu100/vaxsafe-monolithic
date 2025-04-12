@@ -99,7 +99,7 @@ const ShopPage = () => {
                     <Button
                       type='primary'
                       onClick={() => {
-                        user.id ? setOpenModal(true) : navigate('/login'); message.error('Please login to order vaccine')
+                        user.id ? setOpenModal(true) : message.error('Please login to order vaccine'); 
                         setVaccine(vaccine)
                       }
                       }
