@@ -1,6 +1,7 @@
 package com.application.vaccine_system.config.initData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +31,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         long countRoles = this.roleRepository.count();
         long countUsers = this.userRepository.count();
         long countPermissions = this.permissionRepository.count();
+        List<Permission> list =  this.permissionRepository.findAll();
 
        
         
@@ -40,6 +42,8 @@ public class DatabaseInitializer implements CommandLineRunner {
             arr.add(new Permission("Delete a center", "/centers/{id}", "DELETE", "CENTERS"));
             arr.add(new Permission("Get a center by id", "/centers/{id}", "GET", "CENTERS"));
             arr.add(new Permission("Get centers with pagination", "/centers", "GET", "CENTERS"));
+
+            arr.add(new Permission("Get role with pagination", "/roles", "GET", "ROLES"));
 
             arr.add(new Permission("Create a vaccine", "/vaccines", "POST", "VACCINES"));
             arr.add(new Permission("Update a vaccine", "/vaccines/{id}", "PUT", "VACCINES"));
