@@ -35,7 +35,7 @@ public class User {
     LocalDate birthday;
     String address;
     boolean isDeleted;
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     String refreshToken;
     @ManyToOne
     @JoinColumn(name = "center_id")
